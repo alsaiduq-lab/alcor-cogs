@@ -102,7 +102,6 @@ class ShopView(View):
         else:
             return 0
 
-    @Select(placeholder='Select a Pokémon to buy with dust', options=self.pokemon_options)
     async def select_pokemon_callback(self, select, interaction):
         selected_pokemon = select.values[0]
         pokemon_details = next(item for item in self.shop_data if item["name"] == selected_pokemon)
