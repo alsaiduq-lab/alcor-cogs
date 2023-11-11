@@ -42,11 +42,51 @@ class ShopView(View):
         self.add_item(self.create_select_menu('Select a Plate to buy with dust', 'plate'))
 
         self.add_roll_buttons()
+        self.single_roll_button = Button(label='Single Roll (50 Crystals)', style=ButtonStyle.primary, custom_id='single_roll', emoji='🎲')
+        self.single_roll_button.callback = self.single_roll
+        self.add_item(self.single_roll_button)
 
-    def add_roll_buttons(self):
-        self.add_item(Button(label='Single Roll (50 Crystals)', style=ButtonStyle.primary, custom_id='single_roll', emoji='🎲'))
-        self.add_item(Button(label='Multi Roll (10x for 500 Crystals)', style=ButtonStyle.primary, custom_id='multi_roll', emoji='🎰'))
-        self.add_item(Button(label='Flash Sale!', style=ButtonStyle.danger, custom_id='flash_sale', emoji='⚡'))
+        self.multi_roll_button = Button(label='Multi Roll (10x for 500 Crystals)', style=ButtonStyle.primary, custom_id='multi_roll', emoji='🎰')
+        self.multi_roll_button.callback = self.multi_roll
+        self.add_item(self.multi_roll_button)
+
+        self.flash_sale_button = Button(label='Flash Sale!', style=ButtonStyle.danger, custom_id='flash_sale', emoji='⚡')
+        self.flash_sale_button.callback = self.flash_sale
+        self.add_item(self.flash_sale_button)
+
+    async def single_roll(self, interaction):
+        self.current_crystals = self.db.get_crystals(self.user_id)
+        if self.current_crystals < 50:
+            await interaction.response.send_message("Not enough crystals.", ephemeral=True)
+            return
+        new_crystal_count = self.current_crystals - 50
+        self.db.update_crystals(self.user_id, new_crystal_count)
+
+        pokemon, rarity = self.roll()
+        self.add_to_inventory(pokemon, rarity)
+        await interaction.response.send_message(f"You've got a {pokemon} of rarity {rarity}!", ephemeral=True)
+
+    async def multi_roll(self, interaction):
+        current_crystals = self.db.get_crystals(self.user_id)
+        if current_crystals < 500:
+            await interaction.response.send_message("Not enough crystals.", ephemeral=True)
+            return
+        new_crystal_count = current_crystals - 500
+        self.db.update_crystals(self.user_id, new_crystal_count)
+
+        rolls = []
+        for _ in range(10):
+            pokemon, rarity = self.roll()
+            self.add_to_inventory(pokemon, rarity)
+            rolls.append(f"{pokemon} ({rarity})")
+
+        await interaction.response.send_message(f"You've got the following Pokémon: {', '.join(rolls)}", ephemeral=True)
+
+    async def flash_sale(self, interaction):
+        self.generate_flash_sale_pokemon()
+        flash_sale_msg = "Flash sale is live! The following Pokémon are available at half-off dust prices:\n"
+        flash_sale_msg += "\n".join([f"{pokemon['name']} ({pokemon['rarity']})" for pokemon in self.flash_sale_pokemon])
+        await interaction.response.send_message(flash_sale_msg, ephemeral=True)
 
     @staticmethod
     def load_pokemon_data():
@@ -57,6 +97,8 @@ class ShopView(View):
         except FileNotFoundError:
             logging.error(f"File not found: {pokemon_data_path}")
             return []
+
+
 
     def roll(self):
         rolled_pokemon = random.choice(self.shop_data)
@@ -132,42 +174,3 @@ class ShopView(View):
         self.db.update_dust(self.user_id, self.current_dust - plate_cost)
         await interaction.response.send_message(f"You've bought a {selected_plate} for {plate_cost} dust!",
                                                 ephemeral=True)
-
-    @Button(label='Single Roll (50 Crystals)', style=ButtonStyle.primary, custom_id='single_roll', emoji='🎲')
-    async def single_roll(self, button, interaction):
-        self.current_crystals = self.db.get_crystals(self.user_id)
-        if self.current_crystals < 50:
-            await interaction.response.send_message("Not enough crystals.", ephemeral=True)
-            return
-        new_crystal_count = self.current_crystals - 50
-
-        self.db.update_crystals(self.user_id, new_crystal_count)
-
-        pokemon, rarity = self.roll(self.user_id)
-        self.add_to_inventory(self.user_id, pokemon, rarity)
-
-        await interaction.response.send_message(f"You've got a {pokemon} of rarity {rarity}!", ephemeral=True)
-
-    @Button(label='Multi Roll (10x for 500 Crystals)', style=ButtonStyle.primary, custom_id='multi_roll', emoji='🎰')
-    async def multi_roll(self, button, interaction):
-        current_crystals = self.db.get_crystals(self.user_id)
-        if current_crystals < 500:
-            await interaction.response.send_message("Not enough crystals.", ephemeral=True)
-            return
-        new_crystal_count = current_crystals - 500
-        self.db.update_crystals(self.user_id, new_crystal_count)
-
-        rolls = []
-        for _ in range(10):
-            pokemon, rarity = self.roll(self.user_id)
-            self.add_to_inventory(self.user_id, pokemon, rarity)
-            rolls.append(f"{pokemon} ({rarity})")
-
-        await interaction.response.send_message(f"You've got the following Pokémon: {', '.join(rolls)}", ephemeral=True)
-
-    @Button(label='Flash Sale!', style=ButtonStyle.danger, custom_id='flash_sale', emoji='⚡')
-    async def flash_sale(self, button, interaction):
-        self.generate_flash_sale_pokemon()
-        flash_sale_msg = "Flash sale is live! The following Pokémon are available at half-off dust prices:\n"
-        flash_sale_msg += "\n".join([f"{pokemon['name']} ({pokemon['rarity']})" for pokemon in self.flash_sale_pokemon])
-        await interaction.response.send_message(flash_sale_msg, ephemeral=True)
