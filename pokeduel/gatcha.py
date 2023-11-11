@@ -73,6 +73,8 @@ class ShopView(View):
     def add_to_inventory(self, item, rarity):
         self.db.add_to_inventory(self.user_id, item, rarity)
 
+
+
     def generate_flash_sale_pokemon(self):
         self.shop_data = self.load_pokemon_data()
         ex_ux_pokemon = [pokemon for pokemon in self.shop_data if pokemon['rarity'] in ['EX', 'UX']]
@@ -82,6 +84,8 @@ class ShopView(View):
 
     @Select(placeholder='Select a Pokémon to buy with dust', options=self.pokemon_options)
     async def select_pokemon(self, select, interaction):
+        select.options = self.pokemon_options
+
         selected_pokemon = select.values[0]
         selected_rarity = next(item for item in self.shop_data if item["name"] == selected_pokemon)["rarity"]
 
