@@ -29,6 +29,8 @@ class ShopView(View):
         self.db = DatabaseManager(db_path)
         self.shop_data = shop_data
         self.plates_data = plates_data
+        self.add_item(self.create_pokemon_select_menu())
+        self.add_item(self.create_plate_select_menu())
 
         self.pokemon_options = [SelectOption(label=pokemon['name'], value=pokemon['name']) for pokemon in shop_data]
         self.plate_options = [SelectOption(label=plate['name'], value=plate['name']) for plate in plates_data]
@@ -73,6 +75,20 @@ class ShopView(View):
     def add_to_inventory(self, item, rarity):
         self.db.add_to_inventory(self.user_id, item, rarity)
 
+    def create_pokemon_select_menu(self):
+        pokemon_select = Select(placeholder='Select a Pokémon to buy with dust',
+                                options=self.pokemon_options,
+                                custom_id='pokemon_select')
+        pokemon_select.callback = self.select_pokemon_callback
+        return pokemon_select
+
+    def create_plate_select_menu(self):
+        plate_select = Select(placeholder='Select a Plate to buy with dust',
+                              options=self.plate_options,
+                              custom_id='plate_select')
+        plate_select.callback = self.select_plate_callback
+        return plate_select
+
 
 
     def generate_flash_sale_pokemon(self):
@@ -83,37 +99,28 @@ class ShopView(View):
         self.flash_sale_pokemon = random.sample(ex_ux_pokemon, 1) + random.sample(other_pokemon, 1)
 
     @Select(placeholder='Select a Pokémon to buy with dust', options=self.pokemon_options)
-    async def select_pokemon(self, select, interaction):
-        select.options = self.pokemon_options
-
+    async def select_pokemon_callback(self, select, interaction):
         selected_pokemon = select.values[0]
-        selected_rarity = next(item for item in self.shop_data if item["name"] == selected_pokemon)["rarity"]
-
-        dust_cost = 0
-        if selected_rarity == 'UX' or selected_rarity == 'EX':
-            dust_cost = 5000
-        elif selected_rarity == 'R':
-            dust_cost = 2000
-        elif selected_rarity == 'UC':
-            dust_cost = 1000
-        elif selected_rarity == 'C':
-            dust_cost = 500
+        pokemon_details = next(item for item in self.shop_data if item["name"] == selected_pokemon)
+        dust_cost = self.calculate_dust_cost(pokemon_details['rarity'])
 
         self.current_dust = self.db.get_dust(self.user_id)
         if self.current_dust < dust_cost:
             await interaction.response.send_message("Not enough dust.", ephemeral=True)
             return
 
-        self.add_to_inventory(self.user_id, selected_pokemon, selected_rarity)
-
+        self.add_to_inventory(self.user_id, selected_pokemon, pokemon_details['rarity'])
         self.db.update_dust(self.user_id, self.current_dust - dust_cost)
-
         await interaction.response.send_message(f"You've bought a {selected_pokemon}!", ephemeral=True)
 
-    @Select(placeholder='Select a Plate to buy with dust', options=self.plate_options)
-    async def select_plate(self, select, interaction):
+    async def select_plate_callback(self, select, interaction):
         selected_plate = select.values[0]
-        plate_cost = next(item for item in self.plates_data if item["name"] == selected_plate)["cost"]
+
+    @Select(placeholder='Select a Plate to buy with dust', options=self.plate_options)
+    async def select_plate_callback(self, select, interaction):
+        selected_plate = select.values[0]
+        plate_details = next(item for item in self.plates_data if item["name"] == selected_plate)
+        plate_cost = plate_details['cost']
 
         self.current_dust = self.db.get_dust(self.user_id)
         if self.current_dust < plate_cost:
@@ -122,7 +129,6 @@ class ShopView(View):
 
         self.db.add_plate_to_inventory(self.user_id, selected_plate)
         self.db.update_dust(self.user_id, self.current_dust - plate_cost)
-
         await interaction.response.send_message(f"You've bought a {selected_plate} for {plate_cost} dust!",
                                                 ephemeral=True)
 
