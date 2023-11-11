@@ -66,16 +66,20 @@ class ShopView(View):
         self.db.add_to_inventory(self.user_id, item, rarity)
 
     def create_pokemon_select_menu(self):
-        pokemon_select = Select(placeholder='Select a Pokémon to buy with dust',
-                                options=self.pokemon_options,
-                                custom_id='pokemon_select')
+        pokemon_select = Select(
+            placeholder='Select a Pokémon to buy with dust',
+            options=self.pokemon_options,
+            custom_id='pokemon_select'
+        )
         pokemon_select.callback = self.select_pokemon_callback
         return pokemon_select
 
     def create_plate_select_menu(self):
-        plate_select = Select(placeholder='Select a Plate to buy with dust',
-                              options=self.plate_options,
-                              custom_id='plate_select')
+        plate_select = Select(
+            placeholder='Select a Plate to buy with dust',
+            options=self.plate_options,
+            custom_id='plate_select'
+        )
         plate_select.callback = self.select_plate_callback
         return plate_select
 
@@ -96,7 +100,7 @@ class ShopView(View):
         elif rarity == 'C':
             return 500
         else:
-            return 0  # Default value if rarity doesn't match any category
+            return 0
 
     @Select(placeholder='Select a Pokémon to buy with dust', options=self.pokemon_options)
     async def select_pokemon_callback(self, select, interaction):
@@ -114,7 +118,7 @@ class ShopView(View):
         await interaction.response.send_message(f"You've bought a {selected_pokemon}!", ephemeral=True)
 
 
-    @Select(placeholder='Select a Plate to buy with dust', options=self.plate_options)
+
     async def select_plate_callback(self, select, interaction):
         selected_plate = select.values[0]
         plate_details = next(item for item in self.plates_data if item["name"] == selected_plate)
