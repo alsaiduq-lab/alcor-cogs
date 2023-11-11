@@ -1,7 +1,7 @@
 import sqlite3
 import json
 from discord.ext import commands
-from discord.ui import Button, View, ButtonStyle, Select, SelectOption
+from discord import ButtonStyle, SelectOption
 
 
 class DatabaseManager:

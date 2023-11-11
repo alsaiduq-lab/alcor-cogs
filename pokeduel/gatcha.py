@@ -2,7 +2,6 @@ import json
 import random
 from discord import ButtonStyle, SelectOption
 from discord.ext import commands
-from discord.ui import Button, Select
 from pokeduel.data.database import DatabaseManager
 
 with open('plates.json', 'r') as f:

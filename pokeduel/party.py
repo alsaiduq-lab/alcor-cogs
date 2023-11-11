@@ -1,5 +1,5 @@
 from discord.ext import commands
-from discord.ui import Button, View, ButtonStyle, Select, SelectOption
+from discord import ButtonStyle, SelectOption
 
 class PartyManager(commands.Cog):
     def __init__(self, bot, db_path):

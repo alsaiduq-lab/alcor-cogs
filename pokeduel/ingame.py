@@ -2,7 +2,7 @@ from datetime import datetime
 import random
 from pokeduel.utils.board import BoardManager
 from pokeduel.logic.combat import CombatManager
-from discord import ButtonStyle
+from discord import ButtonStyle, SelectOption
 from discord.ui import View, Button
 from pokeduel.party import PartyButtonView, DatabaseManager
 
