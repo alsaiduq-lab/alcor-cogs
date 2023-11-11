@@ -5,9 +5,9 @@ from discord.ui import Select, View
 from discord.ext import commands
 from pokeduel.data.database import DatabaseManager
 
-with open('./data/plates.json', 'r') as f:
+with open('pokeduel/data/plates.json', 'r') as f:
     plates_data = json.load(f)
-with open('./data/pokemon.json', 'r') as f:
+with open('pokeduel/data/pokemon.json', 'r') as f:
     pokemon_data = json.load(f)
 
 class ShopView(commands.View):
