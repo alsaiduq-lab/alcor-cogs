@@ -1,14 +1,26 @@
 import json
 import random
+import os
+import logging
+
 from discord import ButtonStyle, SelectOption
 from discord.ui import Select, View
 from discord.ext import commands
 from pokeduel.data.database import DatabaseManager
 
-with open('pokeduel/data/plates.json', 'r') as f:
-    plates_data = json.load(f)
-with open('pokeduel/data/pokemon.json', 'r') as f:
-    pokemon_data = json.load(f)
+
+base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+plates_path = os.path.join(base_dir, 'pokeduel', 'data', 'plates.json')
+
+logging.basicConfig(level=logging.DEBUG)
+logging.debug(f"Attempting to open file at: {plates_path}")
+
+try:
+    with open(plates_path, 'r') as f:
+        plates_data = json.load(f)
+except FileNotFoundError as e:
+    logging.error(f"File not found: {plates_path}")
+    raise e
 
 class ShopView(commands.View):
     def __init__(self, user_id, db_path, shop_data, plates_data):
