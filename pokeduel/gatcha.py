@@ -48,16 +48,6 @@ class ShopView(View):
         self.add_item(Button(label='Multi Roll (10x for 500 Crystals)', style=ButtonStyle.primary, custom_id='multi_roll', emoji='🎰'))
         self.add_item(Button(label='Flash Sale!', style=ButtonStyle.danger, custom_id='flash_sale', emoji='⚡'))
 
-    def create_select_menu(self, placeholder, custom_id):
-        if custom_id == 'pokemon':
-            options = self.pokemon_options
-        elif custom_id == 'plate':
-            options = self.plate_options
-        else:
-            options = []
-
-        return Select(placeholder=placeholder, options=options, custom_id=custom_id)
-
     @staticmethod
     def load_pokemon_data():
         pokemon_data_path = os.path.join(dir_path, 'data', 'pokemon.json')
@@ -89,14 +79,24 @@ class ShopView(View):
         plate_select.callback = self.select_plate_callback
         return plate_select
 
-
-
     def generate_flash_sale_pokemon(self):
         self.shop_data = self.load_pokemon_data()
         ex_ux_pokemon = [pokemon for pokemon in self.shop_data if pokemon['rarity'] in ['EX', 'UX']]
         other_pokemon = [pokemon for pokemon in self.shop_data if pokemon['rarity'] not in ['EX', 'UX']]
 
         self.flash_sale_pokemon = random.sample(ex_ux_pokemon, 1) + random.sample(other_pokemon, 1)
+
+    def calculate_dust_cost(self, rarity):
+        if rarity == 'UX' or rarity == 'EX':
+            return 5000
+        elif rarity == 'R':
+            return 2000
+        elif rarity == 'UC':
+            return 1000
+        elif rarity == 'C':
+            return 500
+        else:
+            return 0  # Default value if rarity doesn't match any category
 
     @Select(placeholder='Select a Pokémon to buy with dust', options=self.pokemon_options)
     async def select_pokemon_callback(self, select, interaction):
@@ -113,8 +113,6 @@ class ShopView(View):
         self.db.update_dust(self.user_id, self.current_dust - dust_cost)
         await interaction.response.send_message(f"You've bought a {selected_pokemon}!", ephemeral=True)
 
-    async def select_plate_callback(self, select, interaction):
-        selected_plate = select.values[0]
 
     @Select(placeholder='Select a Plate to buy with dust', options=self.plate_options)
     async def select_plate_callback(self, select, interaction):
