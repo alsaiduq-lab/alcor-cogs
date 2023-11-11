@@ -1,11 +1,14 @@
 import json
 import random
 from discord import ButtonStyle, SelectOption
+from discord.ui import Select, View
 from discord.ext import commands
 from pokeduel.data.database import DatabaseManager
 
-with open('plates.json', 'r') as f:
+with open('./data/plates.json', 'r') as f:
     plates_data = json.load(f)
+with open('./data/pokemon.json', 'r') as f:
+    pokemon_data = json.load(f)
 
 class ShopView(commands.View):
     def __init__(self, user_id, db_path, shop_data, plates_data):
