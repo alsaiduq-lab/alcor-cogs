@@ -4,7 +4,7 @@ import os
 import logging
 
 from discord import ButtonStyle, SelectOption
-from discord.ui import Select, View
+from discord.ui import Select, View, Button
 from discord.ext import commands
 from pokeduel.data.database import DatabaseManager
 

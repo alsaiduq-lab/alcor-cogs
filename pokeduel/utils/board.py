@@ -1,6 +1,6 @@
 from collections import deque
 from discord import ButtonStyle, Button
-from discord.ui import Select, View
+from discord.ui import Select, View, Button
 from PIL import Image, ImageDraw
 
 class BoardManager:
