@@ -2,6 +2,7 @@ import sqlite3
 import json
 from discord.ext import commands
 from discord import ButtonStyle, SelectOption
+from discord.ui import Select
 
 
 class DatabaseManager:

@@ -3,7 +3,7 @@ import random
 from pokeduel.utils.board import BoardManager
 from pokeduel.logic.combat import CombatManager
 from discord import ButtonStyle, SelectOption
-from discord.ui import View, Button
+from discord.ui import Select
 from pokeduel.party import PartyButtonView, DatabaseManager
 
 class GameButtons(View):
