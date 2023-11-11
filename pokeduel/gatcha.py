@@ -9,10 +9,9 @@ from discord.ext import commands
 from pokeduel.data.database import DatabaseManager
 
 
-base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-plates_path = os.path.join(base_dir, 'pokeduel', 'data', 'plates.json')
+dir_path = os.path.dirname(os.path.abspath(__file__))
+plates_path = os.path.join(dir_path, 'data', 'plates.json')
 
-logging.basicConfig(level=logging.DEBUG)
 logging.debug(f"Attempting to open file at: {plates_path}")
 
 try:
