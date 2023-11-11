@@ -5,7 +5,6 @@ from discord.ext import commands
 from discord.ui import Button, Select, SelectOption
 from pokeduel.data.database import DatabaseManager
 
-# Load data
 with open('plates.json', 'r') as f:
     plates_data = json.load(f)
 
@@ -34,19 +33,19 @@ class ShopView(commands.View):
         self.add_item(Button(label='Multi Roll (10x for 500 Crystals)', style=ButtonStyle.primary, custom_id='multi_roll', emoji='🎰'))
         self.add_item(Button(label='Flash Sale!', style=ButtonStyle.danger, custom_id='flash_sale', emoji='⚡'))
 
-    # Helper method for rolling a Pokémon
     def roll(self):
         rolled_pokemon = random.choice(self.shop_data)
         return rolled_pokemon['name'], rolled_pokemon['rarity']
 
-    # Helper method for adding to inventory
     def add_to_inventory(self, item, rarity):
         self.db.add_to_inventory(self.user_id, item, rarity)
 
-    # Helper method for flash sale
     def generate_flash_sale_pokemon(self):
+        self.shop_data = self.load_pokemon_data()
         ex_ux_pokemon = [pokemon for pokemon in self.shop_data if pokemon['rarity'] in ['EX', 'UX']]
-        self.flash_sale_pokemon = random.sample(ex_ux_pokemon, 1) + random.sample(sel
+        other_pokemon = [pokemon for pokemon in self.shop_data if pokemon['rarity'] not in ['EX', 'UX']]
+
+        self.flash_sale_pokemon = random.sample(ex_ux_pokemon, 1) + random.sample(other_pokemon, 1)
 
     @Select(placeholder='Select a Pokémon to buy with dust', options=self.pokemon_options)
     async def select_pokemon(self, select, interaction):
@@ -107,7 +106,6 @@ class ShopView(commands.View):
 
     @Button(label='Multi Roll (10x for 500 Crystals)', style=ButtonStyle.primary, custom_id='multi_roll', emoji='🎰')
     async def multi_roll(self, button, interaction):
-        # Similar implementation as provided
         current_crystals = self.db.get_crystals(self.user_id)
         if current_crystals < 500:
             await interaction.response.send_message("Not enough crystals.", ephemeral=True)
