@@ -21,7 +21,8 @@ except FileNotFoundError as e:
     logging.error(f"File not found: {plates_path}")
     raise e
 
-class ShopView(commands.View):
+
+class ShopView(View):
     def __init__(self, user_id, db_path, shop_data, plates_data):
         super().__init__()
         self.user_id = user_id
@@ -29,22 +30,41 @@ class ShopView(commands.View):
         self.shop_data = shop_data
         self.plates_data = plates_data
 
+        self.pokemon_options = [SelectOption(label=pokemon['name'], value=pokemon['name']) for pokemon in shop_data]
+        self.plate_options = [SelectOption(label=plate['name'], value=plate['name']) for plate in plates_data]
+
         self.current_crystals = self.db.get_crystals(user_id)
         self.current_dust = self.db.get_dust(user_id)
 
-        self.add_item(self.create_select_menu('Select a Pokémon to buy with dust', shop_data, 'pokemon'))
-        self.add_item(self.create_select_menu('Select a Plate to buy with dust', plates_data, 'plate'))
+        self.add_item(self.create_select_menu('Select a Pokémon to buy with dust', 'pokemon'))
+        self.add_item(self.create_select_menu('Select a Plate to buy with dust', 'plate'))
 
         self.add_roll_buttons()
-
-    def create_select_menu(self, placeholder, data, custom_id):
-        options = [SelectOption(label=item['name'], value=item['name']) for item in data]
-        return Select(placeholder=placeholder, options=options, custom_id=custom_id)
 
     def add_roll_buttons(self):
         self.add_item(Button(label='Single Roll (50 Crystals)', style=ButtonStyle.primary, custom_id='single_roll', emoji='🎲'))
         self.add_item(Button(label='Multi Roll (10x for 500 Crystals)', style=ButtonStyle.primary, custom_id='multi_roll', emoji='🎰'))
         self.add_item(Button(label='Flash Sale!', style=ButtonStyle.danger, custom_id='flash_sale', emoji='⚡'))
+
+    def create_select_menu(self, placeholder, custom_id):
+        if custom_id == 'pokemon':
+            options = self.pokemon_options
+        elif custom_id == 'plate':
+            options = self.plate_options
+        else:
+            options = []
+
+        return Select(placeholder=placeholder, options=options, custom_id=custom_id)
+
+    @staticmethod
+    def load_pokemon_data():
+        pokemon_data_path = os.path.join(dir_path, 'data', 'pokemon.json')
+        try:
+            with open(pokemon_data_path, 'r') as file:
+                return json.load(file)
+        except FileNotFoundError:
+            logging.error(f"File not found: {pokemon_data_path}")
+            return []
 
     def roll(self):
         rolled_pokemon = random.choice(self.shop_data)
