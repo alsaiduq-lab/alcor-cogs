@@ -1,0 +1,1220 @@
+{
+    "plates": [
+        {
+            "ID": "ID-1",
+            "Color": "Purple",
+            "Name": "Long Throw",
+            "Rarity": " EX",
+            "Cost": "2",
+            "Effect": "Move one Pok\u00e9mon from your bench to one space away from your entry point. Your turn ends."
+        },
+        {
+            "ID": "ID-2",
+            "Color": "Gold",
+            "Name": "Bright Powder",
+            "Rarity": " EX",
+            "Cost": "1",
+            "Effect": "Choose one of your Pok\u00e9mon on the field. For this turn, you can make any battle opponent of this Pok\u00e9mon spin again once."
+        },
+        {
+            "ID": "ID-3",
+            "Color": "Green",
+            "Name": "Recycle",
+            "Rarity": " EX",
+            "Cost": "2",
+            "Effect": "All Plates from both players except Recycle become usable. Your turn ends."
+        },
+        {
+            "ID": "ID-4",
+            "Color": "Gold",
+            "Name": "X Sp. Atk",
+            "Rarity": " EX",
+            "Cost": "1",
+            "Effect": "Choose one of your Pok\u00e9mon on the field or bench. For this turn, it has \u2606+2"
+        },
+        {
+            "ID": "ID-5",
+            "Color": "Pink",
+            "Name": "Max Revive",
+            "Rarity": " R",
+            "Cost": "2",
+            "Effect": "Choose on of your Pok\u00e9mon in the P.C. Move that Pok\u00e9mon to the bench. (It will not gain Wait.)"
+        },
+        {
+            "ID": "ID-6",
+            "Color": "Red",
+            "Name": "Desparate Times",
+            "Rarity": " R",
+            "Cost": "2",
+            "Effect": "Choose one of your Pok\u00e9mon on the field or bench. For this turn, if that Pok\u00e9mon spins an attack between 10 and 50 damage, it deals +50 damage"
+        },
+        {
+            "ID": "ID-7",
+            "Color": "Blue",
+            "Name": "Double Chance",
+            "Rarity": " R",
+            "Cost": "1",
+            "Effect": "Choose a Pok\u00e9mon on the field or bench. (You cannot select unusable Pok\u00e9mon) For this turn, you can choose to respin once for it."
+        },
+        {
+            "ID": "ID-8",
+            "Color": "Pink",
+            "Name": "Clear Wait",
+            "Rarity": " R",
+            "Cost": "2",
+            "Effect": "Choose one of your Pok\u00e9mon on the field or bench. This Pok\u00e9mon cannot have Wait."
+        },
+        {
+            "ID": "ID-9",
+            "Color": "Gold",
+            "Name": "Focus Band",
+            "Rarity": " R",
+            "Cost": "2",
+            "Effect": "Select a Pok\u00e9mon on the Field or on your Bench. This turn, the Pok\u00e9mon cannot be Knocked Out by attacks."
+        },
+        {
+            "ID": "ID-10",
+            "Color": "Gold",
+            "Name": "Full Heal",
+            "Rarity": " R",
+            "Cost": "1",
+            "Effect": "Choose one of your Pok\u00e9mon on the field. Remove all special conditions from that Pok\u00e9mon. (This excludes Wait.)"
+        },
+        {
+            "ID": "ID-11",
+            "Color": "Purple",
+            "Name": "Scoop Up",
+            "Rarity": " UC",
+            "Cost": "1",
+            "Effect": "Choose one of your Pok\u00e9mon on the field. Return it to the bench."
+        },
+        {
+            "ID": "ID-12",
+            "Color": "Red",
+            "Name": "X Attack",
+            "Rarity": " UC",
+            "Cost": "1",
+            "Effect": "Choose one of your Pok\u00e9mon on the field or bench. For this turn, it deals +30 damage"
+        },
+        {
+            "ID": "ID-13",
+            "Color": "Purple",
+            "Name": "Pok\u00e9mon Switch",
+            "Rarity": " UC",
+            "Cost": "1",
+            "Effect": "Choose two of your Pok\u00e9mon on the field or bench and switch their positions. Your turn ends. (You cannot select two Pok\u00e9mon from the Bench)"
+        },
+        {
+            "ID": "ID-14",
+            "Color": "Purple",
+            "Name": "Swap Spot",
+            "Rarity": " UC",
+            "Cost": "1",
+            "Effect": "Switch 1 of your Pok\u00e9mon with another of your Pok\u00e9mon on the field"
+        },
+        {
+            "ID": "ID-15",
+            "Color": "Gold",
+            "Name": "X Defend",
+            "Rarity": " UC",
+            "Cost": "1",
+            "Effect": "Choose one of your Pok\u00e9mon on the field or bench. For this turn, if its opponent deals 10-100 damage in battle, this Pok\u00e9mon will not be knocked out"
+        },
+        {
+            "ID": "ID-16",
+            "Color": "Blue",
+            "Name": "No Guard",
+            "Rarity": " UC",
+            "Cost": "1",
+            "Effect": "Choose one of your Pok\u00e9mon on the field or bench. For this turn, it can spin again once if it spins a Blue Attack."
+        },
+        {
+            "ID": "ID-17",
+            "Color": "Purple",
+            "Name": "Quick Care",
+            "Rarity": " UC",
+            "Cost": "1",
+            "Effect": "Choose one of your Pok\u00e9mon on the field. If there is space in your P.C., move it there. Your turn ends."
+        },
+        {
+            "ID": "ID-18",
+            "Color": "Purple",
+            "Name": "Priority Recovery",
+            "Rarity": " C",
+            "Cost": "1",
+            "Effect": "Switch the order of your Pok\u00e9mon in the P.C. You cannot use this Plate if there are less than 2 Pok\u00e9mon in the P.C. Your turn ends."
+        },
+        {
+            "ID": "ID-19",
+            "Color": "Gold",
+            "Name": "Ballast",
+            "Rarity": " C",
+            "Cost": "1",
+            "Effect": "Choose one of your Pok\u00e9mon on the field. For this turn, it cannot be affected by Whirlwind."
+        },
+        {
+            "ID": "ID-20",
+            "Color": "Pink",
+            "Name": "Awakening",
+            "Rarity": " C",
+            "Cost": "1",
+            "Effect": "Choose one of your Pok\u00e9mon on the field. That Pok\u00e9mon is no longer asleep"
+        },
+        {
+            "ID": "ID-21",
+            "Color": "Pink",
+            "Name": "Paralyz Heal",
+            "Rarity": " C",
+            "Cost": "1",
+            "Effect": "Choose one of your Pok\u00e9mon on the field. That Pok\u00e9mon is no longer paralysed"
+        },
+        {
+            "ID": "ID-22",
+            "Color": "Pink",
+            "Name": "Confuse Heal",
+            "Rarity": " C",
+            "Cost": "1",
+            "Effect": "Choose one of your Pok\u00e9mon on the field. That Pok\u00e9mon is no longer confusion"
+        },
+        {
+            "ID": "ID-23",
+            "Color": "Pink",
+            "Name": "Antidote",
+            "Rarity": " C",
+            "Cost": "1",
+            "Effect": "Choose one of your Pok\u00e9mon on the field. That Pok\u00e9mon is no longer Poisoned or noxious."
+        },
+        {
+            "ID": "ID-24",
+            "Color": "Red",
+            "Name": "Iron Power",
+            "Rarity": " C",
+            "Cost": "2",
+            "Effect": "Steel-type Pok\u00e9mon deal +20 damage. This effect lasts until one of your opponent's Pok\u00e9mon is knocked out by a Steel-type Pok\u00e9mon. Your turn ends"
+        },
+        {
+            "ID": "ID-25",
+            "Color": "Red",
+            "Name": "Dread Power",
+            "Rarity": " C",
+            "Cost": "2",
+            "Effect": "Dark-type Pok\u00e9mon deal +20 damage. This effect lasts until one of your opponent's Pok\u00e9mon is knocked out by a Dark-type Pok\u00e9mon. Your turn ends"
+        },
+        {
+            "ID": "ID-26",
+            "Color": "Red",
+            "Name": "Flame Power",
+            "Rarity": " C",
+            "Cost": "2",
+            "Effect": "Fire-type Pok\u00e9mon deal +20 damage. This effect lasts until one of your opponent's Pok\u00e9mon is knocked out by a Fire-type Pok\u00e9mon. Your turn ends"
+        },
+        {
+            "ID": "ID-27",
+            "Color": "Red",
+            "Name": "Meadow Power",
+            "Rarity": " C",
+            "Cost": "2",
+            "Effect": "Grass-type Pok\u00e9mon deal +20 damage. This effect lasts until one of your opponent's Pok\u00e9mon is knocked out by a Grass-type Pok\u00e9mon. Your turn ends"
+        },
+        {
+            "ID": "ID-28",
+            "Color": "Red",
+            "Name": "Splash Power",
+            "Rarity": " C",
+            "Cost": "2",
+            "Effect": "Water-type Pok\u00e9mon deal +20 damage. This effect lasts until one of your opponent's Pok\u00e9mon is knocked out by a Water-type Pok\u00e9mon. Your turn ends"
+        },
+        {
+            "ID": "ID-39",
+            "Color": "Purple",
+            "Name": "Invisibility Cape",
+            "Rarity": " EX",
+            "Cost": "3",
+            "Effect": "Choose one of your Pok\u00e9mon on the bench. For this turn, it can move through other Pok\u00e9mon when making an MP move"
+        },
+        {
+            "ID": "ID-40",
+            "Color": "Blue",
+            "Name": "Power Battle",
+            "Rarity": " UC",
+            "Cost": "2",
+            "Effect": "Choose on of your Pok\u00e9mon on the field or bench. For this turn, if this Pok\u00e9mon or its opponent spins a Purple Attack in battle, they must both spin once again."
+        },
+        {
+            "ID": "ID-41",
+            "Color": "Purple",
+            "Name": "Hurdle Jump",
+            "Rarity": " UC",
+            "Cost": "2",
+            "Effect": "Choose one of your Pok\u00e9mon on the field and move it over a connected Pok\u00e9mon. Your turn ends."
+        },
+        {
+            "ID": "ID-42",
+            "Color": "Red",
+            "Name": "Mind Power",
+            "Rarity": " C",
+            "Cost": "2",
+            "Effect": "Psychic-type Pok\u00e9mon deal +20 damage. This effect lasts until one of your opponent's Pok\u00e9mon is knocked out by a Psychic-type Pok\u00e9mon. Your turn ends"
+        },
+        {
+            "ID": "ID-49",
+            "Color": "Red",
+            "Name": "Toxic Power",
+            "Rarity": " C",
+            "Cost": "2",
+            "Effect": "Poison-type Pok\u00e9mon deal +20 damage. This effect lasts until one of your opponent's Pok\u00e9mon is knocked out by a Poison-type Pok\u00e9mon. Your turn ends"
+        },
+        {
+            "ID": "ID-50",
+            "Color": "Red",
+            "Name": "Draco Power",
+            "Rarity": " C",
+            "Cost": "2",
+            "Effect": "Dragon-type Pok\u00e9mon deal +20 damage. This effect lasts until one of your opponent's Pok\u00e9mon is knocked out by a Dragon-type Pok\u00e9mon. Your turn ends"
+        },
+        {
+            "ID": "ID-53",
+            "Color": "Purple",
+            "Name": "Switcheroo",
+            "Rarity": " R",
+            "Cost": "1",
+            "Effect": "Choose one of your Pok\u00e9mon on the bech. Switch it with one of your Pok\u00e9mon from your P.C. Your turn ends."
+        },
+        {
+            "ID": "ID-56",
+            "Color": "Purple",
+            "Name": "Goal Block",
+            "Rarity": " R",
+            "Cost": "2",
+            "Effect": "Choose one of your Pok\u00e9mon on the field and move it to your goal point if it is open. Your turn ends."
+        },
+        {
+            "ID": "ID-57",
+            "Color": "Red",
+            "Name": "Clay Power",
+            "Rarity": " C",
+            "Cost": "2",
+            "Effect": "Ground-type Pok\u00e9mon deal +20 damage. This effect lasts until one of your opponent's Pok\u00e9mon is knocked out by a Ground-type Pok\u00e9mon. Your turn ends"
+        },
+        {
+            "ID": "ID-61",
+            "Color": "Red",
+            "Name": "Spooky Power",
+            "Rarity": " C",
+            "Cost": "2",
+            "Effect": "Ghost-type Pok\u00e9mon deal +20 damage. This effect lasts until one of your opponent's Pok\u00e9mon is knocked out by a Ghost-type Pok\u00e9mon. Your turn ends"
+        },
+        {
+            "ID": "ID-73",
+            "Color": "Red",
+            "Name": "Zap Power",
+            "Rarity": " C",
+            "Cost": "2",
+            "Effect": "Electric-type Pok\u00e9mon deal +20 damage. This effect lasts until one of your opponent's Pok\u00e9mon is knocked out by a Electric-type Pok\u00e9mon. Your turn ends"
+        },
+        {
+            "ID": "ID-80",
+            "Color": "Red",
+            "Name": "Ice Heal",
+            "Rarity": " C",
+            "Cost": "1",
+            "Effect": "Choose one of your Pok\u00e9mon on the field. That Pok\u00e9mon is no longer frozen"
+        },
+        {
+            "ID": "ID-90",
+            "Color": "Red",
+            "Name": "Burn Heal",
+            "Rarity": " C",
+            "Cost": "1",
+            "Effect": "Choose one of your Pok\u00e9mon on the field. That Pok\u00e9mon is no longer burned"
+        },
+        {
+            "ID": "ID-91",
+            "Color": "Blue",
+            "Name": "X Speed",
+            "Rarity": " R",
+            "Cost": "1",
+            "Effect": "Choose one of your Pok\u00e9mon on the field or bench. For this turn, one of this Pok\u00e9mon's White Attacks will be changed to a Gold Attack before battle"
+        },
+        {
+            "ID": "ID-303",
+            "Color": "Gold",
+            "Name": "Force Remove",
+            "Rarity": " EX",
+            "Cost": "1",
+            "Effect": "This Plate can be used when you have Pok\u00e9mon on all of your opponent's entry points. Select one of your Pok\u00e9mon on the field or bench. If that Pok\u00e9mon's attack knocks a Pok\u00e9mon out that turn, it will be eliminated from the duel"
+        },
+        {
+            "ID": "ID-304",
+            "Color": "Purple",
+            "Name": "Counter Attack",
+            "Rarity": " EX",
+            "Cost": "1",
+            "Effect": "This plate can be used when you have enemy Pok\u00e9mon on all of your entry points. Select one of your Pok\u00e9mon on the field. That Pok\u00e9mon will have MP + 1 for that turn."
+        },
+        {
+            "ID": "ID-306",
+            "Color": "Blue",
+            "Name": "X Accuracy",
+            "Rarity": " UC",
+            "Cost": "1",
+            "Effect": "Select one of your Pok\u00e9mon on the field or bench. If the Attack for that Pok\u00e9mon is a miss that turn, it will shift to the adjacent attack."
+        },
+        {
+            "ID": "ID-312",
+            "Color": "Gold",
+            "Name": "Burn Drive",
+            "Rarity": " UC",
+            "Cost": "1",
+            "Effect": "Select your Genesect from the field or bench. During this turn, if your Pok\u00e9mon's move lands of Miss, it will shift to the move next to it instead. Also, if the Fainted opposing Pok\u00e9mon is a Grass-type, Ice-type, Bug-type or Steel-type, the opponent will be removed from the duel."
+        },
+        {
+            "ID": "ID-313",
+            "Color": "Gold",
+            "Name": "Douse Drive",
+            "Rarity": " UC",
+            "Cost": "1",
+            "Effect": "Select your Genesect from the field or bench. During this turn, if your Pok\u00e9mon's move lands of Miss, it will shift to the move next to it instead. Also, if the Fainted opposing Pok\u00e9mon is a Fire-type, Ground-type or Rock-type, the opponent will be removed from the duel."
+        },
+        {
+            "ID": "ID-314",
+            "Color": "Gold",
+            "Name": "Chill Drive",
+            "Rarity": " UC",
+            "Cost": "1",
+            "Effect": "Select your Genesect from the field or bench. During this turn, if your Pok\u00e9mon's move lands of Miss, it will shift to the move next to it instead. Also, if the Fainted opposing Pok\u00e9mon is a Grass-type, Ground-type, Flying-type or Dragon-type, the opponent will be removed from the duel."
+        },
+        {
+            "ID": "ID-315",
+            "Color": "Gold",
+            "Name": "Shock Drive",
+            "Rarity": " UC",
+            "Cost": "1",
+            "Effect": "Select your Genesect from the field or bench. During this turn, if your Pok\u00e9mon's move lands of Miss, it will shift to the move next to it instead. Also, if the Fainted opposing Pok\u00e9mon is a Water-type or Flying-type, the opponent will be removed from the duel."
+        },
+        {
+            "ID": "ID-316",
+            "Color": "Gold",
+            "Name": "Burn Drive EX",
+            "Rarity": " R",
+            "Cost": "1",
+            "Effect": "Select 1 of your Genesect on the fieldor on the bench. During this turn, that Pok\u00e9mon can re-spin 1 time during battle. Also, if the fainted battle opponent is a Grass-type, Ice-type, Bug-type or Steel-type, the opponent will be excluded from the duel."
+        },
+        {
+            "ID": "ID-317",
+            "Color": "Gold",
+            "Name": "Douse Drive EX",
+            "Rarity": " R",
+            "Cost": "1",
+            "Effect": "Select 1 of your Genesect on the fieldor on the bench. During this turn, that Pok\u00e9mon can re-spin 1 time during battle. Also, if the fainted battle opponent is a Fire-type, Ground-type or Rock-type, the opponent will be excluded from the duel."
+        },
+        {
+            "ID": "ID-318",
+            "Color": "Gold",
+            "Name": "Chill Drive EX",
+            "Rarity": " R",
+            "Cost": "1",
+            "Effect": "Select 1 of your Genesect on the fieldor on the bench. During this turn, that Pok\u00e9mon can re-spin 1 time during battle. Also, if the fainted battle opponent is a Grass-type, Ground-type, Flying-type or Dragon-type, the opponent will be excluded from the duel."
+        },
+        {
+            "ID": "ID-319",
+            "Color": "Gold",
+            "Name": "Shock Drive EX",
+            "Rarity": " R",
+            "Cost": "1",
+            "Effect": "Select 1 of your Genesect on the fieldor on the bench. During this turn, that Pok\u00e9mon can re-spin 1 time during battle. Also, if the fainted battle opponent is a Water-type or Flying-type, the opponent will be excluded from the duel."
+        },
+        {
+            "ID": "ID-320",
+            "Color": "Gold",
+            "Name": "Cosmo Energy",
+            "Rarity": " R",
+            "Cost": "1",
+            "Effect": "During this duel, when your Deoxys is attacked, before the battle, you may switch that Deoxys with another of your Deoxys on the field or bench. Your turn ends"
+        },
+        {
+            "ID": "ID-321",
+            "Color": "Gold",
+            "Name": "Flame Energy",
+            "Rarity": " R",
+            "Cost": "1",
+            "Effect": "During this duel, your Fire-type Pok\u00e9mon cannot be frozen or burned. Your turn ends"
+        },
+        {
+            "ID": "ID-323",
+            "Color": "Red",
+            "Name": "Overdrive",
+            "Rarity": " R",
+            "Cost": "1",
+            "Effect": "Choose on of your Reshiram, Zekrom, Black Kyurem or White Kyurem on the field. Remove all special conditions affecting that Pok\u00e9mon. (Except Wait.). While that Pok\u00e9mon is on the field, that Pok\u00e9mon deals +30 damage"
+        },
+        {
+            "ID": "ID-324",
+            "Color": "Gold",
+            "Name": "Land's Energy",
+            "Rarity": " R",
+            "Cost": "1",
+            "Effect": "During this duel, the effect of Land's Wrath from your Zygarde becomes \"Spin for all of the opponent's Pok\u00e9mon on the field, excluding Flying-types. If it lands on Purple Attacks, the Pok\u00e9mon Faints\". Your turn ends"
+        },
+        {
+            "ID": "ID-325",
+            "Color": "Gold",
+            "Name": "el",
+            "Rarity": " R",
+            "Cost": "1",
+            "Effect": "Choose 1 of your Rhyperior on the field or bench. Until the end of the duel, the effect of that Rhyperior's Rock Wrecker becomes: : \"Knock out 1 of your opponent's Fire, Ice, Flying or Bug-type Pok\u00e9mon that are 1, 2 or 3 steps away.\" Your turn ends"
+        },
+        {
+            "ID": "ID-328",
+            "Color": "Gold",
+            "Name": "Concentrated Fertilizer",
+            "Rarity": " UC",
+            "Cost": "1",
+            "Effect": "Select 1 of your Grass-type pok\u00e9mon on the field or bench. For this turn, that Pok\u00e9mon gains \u2606+1. It also gains damage +20"
+        },
+        {
+            "ID": "ID-329",
+            "Color": "Gold",
+            "Name": "Sticky Grass",
+            "Rarity": " UC",
+            "Cost": "1",
+            "Effect": "Select one of your Grass-type Pok\u00e9mon on the field. While that Pok\u00e9mon is on the field, the battle opponent of that Pok\u00e9mon cannot respin. Spin-again effects are trated as single spins only."
+        },
+        {
+            "ID": "ID-331",
+            "Color": "Gold",
+            "Name": "Tropical Energy",
+            "Rarity": " R",
+            "Cost": "1",
+            "Effect": "Any special conditions are removed from your Grass-, Flying-, and Bug-type Pok\u00e9mon. During this duel, the effects of Abilities that allow you or your opponent to respin or force respins in battle are nullified for the battle opponents of your Grass-, Flying- and Bug-type Pok\u00e9mon. Your turn ends"
+        },
+        {
+            "ID": "ID-332",
+            "Color": "Gold",
+            "Name": "Dark Energy",
+            "Rarity": " R",
+            "Cost": "1",
+            "Effect": "During this duel, if the opponent Pok\u00e9mon is a Psychic-type, your Dark-type Pok\u00e9mon are not knocked out in battle, but are moved to the bench and gain Wait instead. And, when you have two or more Dark-type Pok\u00e9mon on the field, Energy effects on your opponent's Psychic and Ghost-type Pok\u00e9mon are nullified. Your turn ends."
+        },
+        {
+            "ID": "ID-333",
+            "Color": "Gold",
+            "Name": "Phantom Energy",
+            "Rarity": " R",
+            "Cost": "1",
+            "Effect": "During this duel, your Ghost-type Pok\u00e9mon can move over Pok\u00e9mon affected by special conditions when using an MP move. In addition, when one or more of your Ghost-type Pok\u00e9mon surround an opposing Pok\u00e9mon, if there are three or more opposing Pok\u00e9mon on the field or on your opponent's bench with the same name as the surrounded Pok\u00e9mon, remove the surrounded Pok\u00e9mon from the game. Your turn ends"
+        },
+        {
+            "ID": "ID-335",
+            "Color": "Gold",
+            "Name": "Steel Energy",
+            "Rarity": " R",
+            "Cost": "1",
+            "Effect": "During this duel, your Steel-type Pok\u00e9mon cannot become poisoned or noxious and the damage of one of each of those Pok\u00e9mon's most highly damaging White Attacks that normally deal at least 10 damage is increased by 10. Your turn ends."
+        },
+        {
+            "ID": "ID-336",
+            "Color": "Gold",
+            "Name": "Poison Blade",
+            "Rarity": " EX",
+            "Cost": "1",
+            "Effect": "Select one of your Steel-type Pok\u00e9mon on the field. While that Pok\u00e9mon is on the field, the White Attacks of that Pok\u00e9mon gain: The battle opponent becomes Poisoned."
+        },
+        {
+            "ID": "ID-338",
+            "Color": "Gold",
+            "Name": "Muscle Energy",
+            "Rarity": " R",
+            "Cost": "1",
+            "Effect": "Remove the sleep and frozen conditions, Mp-1 and MP -2 markers and Wait from all of your Fight-type Pok\u00e9mon. During this duel, your Fighting-type Pok\u00e9mon gain +1 to the damage they deal after those Pok\u00e9mon move from P.C. to bench. Your turn ends"
+        },
+        {
+            "ID": "ID-339",
+            "Color": "Gold",
+            "Name": "Mud Energy",
+            "Rarity": " R",
+            "Cost": "1",
+            "Effect": "During this duel, if there are 2 or more Water-type Pok\u00e9mon and 2 or more Ground-type Pok\u00e9mon on the field, your opponent's Pok\u00e9mon on the field get +1 to Wait effects that they receive. Your turn ends."
+        },
+        {
+            "ID": "ID-340",
+            "Color": "Gold",
+            "Name": "Electro Energy",
+            "Rarity": " R",
+            "Cost": "1",
+            "Effect": "Removes the paralyzed condition from all of your Electric-type Pok\u00e9mon. During this duel, if one of your Electric-type Pok\u00e9mon would deal damage, and there is an Electric-type Pok\u00e9mon adjacent to it, that damage increased by 10. Your turn ends."
+        },
+        {
+            "ID": "ID-341",
+            "Color": "Gold",
+            "Name": "Molting Energy",
+            "Rarity": " R",
+            "Cost": "1",
+            "Effect": "During this duel, whenever one of your Bug-type or Flying-type Pok\u00e9mon moves from the P.C. to the bench, it can evolve. If it does, that Pok\u00e9mon gains Wait 3. Your turn ends."
+        },
+        {
+            "ID": "ID-343",
+            "Color": "Gold",
+            "Name": "Eon Flute",
+            "Rarity": " EX",
+            "Cost": "2",
+            "Effect": "During a duel, this plate can be used when your Latias or Latios is excluded from the duel. That one Latias or Latios appears on your bench. That Pok\u00e9mon is excluded from the duel after your next turn has ended."
+        },
+        {
+            "ID": "ID-344",
+            "Color": "Gold",
+            "Name": "Salamencite",
+            "Rarity": " EX",
+            "Cost": "",
+            "Effect": "This plate can be used when none of your Pok\u00e9mon are Mega Evolved. Choose one of your Salamence on the field, and Mega Evolve it for 7turns."
+        },
+        {
+            "ID": "ID-345",
+            "Color": "Gold",
+            "Name": "Charizardite X",
+            "Rarity": " EX",
+            "Cost": "",
+            "Effect": "This plate can be used when none of your Pok\u00e9mon are Mega Evolved. Choose one of your Charizard on the field, and Mega Evolve it for 7turns."
+        },
+        {
+            "ID": "ID-346",
+            "Color": "Gold",
+            "Name": "Charizardite Y",
+            "Rarity": " EX",
+            "Cost": "",
+            "Effect": "This plate can be used when none of your Pok\u00e9mon are Mega Evolved. Choose one of your Charizard on the field, and Mega Evolve it for 7turns."
+        },
+        {
+            "ID": "ID-347",
+            "Color": "Gold",
+            "Name": "Beedrillite",
+            "Rarity": " EX",
+            "Cost": "",
+            "Effect": "This plate can be used when none of your Pok\u00e9mon are Mega Evolved. Choose one of your Beedrill on the field, and Mega Evolve it for 7turns."
+        },
+        {
+            "ID": "ID-365",
+            "Color": "Gold",
+            "Name": "Venusaurite",
+            "Rarity": " EX",
+            "Cost": "",
+            "Effect": "This plate can be used when none of your Pok\u00e9mon are Mega Evolved. Choose one of your Venusaur on the field, and Mega Evolve it for 7turns."
+        },
+        {
+            "ID": "ID-366",
+            "Color": "Gold",
+            "Name": "Blastoisinite",
+            "Rarity": " EX",
+            "Cost": "",
+            "Effect": "This plate can be used when none of your Pok\u00e9mon are Mega Evolved. Choose one of your Blastoise on the field, and Mega Evolve it for 7turns."
+        },
+        {
+            "ID": "ID-367",
+            "Color": "Gold",
+            "Name": "Gengarite",
+            "Rarity": " EX",
+            "Cost": "",
+            "Effect": "This plate can be used when none of your Pok\u00e9mon are Mega Evolved. Choose one of your Gengar on the field, and Mega Evolve it for 7turns."
+        },
+        {
+            "ID": "ID-368",
+            "Color": "Gold",
+            "Name": "Sceptilite",
+            "Rarity": " EX",
+            "Cost": "",
+            "Effect": "This plate can be used when none of your Pok\u00e9mon are Mega Evolved. Choose one of your Sceptile on the field, and Mega Evolve it for 7 turns."
+        },
+        {
+            "ID": "ID-369",
+            "Color": "Gold",
+            "Name": "Blazikenite",
+            "Rarity": " EX",
+            "Cost": "",
+            "Effect": "This plate can be used when none of your Pok\u00e9mon are Mega Evolved. Choose one of your Blaziken on the field, and Mega Evolve it for 7 turns."
+        },
+        {
+            "ID": "ID-370",
+            "Color": "Gold",
+            "Name": "Swampertite",
+            "Rarity": " EX",
+            "Cost": "",
+            "Effect": "This plate can be used when none of your Pok\u00e9mon are Mega Evolved. Choose one of your Swampert on the field, and Mega Evolve it for 7 turns."
+        },
+        {
+            "ID": "ID-371",
+            "Color": "Gold",
+            "Name": "Metal Coat",
+            "Rarity": " EX",
+            "Cost": "1",
+            "Effect": "Choose one of your Onix, Scyther, or Steel-type Pok\u00e9mon on the field. If you choose Onix or Scyther, evolveit. Until the end of the duel, battle opponents of the Pok\u00e9mon you chose, or the Pok\u00e9mon that evolved from it, have the effects of their Abilities that increase or decrease Attack damage nullified. This ends your turn."
+        },
+        {
+            "ID": "ID-372",
+            "Color": "Gold",
+            "Name": "Golden Module",
+            "Rarity": " EX",
+            "Cost": "2",
+            "Effect": "Choose one of your Genesect on the field or bench. For this turn, that Pok\u00e9mon's Purple Attack becomes the Gold Attack Extreme Speed 100. Also, if a battle opponent knocked out by that Pok\u00e9mon is a Dark or Fairy-type Pok\u00e9mon, that battle opponent is excluded from the duel."
+        },
+        {
+            "ID": "ID-373",
+            "Color": "Gold",
+            "Name": "Scizorite",
+            "Rarity": " EX",
+            "Cost": "2",
+            "Effect": "This plate can be used when none of your Pok\u00e9mon are Mega Evolved. Choose one of your Scizor on the field, and Mega Evolve it for 7 turns."
+        },
+        {
+            "ID": "ID-374",
+            "Color": "Gold",
+            "Name": "Metal Sphere",
+            "Rarity": " R",
+            "Cost": "1",
+            "Effect": "Choose one of your Steel-type Pok\u00e9mon. Until the end of the duel, while that Pok\u00e9mon is on the field, your Steel-type Pok\u00e9mon do not become poisoned or noxious and their White Attacks that deal 10 or more damage deal +10 damage. Your turn end.s The effects of this plate do not stack."
+        },
+        {
+            "ID": "ID-375",
+            "Color": "Gold",
+            "Name": "Phantom Sphere",
+            "Rarity": " R",
+            "Cost": "1",
+            "Effect": "Choose one of your Ghost-type Pok\u00e9mon. Until the end of the duel, while that Pok\u00e9mon is on the field, your Ghost-type Pok\u00e9mon on the bench can move past Ghost-type Pok\u00e9mon and Pok\u00e9mon affected by special conditions. Your turn ends."
+        },
+        {
+            "ID": "ID-376",
+            "Color": "Gold",
+            "Name": "Flame Sphere",
+            "Rarity": " R",
+            "Cost": "1",
+            "Effect": "Choose one of your Fire-type Pok\u00e9mon. Until the end of the duel, while that Pok\u00e9mon is on the field, your Fire-type Pok\u00e9mon do not become frozen or burned, and they can MO move past burned Pok\u00e9mon on the field. Your turn ends."
+        },
+        {
+            "ID": "ID-377",
+            "Color": "Gold",
+            "Name": "Electro Sphere",
+            "Rarity": " R",
+            "Cost": "1",
+            "Effect": "Choose one of your Electric-type Pok\u00e9mon. Until the end of the duel, while that Pok\u00e9mon is on the field, your Electric-type Pok\u00e9mon deal +10 damage for each Electric-type Pok\u00e9mon next to them. Your Electric-type Pok\u00e9mon can MP move past Pok\u00e9mon that have Wait. Your turn ends. The effects of this plate do note stack."
+        },
+        {
+            "ID": "ID-378",
+            "Color": "Gold",
+            "Name": "Mewtwonite X",
+            "Rarity": " EX",
+            "Cost": "",
+            "Effect": "This plate can be used when none of your Pok\u00e9mon are Mega Evolved. Choose one of your Mewtwo on the field, and Mega Evolve it for 7 turns."
+        },
+        {
+            "ID": "ID-379",
+            "Color": "Gold",
+            "Name": "Winged Sphere",
+            "Rarity": " R",
+            "Cost": "1",
+            "Effect": "Choose one of your Bug-type Pok\u00e9mon or Flying-type Pok\u00e9mon. Until the end of the duel, while that Pok\u00e9mon is on the field, your Stage 1 or higher Bug- or Flying-type Pok\u00e9mon may MP move over opposing non-Flying-type Pok\u00e9mon. Your turn ends"
+        },
+        {
+            "ID": "ID-380",
+            "Color": "Gold",
+            "Name": "Galladite",
+            "Rarity": " EX",
+            "Cost": "",
+            "Effect": "This plate can be used when none of your Pok\u00e9mon are Mega Evolved. Choose one of your Gallade on the field, and Mega Evolve it for 7 turns."
+        },
+        {
+            "ID": "ID-381",
+            "Color": "Gold",
+            "Name": "Mystic Sphere",
+            "Rarity": " R",
+            "Cost": "1",
+            "Effect": "Choose 1 of your Fairy-type Pok\u00e9mon. Until the end of the duel, while that Pok\u00e9mon is on the field, your Fairy-type Pok\u00e9mon cannot have markers attached to them from the Attacks of other Pok\u00e9mon. Your turn ends."
+        },
+        {
+            "ID": "ID-382",
+            "Color": "Gold",
+            "Name": "Sablenite",
+            "Rarity": " EX",
+            "Cost": "",
+            "Effect": "This plate can be used when none of your Pok\u00e9mon are Mega Evolved. Choose one of your Sableye on the field, and Mega Evolve it for 7 turns."
+        },
+        {
+            "ID": "ID-383",
+            "Color": "Gold",
+            "Name": "Mewtwonite Y",
+            "Rarity": " EX",
+            "Cost": "",
+            "Effect": "This plate can be used when none of your Pok\u00e9mon are Mega Evolved. Choose one of your Mewtwo on the field, and Mega Evolve it for 7 turns."
+        },
+        {
+            "ID": "ID-384",
+            "Color": "Gold",
+            "Name": "Mighty Sphere",
+            "Rarity": " R",
+            "Cost": "1",
+            "Effect": "Choose one of your Fighting-type Pok\u00e9mon. Until the end of the duel, while that Pok\u00e9mon is on the field, opposing Pok\u00e9mon surrounded by your Fighting-type Pok\u00e9mon move to your P.C. Your turn ends."
+        },
+        {
+            "ID": "ID-385",
+            "Color": "Gold",
+            "Name": "Dark Sphere",
+            "Rarity": " R",
+            "Cost": "1",
+            "Effect": "Choose one of your Dark-type Pok\u00e9mon. Until the end of the duel, while that Pok\u00e9mon is on the field, opposing Ghost-type Pok\u00e9mon and Psychic-type Pok\u00e9mon cannot pass through your Dark-type Pok\u00e9mon by the effects of Abilities. Your turn ends."
+        },
+        {
+            "ID": "ID-386",
+            "Color": "Gold",
+            "Name": "Altarianite",
+            "Rarity": " EX",
+            "Cost": "",
+            "Effect": "This plate can be used when none of your Pok\u00e9mon are Mega Evolved. Choose one of your Altaria on the field, and Mega Evolve it for 7 turns."
+        },
+        {
+            "ID": "ID-387",
+            "Color": "Gold",
+            "Name": "Ampharosite",
+            "Rarity": " EX",
+            "Cost": "",
+            "Effect": "This plate can be used when none of your Pok\u00e9mon are Mega Evolved. Choose one of your Ampharos on the field, and Mega Evolve it for 7 turns."
+        },
+        {
+            "ID": "ID-388",
+            "Color": "Red",
+            "Name": "Magnet",
+            "Rarity": " UC",
+            "Cost": "1",
+            "Effect": "Choose one of your Electric-type Pok\u00e9mon on the field. While that Pok\u00e9mon is on the field, it deals +20 damage. Your turn ends."
+        },
+        {
+            "ID": "ID-389",
+            "Color": "Red",
+            "Name": "Sharp Beak",
+            "Rarity": " UC",
+            "Cost": "1",
+            "Effect": "Choose one of your Flying-type Pok\u00e9mon on the field. While that Pok\u00e9mon is on the field, it deals +20 damage. Your turn ends."
+        },
+        {
+            "ID": "ID-390",
+            "Color": "Gold",
+            "Name": "DNA Splicers",
+            "Rarity": " EX",
+            "Cost": "1",
+            "Effect": "Choose one of your Kyurem on the field, and one of your Zekrom or Reshiram on the field or bench in the P.C.. Exclude that Zekrom or Reshiram from the duel, and change form of Kyurem to Black Kyurem or White Kyurem."
+        },
+        {
+            "ID": "ID-391",
+            "Color": "Red",
+            "Name": "Miracle Seed",
+            "Rarity": " UC",
+            "Cost": "1",
+            "Effect": "Choose one of your Grass-type Pok\u00e9mon on the field. While that Pok\u00e9mon is on the field, it deals +20 damage. Your turn ends."
+        },
+        {
+            "ID": "ID-392",
+            "Color": "Red",
+            "Name": "Never-Melt Ice",
+            "Rarity": " UC",
+            "Cost": "1",
+            "Effect": "Choose one of your Ice-type Pok\u00e9mon on the field. While that Pok\u00e9mon is on the field, it deals +20 damage. Your turn ends."
+        },
+        {
+            "ID": "ID-393",
+            "Color": "Gold",
+            "Name": "Microwave Oven",
+            "Rarity": " EX",
+            "Cost": "1",
+            "Effect": "Choose one of your Rotom, Wash Rotom, Frost Rotom, Fan Rotom or Mow Rotom on the field and change its form to Heat Rotom. Removes the burned condition from all Pok\u00e9mon. All Pok\u00e9mon become Fire-type Pok\u00e9mon for 9 turns."
+        },
+        {
+            "ID": "ID-394",
+            "Color": "Gold",
+            "Name": "Washing Machine",
+            "Rarity": " EX",
+            "Cost": "1",
+            "Effect": "Choose one of your Rotom, Heat Rotom, Frost Rotom, Fan Rotom, or Mow Rotom on the field and change its form to Wash Rotom. Remove the poisoned condition from all Pok\u00e9mon. All Pok\u00e9mon become Water-type Pok\u00e9mon for 9 turns."
+        },
+        {
+            "ID": "ID-395",
+            "Color": "Gold",
+            "Name": "Refrigerator",
+            "Rarity": " EX",
+            "Cost": "1",
+            "Effect": "Choose one of your Rotom, Heat Rotom, Wash Rotom, Fan Rotom or Mow Rotom on the field and change its form to Frost Rotom. Removes the burned condition from all Pok\u00e9mon. All Pok\u00e9mon become Ice-type Pok\u00e9mon for 9 turns."
+        },
+        {
+            "ID": "ID-396",
+            "Color": "Gold",
+            "Name": "Electric Fan",
+            "Rarity": " EX",
+            "Cost": "1",
+            "Effect": "Choose one of your Rotom, Heat Rotom, Wash Rotom, Frost Rotom or Mow Roton on the field and change its form to Fan Rotom. Removes the Wait Condition from all Pok\u00e9mon. All Pok\u00e9mon become Flying-type Pok\u00e9mon for 9 turns"
+        },
+        {
+            "ID": "ID-397",
+            "Color": "Gold",
+            "Name": "Lawnmower",
+            "Rarity": " EX",
+            "Cost": "1",
+            "Effect": "Choose one of your Rotom, Heat Rotom, Wash Rotom, Frost Rotom or Fan Rotom on the field and change its form to Mow Rotom. Remove the asleep condition from all Pok\u00e9mon. All Pok\u00e9mon become Grass-type Pok\u00e9mon for 9 turns"
+        },
+        {
+            "ID": "ID-398",
+            "Color": "Gold",
+            "Name": "Tyranitarite",
+            "Rarity": " EX",
+            "Cost": "",
+            "Effect": "This plate can be used when none of your Pok\u00e9mon are Mega Evolved. Choose one of your Tyranitar on the field, and Mega Evolve it for 7 turns."
+        },
+        {
+            "ID": "ID-399",
+            "Color": "Gold",
+            "Name": "Aggronite",
+            "Rarity": " EX",
+            "Cost": "",
+            "Effect": "This plate can be used when none of your Pok\u00e9mon are Mega Evolved. Choose one of your Aggron on the field, and Mega Evolve it for 7 turns."
+        },
+        {
+            "ID": "ID-400",
+            "Color": "Gold",
+            "Name": "Gracidea",
+            "Rarity": " EX",
+            "Cost": "2",
+            "Effect": "Choose one of your Shaymin on the field and change its form to Sky Forme. If any of your Sharmin becomes knocked out, this plate returns to its unused state"
+        },
+        {
+            "ID": "ID-401",
+            "Color": "Gold",
+            "Name": "Stony Sphere",
+            "Rarity": " R",
+            "Cost": "1",
+            "Effect": "Choose one of your Rock-type Pok\u00e9mon. Until the end of the duel, while that Pok\u00e9mon is on the field, opposing Flying-type Pok\u00e9mon and Fairy-type Pok\u00e9mon cannot pass through your Rock-type Pok\u00e9mon by the effects of Abilities. Your turn ends."
+        },
+        {
+            "ID": "ID-402",
+            "Color": "Red",
+            "Name": "Hard Stone",
+            "Rarity": " UC",
+            "Cost": "1",
+            "Effect": "Choose one of your Rock-type Pok\u00e9mon on the field. While that Pok\u00e9mon is on the field, it deals +20 damage. Your turn ends."
+        },
+        {
+            "ID": "ID-403",
+            "Color": "Gold",
+            "Name": "Lucarionite",
+            "Rarity": " EX",
+            "Cost": "",
+            "Effect": "This plate can be used when none of your Pok\u00e9mon are Mega Evolved. Choose one of your Lucario on the field, and Mega Evolve it for 7 turns."
+        },
+        {
+            "ID": "ID-404",
+            "Color": "Gold",
+            "Name": "Houndoominite",
+            "Rarity": " EX",
+            "Cost": "",
+            "Effect": "This plate can be used when none of your Pok\u00e9mon are Mega Evolved. Choose one of your Houndoom on the field, and Mega Evolve it for 7 turns."
+        },
+        {
+            "ID": "ID-405",
+            "Color": "Red",
+            "Name": "Charcoal",
+            "Rarity": " UC",
+            "Cost": "1",
+            "Effect": "Choose one of your Fire-type Pok\u00e9mon on the field. While that Pok\u00e9mon is on the field, it deals +20 damage. Your turn ends."
+        },
+        {
+            "ID": "ID-406",
+            "Color": "Gold",
+            "Name": "Meteoric Teachings",
+            "Rarity": " EX",
+            "Cost": "2",
+            "Effect": "This plate can be used when none of your Pok\u00e9mon are Mega Evolved. Choose one of your Rayquaza on the field, and Mega Evolve it for 7 turns. That Rayquaza's Break Energy becomes Dragon Ascent 90 until the duel ends. If any of your Rayquaza or Mega Rayquaza become knocked out, this plate returns to its unused state."
+        },
+        {
+            "ID": "ID-407",
+            "Color": "Gold",
+            "Name": "Glalitite",
+            "Rarity": " EX",
+            "Cost": "",
+            "Effect": "This plate can be used when none of your Pok\u00e9mon are Mega Evolved. Choose one of your Glalie on the field, and Mega Evolve it for 7 turns."
+        },
+        {
+            "ID": "ID-408",
+            "Color": "Red",
+            "Name": "Dragon Fang",
+            "Rarity": " UC",
+            "Cost": "1",
+            "Effect": "Choose one of your Dragon-type Pok\u00e9mon on the field. While that Pok\u00e9mon is on the field, it deals +20 damage. Your turn ends."
+        },
+        {
+            "ID": "ID-409",
+            "Color": "Gold",
+            "Name": "Dragon Sphere",
+            "Rarity": " R",
+            "Cost": "1",
+            "Effect": "Choose one of your Dragon-type Pok\u00e9mon. Until the end of the duel, while that Pok\u00e9mon is on the field, your Dragon-type Pok\u00e9mon with MP 1 or lower get +1 MP. If those Pok\u00e9mon are not affected by a special condition, they can MP move over other Pok\u00e9mon on the field. Your turn ends"
+        },
+        {
+            "ID": "ID-410",
+            "Color": "Gold",
+            "Name": "Blue Orb",
+            "Rarity": " EX",
+            "Cost": "2",
+            "Effect": "Choose one of your Kyogre on the bench. It undergoes Primal Reversion"
+        },
+        {
+            "ID": "ID-411",
+            "Color": "Gold",
+            "Name": "Red Orb",
+            "Rarity": " EX",
+            "Cost": "2",
+            "Effect": "Choose one of your Groudon on the bench. It undergoes Primal Reversion"
+        },
+        {
+            "ID": "ID-412",
+            "Color": "Red",
+            "Name": "Mystic Water",
+            "Rarity": " UC",
+            "Cost": "1",
+            "Effect": "Choose one of your Water-type Pok\u00e9mon on the field. While that Pok\u00e9mon is on the field, it deals +20 damage. Your turn ends."
+        },
+        {
+            "ID": "ID-413",
+            "Color": "Gold",
+            "Name": "Aqua Sphere",
+            "Rarity": " R",
+            "Cost": "1",
+            "Effect": "Choose one of your Water-type Pok\u00e9mon. Until the end of the duel, while that Pok\u00e9mon is on the field, your Water-type Pok\u00e9mon that are next to Water-type Pok\u00e9mon gain +1 MP (to a maximum of MP3) Your turn ends"
+        },
+        {
+            "ID": "ID-414",
+            "Color": "Gold",
+            "Name": "Gyaradosite",
+            "Rarity": " EX",
+            "Cost": "",
+            "Effect": "This plate can be used when none of your Pok\u00e9mon are Mega Evolved. Choose one of your Gyarados on the field, and Mega Evolve it for 7 turns."
+        },
+        {
+            "ID": "ID-415",
+            "Color": "Gold",
+            "Name": "Grass Sphere",
+            "Rarity": " R",
+            "Cost": "1",
+            "Effect": "Choose one of your Grass-type Pok\u00e9mon. Until the end of the duel, while that Pok\u00e9mon is on the field, your Grass-type Pok\u00e9mon do not move from effects of opposing Attacks that would move them to the bench, P.C., or the Ultra Space. Your turn ends."
+        },
+        {
+            "ID": "ID-416",
+            "Color": "Gold",
+            "Name": "Latiasite",
+            "Rarity": " EX",
+            "Cost": "",
+            "Effect": "This plate can be used when none of your Pok\u00e9mon are Mega Evolved. Choose one of your Latias on the field, and Mega Evolve it for 7 turns."
+        },
+        {
+            "ID": "ID-417",
+            "Color": "Gold",
+            "Name": "Gardevoirite",
+            "Rarity": " EX",
+            "Cost": "",
+            "Effect": "This plate can be used when none of your Pok\u00e9mon are Mega Evolved. Choose one of your Gardevoir on the field, and Mega Evolve it for 7 turns."
+        },
+        {
+            "ID": "ID-418",
+            "Color": "Gold",
+            "Name": "Latiosite",
+            "Rarity": " EX",
+            "Cost": "",
+            "Effect": "This plate can be used when none of your Pok\u00e9mon are Mega Evolved. Choose one of your Latios on the field, and Mega Evolve it for 7 turns."
+        },
+        {
+            "ID": "ID-419",
+            "Color": "Red",
+            "Name": "Soul Dew",
+            "Rarity": " R",
+            "Cost": "1",
+            "Effect": "Choose one of your Latias or Latios on the field. While that Pok\u00e9mon is on the field, it deals +30 damage. Your turn ends"
+        },
+        {
+            "ID": "ID-420",
+            "Color": "Gold",
+            "Name": "Venom Sphere",
+            "Rarity": " R",
+            "Cost": "1",
+            "Effect": "Choose one of your Poison-type Pok\u00e9mon. Until the end of the duel, while that Pok\u00e9mon is on the field, the effects of Abilities of opposing Pok\u00e9mon that are poisoned or noxious that increase or decrease Attack damage are nullified. Your turn ends."
+        },
+        {
+            "ID": "ID-421",
+            "Color": "Red",
+            "Name": "Poison Barb",
+            "Rarity": " UC",
+            "Cost": "1",
+            "Effect": "Choose one of your Poison-type Pok\u00e9mon on the field. While that Pok\u00e9mon is on the field, it deals +20 damage. Your turn ends."
+        },
+        {
+            "ID": "ID-424",
+            "Color": "Gold",
+            "Name": "Necroizer",
+            "Rarity": " EX",
+            "Cost": "1",
+            "Effect": "Choose one of your Necrozma on the field and one of your Solgaleo or Lunala on the field, bench or in the P.C. That Solgaleo or Lunala moves to the Ultra Space and the Necrozma changes its form into Dusk Mane Necrozma or Dawn Wings Necrozma"
+        },
+        {
+            "ID": "ID-425",
+            "Color": "Red",
+            "Name": "Spell Tag",
+            "Rarity": " UC",
+            "Cost": "1",
+            "Effect": "Choose one of your Ghost-type Pok\u00e9mon on the field. While that Pok\u00e9mon is on the field, it deals +20 damage. Your turn ends."
+        },
+        {
+            "ID": "ID-426",
+            "Color": "Red",
+            "Name": "Odd Incense",
+            "Rarity": " UC",
+            "Cost": "1",
+            "Effect": "Choose one of your Psychic-type Pok\u00e9mon on the field. While that Pok\u00e9mon is on the field, it deals +20 damage. Your turn ends."
+        },
+        {
+            "ID": "ID-430",
+            "Color": "Red",
+            "Name": "Black Glasses",
+            "Rarity": " UC",
+            "Cost": "1",
+            "Effect": "Choose one of your Dark-type Pok\u00e9mon on the field. While that Pok\u00e9mon is on the field, it deals +20 damage. Your turn ends."
+        },
+        {
+            "ID": "ID-431",
+            "Color": "Gold",
+            "Name": "Alakazite",
+            "Rarity": " EX",
+            "Cost": "",
+            "Effect": "This plate can be used when none of your Pok\u00e9mon are Mega Evolved. Choose one of your Alakazam on the field, and Mega Evolve it for 7 turns."
+        },
+        {
+            "ID": "ID-432",
+            "Color": "Gold",
+            "Name": "Kangaskhanite",
+            "Rarity": " EX",
+            "Cost": "",
+            "Effect": "This plate can be used when none of your Pok\u00e9mon are Mega Evolved. Choose one of your Kangaskhan on the field, and Mega Evolve it for 7 turns."
+        },
+        {
+            "ID": "ID-433",
+            "Color": "Gold",
+            "Name": "Twisted Spoon",
+            "Rarity": " R",
+            "Cost": "1",
+            "Effect": "Choose one of your Psychic-type Pok\u00e9mon on the field. While that Pok\u00e9mon is on the field, it gains \u2606+1. Your turn ends."
+        },
+        {
+            "ID": "ID-435",
+            "Color": "Gold",
+            "Name": "Ultra Burst",
+            "Rarity": " EX",
+            "Cost": "1",
+            "Effect": "Choose one of your Dusk Mane Necrozma or Dawn Wings Necrozma on the field and change its form to Ultra Necrozma for 4 turns."
+        },
+        {
+            "ID": "ID-436",
+            "Color": "Gold",
+            "Name": "Mawilite",
+            "Rarity": " EX",
+            "Cost": "",
+            "Effect": "This plate can be used when none of your Pok\u00e9mon are Mega Evolved. Choose one of your Mawile on the field, and Mega Evolve it for 7 turns."
+        },
+        {
+            "ID": "ID-437",
+            "Color": "Gold",
+            "Name": "Diancite",
+            "Rarity": " EX",
+            "Cost": "",
+            "Effect": "This plate can be used when none of your Pok\u00e9mon are Mega Evolved. Choose one of your Diancie on the field, and Mega Evolve it for 7 turns."
+        },
+        {
+            "ID": "ID-438",
+            "Color": "Gold",
+            "Name": "Metagrossite",
+            "Rarity": " EX",
+            "Cost": "",
+            "Effect": "This plate can be used when none of your Pok\u00e9mon are Mega Evolved. Choose one of your Metagross on the field, and Mega Evolve it for 7 turns."
+        },
+        {
+            "ID": "ID-439",
+            "Color": "Gold",
+            "Name": "Steelixite",
+            "Rarity": " EX",
+            "Cost": "",
+            "Effect": "This plate can be used when none of your Pok\u00e9mon are Mega Evolved. Choose one of your Steelix on the field, and Mega Evolve it for 7 turns."
+        },
+        {
+            "ID": "ID-440",
+            "Color": "Pink",
+            "Name": "Restorer",
+            "Rarity": " R",
+            "Cost": "1",
+            "Effect": "Choose a Restored Pok\u00e9mon in your P.C. That Pok\u00e9mon moves to the bench without gaining Wait. Move one of your Restored Pok\u00e9mon that has been excluded from the duel to your P.C."
+        },
+        {
+            "ID": "ID-441",
+            "Color": "Gold",
+            "Name": "Primal Sphere",
+            "Rarity": " R",
+            "Cost": "1",
+            "Effect": "Choose one of your Restored Pok\u00e9mon. Until the end of the duel, while that Pok\u00e9mon is on the field, if the number of your own Pok\u00e9mon on the field, bench and in your P.C. Is lower than the number of the opponent's Pok\u00e9mon on the field, bench, and in the opponent's P.C., your Restored Pok\u00e9mon and Pok\u00e9mon that have evolved from Restored Pok\u00e9mon deal +30 damage and gain +1 \u2606. Your turn ends. The effects of this plate do not stack."
+        },
+        {
+            "ID": "ID-442",
+            "Color": "Gold",
+            "Name": "Frost Sphere",
+            "Rarity": " R",
+            "Cost": "1",
+            "Effect": "Choose one of your Ice-type Pok\u00e9mon. Until the end of the duel, plates with Sphere in their name, except for Frost Sphere, have their effects negated on opposing Pok\u00e9mon within 3 steps of that Pok\u00e9mon. Your turn ends"
+        },
+        {
+            "ID": "ID-447",
+            "Color": "Green",
+            "Name": "Reveal Glass",
+            "Rarity": " EX",
+            "Cost": "1",
+            "Effect": "Change the form of each Tornadus, Thundurus, and Landorus on the field, if possible. This plate can be used again if the opponent uses a plate that is not Reveal Glass. This ends your turn"
+        },
+        {
+            "ID": "ID-448",
+            "Color": "Gold",
+            "Name": "Silk Sphere",
+            "Rarity": " R",
+            "Cost": "1",
+            "Effect": "Select one of your Bug-type Pok\u00e9mon. While this Pok\u00e9mon is on the field, the Abilities of opposing Pok\u00e9mon that have an MP-reducing marker attached to them are nullified. This ends your turn."
+        },
+        {
+            "ID": "ID-451",
+            "Color": "Red",
+            "Name": "Silver Powder",
+            "Rarity": " UC",
+            "Cost": "1",
+            "Effect": "Choose one of your Bug-type Pok\u00e9mon on the field. While that Pok\u00e9mon is on the field, it deals +20 damage. Your turn ends."
+        },
+        {
+            "ID": "ID-452",
+            "Color": "Red",
+            "Name": "Silk Scarf",
+            "Rarity": " UC",
+            "Cost": "1",
+            "Effect": "Choose one of your Normal-type Pok\u00e9mon on the field. While that Pok\u00e9mon is on the field, it deals +20 damage. Your turn ends."
+        },
+        {
+            "ID": "ID-453",
+            "Color": "Red",
+            "Name": "Karate Belt",
+            "Rarity": " UC",
+            "Cost": "1",
+            "Effect": "Choose one of your Fighting-type Pok\u00e9mon on the field. While that Pok\u00e9mon is on the field, it deals +20 damage. Your turn ends."
+        },
+        {
+            "ID": "ID-454",
+            "Color": "Red",
+            "Name": "Soft Sand",
+            "Rarity": " UC",
+            "Cost": "1",
+            "Effect": "Choose one of your Ground-type Pok\u00e9mon on the field. While that Pok\u00e9mon is on the field, it deals +20 damage. Your turn ends."
+        }
+    ]
+}

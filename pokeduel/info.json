@@ -1,0 +1,20 @@
+{
+    "$schema": "https://raw.githubusercontent.com/Cog-Creators/Red-DiscordBot/V3/develop/schema/red_cog.schema.json",
+    "name": "pokeduel",
+    "short": "A cog designed to emulate the deprecated app, Pokeduel.",
+    "description": "A cog designed to emulate the deprecated app, Pokeduel after it's been gone.",
+    "end_user_data_statement": "This cog does not persistently store any data or metadata about users except user ids for the database.",
+    "install_msg": "Thank you for installing!",
+    "author": [
+        "Alcor"
+    ],
+    "required_cogs": {},
+    "requirements": [],
+    "tags": [
+        "Pokemon"
+    ],
+    "min_bot_version": "3.5.0",
+    "hidden": false,
+    "disabled": false,
+    "type": "COG"
+}
