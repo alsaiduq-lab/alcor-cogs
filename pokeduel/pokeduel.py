@@ -2,8 +2,7 @@ import json
 import random
 from datetime import datetime, timedelta
 from redbot.core import commands, Config
-from discord import Member, ButtonStyle, SelectOption, Interaction, ui
-from discord.ui import Select, View, Button
+from discord import Interaction, ui, ButtonStyle, SelectOption
 
 from pokeduel.gatcha import ShopView
 from pokeduel.party import PartyManager
@@ -132,25 +131,26 @@ class StartGameView(View):
     async def on_error(self, interaction, error, item):
         await self.ctx.send(f"An error occurred: {str(error)}")
 
-class GameStatusView(View):
+class GameStatusView(ui.View):
     def __init__(self, cog):
         super().__init__()
         self.cog = cog
 
-        self.add_item(Button(label='Game Status', style=ButtonStyle.grey, custom_id='game_status'))
-        self.add_item(Button(label='Help', style=ButtonStyle.grey, custom_id='help'))
-        self.add_item(Button(label='Enter Matchmaking', style=ButtonStyle.blue, custom_id='matchmaking'))
+        self.add_item(ui.Button(label='Game Status', style=ButtonStyle.grey, custom_id='game_status'))
+        self.add_item(ui.Button(label='Help', style=ButtonStyle.grey, custom_id='help'))
+        self.add_item(ui.Button(label='Enter Matchmaking', style=ButtonStyle.blue, custom_id='matchmaking'))
 
-    @discord.ui.button(label='Game Status', style=ButtonStyle.grey)
-    async def game_status(self, interaction: discord.Interaction, button: discord.ui.Button):
+    @ui.button(label='Game Status', style=ButtonStyle.grey)
+    async def game_status(self, interaction: Interaction, button: ui.Button):
         game_status = self.cog.get_game_status(interaction.user)
         await interaction.response.send_message(f"Game Status: {game_status}" if game_status else "No active game found.")
 
-    @discord.ui.button(label='Help', style=ButtonStyle.grey)
-    async def help(self, interaction: discord.Interaction, button: discord.ui.Button):
+    @ui.button(label='Help', style=ButtonStyle.grey)
+    async def help(self, interaction: Interaction, button: ui.Button):
         help_message = self.cog.get_help_message()
         await interaction.response.send_message(help_message)
 
-    async def matchmaking(self, button, interaction):
+    @ui.button(label='Enter Matchmaking', style=ButtonStyle.blue)
+    async def matchmaking(self, interaction: Interaction, button: ui.Button):
         await self.cog.enter_matchmaking(interaction.user)
         await interaction.response.send_message("Searching for an opponent...")
