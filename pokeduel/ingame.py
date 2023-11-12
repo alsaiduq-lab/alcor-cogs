@@ -54,10 +54,10 @@ class MoveButtons(View):
 
 
 class GameManager:
-    def __init__(self, bot, db, board_manager):
+    def __init__(self, bot, db_path, party_manager):
         self.bot = bot
         self.db = DatabaseManager(db_path)
-        self.board_manager = BoardManager()
+        self.board_manager = BoardManager(party_manager)
         self.combat_manager = CombatManager()
         self.ongoing_games = {}
 

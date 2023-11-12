@@ -26,7 +26,7 @@ class PokeDuel(commands.Cog):
         self.db = DatabaseManager(db_path)
         self.party_manager = PartyManager(bot, db_path)
         self.board_manager = BoardManager(self.party_manager)
-        self.game_manager = GameManager(bot, db_path)
+        self.game_manager = GameManager(bot, db_path, self.party_manager)
         self.config = Config.get_conf(self, identifier=10112123, force_registration=True)
         self.config.register_user(**default_user)
         self.gacha = PokeGacha()
