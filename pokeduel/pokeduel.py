@@ -28,15 +28,17 @@ class PokeDuel(commands.Cog):
         self.board_manager = BoardManager(self.party_manager)
         self.game_manager = GameManager(bot, db_path, self.party_manager)
         self.config = Config.get_conf(self, identifier=10112123, force_registration=True)
-        self.config.register_user(**default_user)
-        self.gacha = PokeGacha()
-        self.plates_data = self.load_json('./data/plates.json')
-        self.pokemon_data = self.load_json('./data/pokemon.json')
-
+        
         default_user = {
             'key1': 'default_value1',
             'key2': 'default_value2',
         }
+
+        self.config.register_user(**default_user)
+
+        self.gacha = PokeGacha()
+        self.plates_data = self.load_json('./data/plates.json')
+        self.pokemon_data = self.load_json('./data/pokemon.json')
 
         self.config.register_user(**default_user)
 
