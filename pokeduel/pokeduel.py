@@ -21,7 +21,7 @@ def has_started_save():
 class PokeDuel(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.db = DatabaseManager('./pokeduel_db.sqlite')
+        self.db = DatabaseManager('./data/pokeduel_db.sqlite')
         self.party_manager = PartyManager()
         self.board_manager = BoardManager(self.party_manager)
         self.game_manager = GameManager(self.bot, self.db, self.board_manager)
