@@ -140,7 +140,7 @@ class GameStatusView(ui.View):
 
         self.add_item(ui.Button(label='Game Status', style=ButtonStyle.grey, custom_id='game_status'))
         self.add_item(ui.Button(label='Help', style=ButtonStyle.grey, custom_id='help'))
-        self.add_item(ui.Button(label='Enter Matchmaking', style=ButtonStyle.blue, custom_id='matchmaking'))
+        self.add_item(ui.Button(label='Enter Matchmaking', style=ButtonStyle.primary, custom_id='matchmaking'))
 
     @ui.button(label='Game Status', style=ButtonStyle.grey)
     async def game_status(self, interaction: Interaction, button: ui.Button):
