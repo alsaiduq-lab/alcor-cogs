@@ -115,17 +115,15 @@ class PartyButtonView(View):
         custom_id = interaction.data['custom_id']
         action, index = custom_id.split("_")
         if action == "remove":
-            party = self.db.get_user_party(self.user_id)
-            if 0 <= int(index) < len(party):
-                del party[int(index)]
-                self.db.update_user_party(self.user_id, party)
-                self.refresh_view()
+            self.db.remove_item_from_party(self.user_id, int(index))
+            self.refresh_view()
             await interaction.response.send_message("Item removed from your party.", ephemeral=True)
+
 
 class PartyManager(commands.Cog):
     def __init__(self, bot, db_path):
         self.bot = bot
-        self.db = DatabaseManager(db_path)
+        self.db_manager = DatabaseManager(db_path)
 
     @commands.command()
     async def party(self, ctx):

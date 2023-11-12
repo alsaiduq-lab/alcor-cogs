@@ -14,6 +14,7 @@ class PartyManager(commands.Cog):
         view = PartyButtonView(self.db_manager, ctx.author.id)
         await ctx.send("Your party:", view=view)
 
+
 class PokemonSelect(Select):
     def __init__(self, db, user_id, placeholder, callback_method, is_z_move_select=False):
         super().__init__(placeholder=placeholder, min_values=1, max_values=1)
@@ -76,7 +77,7 @@ class PartyButtonView(View):
     async def add_plate_to_party(self, select, plate, interaction):
         try:
             party = self.db.get_user_party(self.user_id)
-            if len(party) < MAX_PARTY_SIZE:  # Assuming a limit to the party size
+            if len(party) < MAX_PARTY_SIZE:
                 party.append(plate)
                 self.db.update_user_party(self.user_id, party)
                 await interaction.response.send_message(f"{plate} added to your party!", ephemeral=True)
@@ -96,7 +97,7 @@ class PartyButtonView(View):
         action, index = custom_id.split("_")
         if action == "remove":
             button = Button(style=ButtonStyle.primary, label=item, custom_id=f"remove_{i}")
-            button.callback = self.on_button_click  # Assign the method as a callback
+            button.callback = self.on_button_click
             self.add_item(button)
 
             self.db.remove_item_from_party(self.user_id, int(index))
