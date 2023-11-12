@@ -24,7 +24,7 @@ class PokeDuel(commands.Cog):
         self.bot = bot
         db_path = os.path.join(os.path.dirname(__file__), 'data', 'pokeduel_db.sqlite')
         self.db = DatabaseManager(db_path)
-        self.party_manager = PartyManager()
+        self.party_manager = PartyManager(bot, db_path)
         self.board_manager = BoardManager(self.party_manager)
         self.game_manager = GameManager(self.bot, self.db, self.board_manager)
         self.config = Config.get_conf(self, identifier=10112123, force_registration=True)
