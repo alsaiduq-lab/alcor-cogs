@@ -125,6 +125,7 @@ class PartyManager(commands.Cog):
         self.bot = bot
         self.db_manager = DatabaseManager(db_path)
 
+
     @commands.command()
     async def party(self, ctx):
         view = PartyButtonView(self.db, ctx.author.id)

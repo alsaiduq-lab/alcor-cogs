@@ -2,12 +2,13 @@ from discord.ext import commands
 from discord import ButtonStyle, SelectOption
 from discord.ui import Select, View, Button
 from pokeduel.data.database import DatabaseManager
+from pokeduel.utils.constants import *
 
 
 class PartyManager(commands.Cog):
     def __init__(self, bot, db_path):
         self.bot = bot
-        self.db_manager = PartyDatabaseManager(db_path)
+        self.db_manager = DatabaseManager(db_path)
 
     @commands.command()
     async def party(self, ctx):
@@ -85,22 +86,4 @@ class PartyButtonView(View):
                 await interaction.response.send_message("Your party is full.", ephemeral=True)
         except Exception as e:
             await interaction.response.send_message(f"An error occurred: {e}", ephemeral=True)
-
-    def remove_item_from_party(self, user_id, index):
-        party = self.get_user_party(user_id)
-        if 0 <= index < len(party):
-            del party[index]
-            self.update_user_party(user_id, party)
-
-    async def on_button_click(self, interaction):
-        custom_id = interaction.data['custom_id']
-        action, index = custom_id.split("_")
-        if action == "remove":
-            button = Button(style=ButtonStyle.primary, label=item, custom_id=f"remove_{i}")
-            button.callback = self.on_button_click
-            self.add_item(button)
-
-            self.db.remove_item_from_party(self.user_id, int(index))
-            self.refresh_view()
-            await interaction.response.send_message("Item removed from your party.", ephemeral=True)
 
