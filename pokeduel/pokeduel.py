@@ -152,7 +152,7 @@ class GameStatusView(ui.View):
         help_message = self.cog.get_help_message()
         await interaction.response.send_message(help_message)
 
-    @ui.button(label='Enter Matchmaking', style=ButtonStyle.blue)
+    @ui.button(label='Enter Matchmaking', style=ButtonStyle.primary)
     async def matchmaking(self, interaction: Interaction, button: ui.Button):
         await self.cog.enter_matchmaking(interaction.user)
         await interaction.response.send_message("Searching for an opponent...")
