@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 from redbot.core import commands, Config
 from discord import DiscordException, Interaction, ui, ButtonStyle, SelectOption, Member
 from discord.ui import View
+import os
 
 from pokeduel.gatcha import ShopView
 from pokeduel.party import PartyManager
@@ -21,8 +22,8 @@ def has_started_save():
 class PokeDuel(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.db = DatabaseManager('./data/pokeduel_db.sqlite')
-        self.party_manager = PartyManager()
+        db_path = os.path.join(os.path.dirname(__file__), 'data', 'pokeduel_db.sqlite')
+        self.db = DatabaseManager(db_path)
         self.board_manager = BoardManager(self.party_manager)
         self.game_manager = GameManager(self.bot, self.db, self.board_manager)
         self.config = Config.get_conf(self, identifier=10112123, force_registration=True)
