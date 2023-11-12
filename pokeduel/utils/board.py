@@ -4,7 +4,8 @@ from discord.ui import Select, View, Button
 from PIL import Image, ImageDraw
 
 class BoardManager:
-    def __init__(self):
+    def __init__(self, party_manager):
+        self.party_manager = party_manager
         self.board = self.initialize_board()
         self.action_history = deque([], maxlen=5)
 
