@@ -21,6 +21,9 @@ class MoveButtons(View):
         self.board_manager = board_manager
         self.current_piece_coords = current_piece_coords
         self.movement_range = movement_range
+        move_button = Button(style=ButtonStyle.primary, label="Move", custom_id="move")
+        move_button.callback = self.handle_move
+        self.add_item(move_button)
 
         for direction, label in self.valid_movements():
             self.add_item(Button(style=ButtonStyle.secondary, label=label, custom_id=direction))
@@ -40,6 +43,14 @@ class MoveButtons(View):
         # TODO: Add logic for other movement ranges
 
         return valid_moves
+
+    async def handle_move(self, interaction):
+        # Logic to move a piece
+        # You might need to update the game state, move a piece on the board, etc.
+        # Example:
+        selected_direction = interaction.custom_id
+        # Perform the movement based on `selected_direction`
+        await interaction.response.send_message(f"Moved piece to {selected_direction}", ephemeral=True)
 
 
 class GameManager:
@@ -117,12 +128,12 @@ class GameManager:
 
 
 
-    # New method for handling special game features (status, evolution, Z-Moves)
     def handle_special_features(self, game_id, current_player_id):
-        current_game = self.ongoing_games[game_id]
-        current_board = current_game[f'player{current_player_id}']['board']
-        # Implement logic for evolutions, Mega Evolutions, Z-Moves, and status conditions
-        # ...
+        # Implement game-specific features like evolutions, Z-Moves, etc.
+        # Example:
+        game = self.ongoing_games[game_id]
+        # Check and apply any special features
+        # This might involve modifying the game state, applying effects, etc.
 
     def check_win_condition(self, game_id, current_player_id):
         current_game = self.ongoing_games[game_id]

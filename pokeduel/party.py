@@ -1,6 +1,7 @@
 from discord.ext import commands
 from discord import ButtonStyle, SelectOption
 from discord.ui import Select, View, Button
+from pokeduel.data.database import DatabaseManager
 
 
 class PartyManager(commands.Cog):
@@ -94,6 +95,10 @@ class PartyButtonView(View):
         custom_id = interaction.data['custom_id']
         action, index = custom_id.split("_")
         if action == "remove":
+            button = Button(style=ButtonStyle.primary, label=item, custom_id=f"remove_{i}")
+            button.callback = self.on_button_click  # Assign the method as a callback
+            self.add_item(button)
+
             self.db.remove_item_from_party(self.user_id, int(index))
             self.refresh_view()
             await interaction.response.send_message("Item removed from your party.", ephemeral=True)
