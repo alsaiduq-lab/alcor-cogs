@@ -35,7 +35,7 @@ class PokeDuel(commands.Cog):
         }
         self.config.register_user(**default_user)
 
-        self.gacha = ShopView(user_id, db_path, self.pokemon_data, self.plates_data)
+        self.gacha = ShopView(db_path, self.pokemon_data, self.plates_data)
         self.plates_data = self.load_json('./data/plates.json')
         self.pokemon_data = self.load_json('./data/pokemon.json')
 
@@ -143,8 +143,9 @@ class StartGameView(View):
     async def on_error(self, interaction, error, item):
         await self.ctx.send(f"An error occurred: {str(error)}")
 
-class GameStatusView(ui.View):
-    def __init__(self, cog):
+class PokeDuel(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
         super().__init__()
         self.cog = cog
 

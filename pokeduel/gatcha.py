@@ -22,9 +22,8 @@ except FileNotFoundError as e:
 
 
 class ShopView(View):
-    def __init__(self, user_id, db_path, shop_data, plates_data):
+    def __init__(self, db_path, shop_data, plates_data):
         super().__init__()
-        self.user_id = user_id
         self.db = DatabaseManager(db_path)
         self.shop_data = shop_data
         self.plates_data = plates_data
@@ -54,19 +53,21 @@ class ShopView(View):
         self.add_item(self.flash_sale_button)
 
     async def single_roll(self, interaction):
-        self.current_crystals = self.db.get_crystals(self.user_id)
-        if self.current_crystals < 50:
+        user_id = interaction.user.id
+        current_crystals = self.db.get_crystals(user_id)
+        if current_crystals < 50:
             await interaction.response.send_message("Not enough crystals.", ephemeral=True)
             return
-        new_crystal_count = self.current_crystals - 50
-        self.db.update_crystals(self.user_id, new_crystal_count)
+        new_crystal_count = current_crystals - 50
+        self.db.update_crystals(user_id, new_crystal_count)
 
         pokemon, rarity = self.roll()
-        self.add_to_inventory(pokemon, rarity)
+        self.add_to_inventory(user_id, pokemon, rarity)
         await interaction.response.send_message(f"You've got a {pokemon} of rarity {rarity}!", ephemeral=True)
 
     async def multi_roll(self, interaction):
-        current_crystals = self.db.get_crystals(self.user_id)
+        user_id = interaction.user.id
+        current_crystals = self.db.get_crystals(user_id)
         if current_crystals < 500:
             await interaction.response.send_message("Not enough crystals.", ephemeral=True)
             return
