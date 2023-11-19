@@ -25,12 +25,11 @@ class ShopView(View):
     def __init__(self, db_path, shop_data, plates_data_param):
         super().__init__()
         self.db = DatabaseManager(db_path)
+        print("Debugging shop_data:", shop_data)
         self.shop_data = shop_data
         self.plates_data = plates_data_param
         self.pokemon_options = [SelectOption(label=pokemon['name'], value=pokemon['name']) for pokemon in shop_data]
         self.plate_options = [SelectOption(label=plate['name'], value=plate['name']) for plate in plates_data_param]
-
-        # Initialize attributes to None or default values
         self.single_roll_button = None
         self.multi_roll_button = None
         self.flash_sale_button = None
