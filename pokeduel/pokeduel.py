@@ -26,21 +26,31 @@ class PokeDuel(commands.Cog):
     def __init__(self, bot):
         super().__init__()
         self.bot = bot
-        db_path = os.path.join(os.path.dirname(__file__), 'data', 'pokeduel_db.sqlite')
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+
+        plates_path = os.path.join(dir_path, 'data', 'plates.json')
+        pokemon_path = os.path.join(dir_path, 'data', 'pokemon.json')
+
+        self.plates_data = self.load_json(plates_path)
+        self.pokemon_data = self.load_json(pokemon_path)
+
+        db_path = os.path.join(dir_path, 'data', 'pokeduel_db.sqlite')
         self.db = DatabaseManager(db_path)
         self.party_manager = PartyManager(bot, db_path)
         self.board_manager = BoardManager(self.party_manager)
         self.game_manager = GameManager(bot, db_path, self.party_manager)
         self.config = Config.get_conf(self, identifier=10112123, force_registration=True)
-
         default_user = {'key1': 'default_value1', 'key2': 'default_value2'}
         self.config.register_user(**default_user)
         self.matchmaking_queue = {}
         self.ongoing_duels = {}
 
-        self.plates_data = self.load_json('./data/plates.json')
-        self.pokemon_data = self.load_json('./data/pokemon.json')
         self.gacha = ShopView(db_path, self.pokemon_data, self.plates_data)
+
+    @staticmethod
+    def load_json(file_path):
+        with open(file_path, 'r') as file:
+            return json.load(file)
 
     @commands.command()
     async def start(self, ctx):
