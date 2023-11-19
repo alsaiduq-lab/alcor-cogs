@@ -13,14 +13,18 @@ from pokeduel.ingame import GameManager
 from pokeduel.utils.board import BoardManager
 from pokeduel.data.database import DatabaseManager
 
+
 # predicate saves
 def has_started_save():
     async def predicate(ctx):
         return ctx.cog.db.has_started_save(ctx.author.id)
+
     return commands.check(predicate)
+
 
 class PokeDuel(commands.Cog):
     def __init__(self, bot):
+        super().__init__()
         self.bot = bot
         db_path = os.path.join(os.path.dirname(__file__), 'data', 'pokeduel_db.sqlite')
         self.db = DatabaseManager(db_path)
@@ -29,21 +33,18 @@ class PokeDuel(commands.Cog):
         self.game_manager = GameManager(bot, db_path, self.party_manager)
         self.config = Config.get_conf(self, identifier=10112123, force_registration=True)
 
-        default_user = {
-            'key1': 'default_value1',
-            'key2': 'default_value2',
-        }
+        default_user = {'key1': 'default_value1', 'key2': 'default_value2'}
         self.config.register_user(**default_user)
+        self.matchmaking_queue = {}
+        self.ongoing_duels = {}
 
-        self.gacha = ShopView(db_path, self.pokemon_data, self.plates_data)
         self.plates_data = self.load_json('./data/plates.json')
         self.pokemon_data = self.load_json('./data/pokemon.json')
-
-        self.config.register_user(**default_user)
+        self.gacha = ShopView(db_path, self.pokemon_data, self.plates_data)
 
     @commands.command()
     async def start(self, ctx):
-        await ctx.send("Welcome to PokeDuel! Type `!newgame` to begin your journey!")
+        await ctx.send("Welcome to PokeDuel! Type `start` to begin your journey!")
 
     @commands.command(aliases=['begin', 'start'])
     async def newgame(self, ctx):
@@ -78,7 +79,8 @@ class PokeDuel(commands.Cog):
         await ctx.send(f"Duel between {ctx.author.mention} and {opponent.mention} has started!")
 
     # Helper methods
-    def load_json(self, file_path):
+    @staticmethod
+    def load_json(file_path):
         with open(file_path, 'r') as file:
             return json.load(file)
 
@@ -125,11 +127,11 @@ class PokeDuel(commands.Cog):
     def leave_matchmaking(self, player):
         self.matchmaking_queue.pop(player.id, None)
 
+
 class StartGameView(View):
-    def __init__(self, ctx, cog):
+    def __init__(self, ctx):
         super().__init__()
         self.ctx = ctx
-        self.cog = cog
 
         self.add_item(Button(label='New Game', style=ButtonStyle.green, custom_id='new_game'))
         self.add_item(Button(label='Resume Game', style=ButtonStyle.green, custom_id='resume_game'))
@@ -143,11 +145,11 @@ class StartGameView(View):
     async def on_error(self, interaction, error, item):
         await self.ctx.send(f"An error occurred: {str(error)}")
 
-class PokeDuel(commands.Cog):
+
+class PokeDuelButtons(ui.View):
     def __init__(self, bot):
-        self.bot = bot
         super().__init__()
-        self.cog = cog
+        self.bot = bot
 
         self.add_item(ui.Button(label='Game Status', style=ButtonStyle.grey, custom_id='game_status'))
         self.add_item(ui.Button(label='Help', style=ButtonStyle.grey, custom_id='help'))
@@ -155,15 +157,29 @@ class PokeDuel(commands.Cog):
 
     @ui.button(label='Game Status', style=ButtonStyle.grey)
     async def game_status(self, interaction: Interaction, button: ui.Button):
-        game_status = self.cog.get_game_status(interaction.user)
+        game_status = self.get_game_status(interaction.user)
+
         await interaction.response.send_message(f"Game Status: {game_status}" if game_status else "No active game found.")
+
+        button.label = "Status Checked"
+        button.disabled = True
+
+        await interaction.message.edit(view=self)
 
     @ui.button(label='Help', style=ButtonStyle.grey)
     async def help(self, interaction: Interaction, button: ui.Button):
-        help_message = self.cog.get_help_message()
+        help_message = self.get_help_message()
         await interaction.response.send_message(help_message)
+
+        button.label = "Help Viewed"
+        button.disabled = True
+        await interaction.message.edit(view=self)
 
     @ui.button(label='Enter Matchmaking', style=ButtonStyle.primary)
     async def matchmaking(self, interaction: Interaction, button: ui.Button):
-        await self.cog.enter_matchmaking(interaction.user)
+        await self.enter_matchmaking(interaction.user)
         await interaction.response.send_message("Searching for an opponent...")
+
+        button.label = "Matchmaking Entered"
+        button.disabled = True
+        await interaction.message.edit(view=self)
