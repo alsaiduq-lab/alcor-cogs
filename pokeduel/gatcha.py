@@ -2,34 +2,107 @@ import json
 import random
 import os
 import logging
-
 from discord import ButtonStyle, SelectOption
 from discord.ui import Select, View, Button
 from .data.database import DatabaseManager
 
 
+def find_strongest_attack(pokemon_data):
+    max_effective_damage = 0
+    strongest_attack = None
+    for attack in pokemon_data["Base Wheel Size"]:
+        try:
+            if attack["Move Type"] == "White" or attack["Move Type"] == "Blue":
+                damage = int(attack["Damage"])
+            elif attack["Move Type"] == "Purple":
+                damage = 70
+            elif attack["Move Type"] == "Gold":
+                damage = int(attack["Damage"]) * 1.5
+            else:
+                damage = 0
+
+            if damage > max_effective_damage:
+                max_effective_damage = damage
+                strongest_attack = attack
+        except ValueError:
+            continue
+    return strongest_attack
+
+
+def process_pokemon_data(file_path):
+    with open(file_path, 'r') as file:
+        data = json.load(file)
+    processed_data = []
+    for name, details in data.items():
+        strongest_attack = find_strongest_attack(details)
+        if strongest_attack:
+            processed_data.append({
+                "name": name,
+                "rarity": details["Rarity"],
+                "strongest_attack": strongest_attack["Name"],
+                "attack_damage": strongest_attack["Damage"]
+            })
+    return processed_data
+
+
+def create_shop_data_template(pokemon_data, plates_data, num_pokemon=5, num_plates=3):
+    selected_pokemon = random.sample(pokemon_data, num_pokemon)
+    selected_plates = random.sample(plates_data, num_plates)
+
+    pokemon_items = []
+    for pokemon in selected_pokemon:
+        strongest_attack, attack_damage = find_strongest_attack(pokemon)
+        pokemon_items.append({
+            "name": pokemon['name'],
+            "rarity": pokemon['rarity'],
+            "strongest_attack": strongest_attack,
+            "attack_damage": attack_damage
+        })
+    plate_items = []
+    for plate in selected_plates:
+        plate_items.append({
+            "id": plate["ID"],
+            "color": plate["Color"],
+            "name": plate["Name"],
+            "rarity": plate["Rarity"].strip(),
+            "cost": int(plate["Cost"]),
+            "effect": plate["Effect"]
+        })
+
+    return {"pokemon": pokemon_items, "plates": plate_items}
+
+
 dir_path = os.path.dirname(os.path.abspath(__file__))
+pokemon_data_path = os.path.join(dir_path, 'data', 'pokemon.json')
 plates_path = os.path.join(dir_path, 'data', 'plates.json')
 
-logging.debug(f"Attempting to open file at: {plates_path}")
-
 try:
-    with open(plates_path, 'r') as f:
-        plates_data = json.load(f)
+    with open(pokemon_data_path, 'r') as data_file:
+        raw_pokemon_data = json.load(data_file)
+    processed_pokemon_data = process_pokemon_data(raw_pokemon_data)
+
+    with open(plates_path, 'r') as data_file:
+        raw_plates_data = json.load(data_file)
+
 except FileNotFoundError as e:
-    logging.error(f"File not found: {plates_path}")
-    raise e
+    logging.error(f"File not found: {e.filename}")
 
 
 class ShopView(View):
-    def __init__(self, db_path, shop_data, plates_data_param):
+    def __init__(self, db_path, init_pokemon_data, init_plates_data):
         super().__init__()
         self.db = DatabaseManager(db_path)
-        print("Debugging shop_data:", shop_data)
-        self.shop_data = shop_data
-        self.plates_data = plates_data_param
-        self.pokemon_options = [SelectOption(label=pokemon['name'], value=pokemon['name']) for pokemon in shop_data]
-        self.plate_options = [SelectOption(label=plate['name'], value=plate['name']) for plate in plates_data_param]
+        shop_data = create_shop_data_template(init_pokemon_data, init_plates_data)
+
+        self.pokemon_shop_data = shop_data['pokemon']
+        self.plates_shop_data = shop_data['plates']
+        self.shop_data = self.pokemon_shop_data
+        self.plates_data = self.plates_shop_data
+        self.pokemon_options = [
+            SelectOption(label=pokemon['name'] + " - " + pokemon['strongest_attack'], value=pokemon['name'])
+            for pokemon in self.pokemon_shop_data
+        ]
+        self.plate_options = [SelectOption(label=plate['name'], value=plate['name']) for plate in self.plates_shop_data]
         self.single_roll_button = None
         self.multi_roll_button = None
         self.flash_sale_button = None
@@ -46,11 +119,13 @@ class ShopView(View):
         self.single_roll_button.callback = self.single_roll
         self.add_item(self.single_roll_button)
 
-        self.multi_roll_button = Button(label='Multi Roll (10x for 500 Crystals)', style=ButtonStyle.primary, custom_id='multi_roll', emoji='🎰')
+        self.multi_roll_button = Button(label='Multi Roll (10x for 500 Crystals)', style=ButtonStyle.primary,
+                                        custom_id='multi_roll', emoji='🎰')
         self.multi_roll_button.callback = self.multi_roll
         self.add_item(self.multi_roll_button)
 
-        self.flash_sale_button = Button(label='Flash Sale!', style=ButtonStyle.danger, custom_id='flash_sale', emoji='⚡')
+        self.flash_sale_button = Button(label='Flash Sale!', style=ButtonStyle.danger, custom_id='flash_sale',
+                                        emoji='⚡')
         self.flash_sale_button.callback = self.flash_sale
         self.add_item(self.flash_sale_button)
 
@@ -90,19 +165,12 @@ class ShopView(View):
         flash_sale_msg += "\n".join([f"{pokemon['name']} ({pokemon['rarity']})" for pokemon in self.flash_sale_pokemon])
         await interaction.response.send_message(flash_sale_msg, ephemeral=True)
 
-    @staticmethod
-    def load_pokemon_data():
-        pokemon_data_path = os.path.join(dir_path, 'data', 'pokemon.json')
-        try:
-            with open(pokemon_data_path, 'r') as file:
-                return json.load(file)
-        except FileNotFoundError:
-            logging.error(f"File not found: {pokemon_data_path}")
-            return []
-
     def roll(self):
-        rolled_pokemon = random.choice(self.shop_data)
-        return rolled_pokemon['name'], rolled_pokemon['rarity']
+        if self.shop_data:
+            rolled_pokemon = random.choice(self.shop_data)
+            return rolled_pokemon['name'], rolled_pokemon['rarity']
+        else:
+            return None, None
 
     def add_to_inventory(self, user_id, item, rarity):
         self.db.add_to_inventory(user_id, item, rarity)
@@ -126,11 +194,13 @@ class ShopView(View):
         return plate_select
 
     def generate_flash_sale_pokemon(self):
-        self.shop_data = self.load_pokemon_data()
-        ex_ux_pokemon = [pokemon for pokemon in self.shop_data if pokemon['rarity'] in ['EX', 'UX']]
-        other_pokemon = [pokemon for pokemon in self.shop_data if pokemon['rarity'] not in ['EX', 'UX']]
+        ex_ux_pokemon = [pokemon for pokemon in self.pokemon_shop_data if pokemon['rarity'] in ['EX', 'UX']]
+        other_pokemon = [pokemon for pokemon in self.pokemon_shop_data if pokemon['rarity'] not in ['EX', 'UX']]
 
-        self.flash_sale_pokemon = random.sample(ex_ux_pokemon, 1) + random.sample(other_pokemon, 1)
+        if len(ex_ux_pokemon) > 0 and len(other_pokemon) > 0:
+            self.flash_sale_pokemon = random.sample(ex_ux_pokemon, 1) + random.sample(other_pokemon, 1)
+        else:
+            self.flash_sale_pokemon = []
 
     @staticmethod
     def calculate_dust_cost(rarity):

@@ -61,8 +61,7 @@ class PokeDuel(commands.Cog):
     @commands.command()
     @has_started_save()
     async def shop(self, ctx):
-        user_id = ctx.author.id
-        shop_view = ShopView(user_id, self.db.path, self.pokemon_data, self.plates_data)
+        shop_view = ShopView(db_path, processed_pokemon_data, processed_plates_data)
         await ctx.send("Welcome to the Shop!", view=shop_view)
 
     @commands.command()
