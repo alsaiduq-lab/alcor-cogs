@@ -22,16 +22,20 @@ def has_started_save():
     return commands.check(predicate)
 
 
+def load_json(file_path):
+    with open(file_path, 'r') as file:
+        return json.load(file)
+
+
 class PokeDuel(commands.Cog):
     def __init__(self, bot):
         super().__init__()
         self.bot = bot
+
         dir_path = os.path.dirname(os.path.realpath(__file__))
-
         plates_path = os.path.join(dir_path, 'data', 'plates.json')
-        pokemon_path = os.path.join(dir_path, 'data', 'pokemon.json')
-
         self.plates_data = self.load_json(plates_path)
+        pokemon_path = os.path.join(dir_path, 'data', 'pokemon.json')
         self.pokemon_data = self.load_json(pokemon_path)
 
         db_path = os.path.join(dir_path, 'data', 'pokeduel_db.sqlite')
@@ -40,17 +44,11 @@ class PokeDuel(commands.Cog):
         self.board_manager = BoardManager(self.party_manager)
         self.game_manager = GameManager(bot, db_path, self.party_manager)
         self.config = Config.get_conf(self, identifier=10112123, force_registration=True)
+        self.gacha = ShopView(db_path, self.pokemon_data, self.plates_data)
         default_user = {'key1': 'default_value1', 'key2': 'default_value2'}
         self.config.register_user(**default_user)
         self.matchmaking_queue = {}
         self.ongoing_duels = {}
-
-        self.gacha = ShopView(db_path, self.pokemon_data, self.plates_data)
-
-    @staticmethod
-    def load_json(file_path):
-        with open(file_path, 'r') as file:
-            return json.load(file)
 
     @commands.command()
     async def start(self, ctx):
@@ -88,7 +86,6 @@ class PokeDuel(commands.Cog):
         self.prepare_for_duel(ctx.author, opponent)
         await ctx.send(f"Duel between {ctx.author.mention} and {opponent.mention} has started!")
 
-    # Helper methods
     @staticmethod
     def load_json(file_path):
         with open(file_path, 'r') as file:
@@ -169,7 +166,8 @@ class PokeDuelButtons(ui.View):
     async def game_status(self, interaction: Interaction, button: ui.Button):
         game_status = self.get_game_status(interaction.user)
 
-        await interaction.response.send_message(f"Game Status: {game_status}" if game_status else "No active game found.")
+        await interaction.response.send_message(
+            f"Game Status: {game_status}" if game_status else "No active game found.")
 
         button.label = "Status Checked"
         button.disabled = True

@@ -28,8 +28,9 @@ class DatabaseManager:
         if party is None:
             party = json.dumps([])
         with self.conn:
-            self.conn.execute("INSERT OR IGNORE INTO users (id, crystals, dust, inventory, party) VALUES (?, ?, ?, ?, ?)",
-                              (user_id, crystals, dust, inventory, party))
+            self.conn.execute(
+                "INSERT OR IGNORE INTO users (id, crystals, dust, inventory, party) VALUES (?, ?, ?, ?, ?)",
+                (user_id, crystals, dust, inventory, party))
 
     def get_crystals(self, user_id):
         with self.conn:
@@ -71,6 +72,16 @@ class DatabaseManager:
             party_str = json.dumps(new_party)
             self.conn.execute("UPDATE users SET party = ? WHERE id = ?", (party_str, user_id))
 
+    def add_to_inventory(self, user_id, item, rarity):
+        inventory = self.get_inventory(user_id)
+        inventory.append({'item': item, 'rarity': rarity})
+        self.update_inventory(user_id, inventory)
+
+    def add_plate_to_inventory(self, user_id, plate):
+        inventory = self.get_inventory(user_id)
+        inventory.append(plate)
+        self.update_inventory(user_id, inventory)
+
 
 class PokemonSelect(Select):
     def __init__(self, db, user_id, placeholder, callback_method):
@@ -88,6 +99,7 @@ class PokemonSelect(Select):
         selected_item = self.values[0]
         await self.callback_method(self, selected_item, interaction)
 
+
 class PartyButtonView(View):
     def __init__(self, db, user_id):
         super().__init__()
@@ -103,7 +115,7 @@ class PartyButtonView(View):
 
         self.add_item(PokemonSelect(self.db, self.user_id, 'Add to Party', self.add_to_party))
 
-    async def add_to_party(self, select, item, interaction):
+    async def add_to_party(self, item, interaction):
         party = self.db.get_user_party(self.user_id)
         party.append(item)
         self.db.update_user_party(self.user_id, party)
@@ -124,7 +136,6 @@ class PartyManager(commands.Cog):
     def __init__(self, bot, db_path):
         self.bot = bot
         self.db_manager = DatabaseManager(db_path)
-
 
     @commands.command()
     async def party(self, ctx):

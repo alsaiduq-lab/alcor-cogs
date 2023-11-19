@@ -5,7 +5,7 @@ import logging
 
 from discord import ButtonStyle, SelectOption
 from discord.ui import Select, View, Button
-from pokeduel.data.database import DatabaseManager
+from .data.database import DatabaseManager
 
 
 dir_path = os.path.dirname(os.path.abspath(__file__))
@@ -22,25 +22,28 @@ except FileNotFoundError as e:
 
 
 class ShopView(View):
-    def __init__(self, db_path, shop_data, plates_data):
+    def __init__(self, db_path, shop_data, plates_data_param):
         super().__init__()
         self.db = DatabaseManager(db_path)
         self.shop_data = shop_data
-        self.plates_data = plates_data
+        self.plates_data = plates_data_param
+        self.pokemon_options = [SelectOption(label=pokemon['name'], value=pokemon['name']) for pokemon in shop_data]
+        self.plate_options = [SelectOption(label=plate['name'], value=plate['name']) for plate in plates_data_param]
+
+        # Initialize attributes to None or default values
+        self.single_roll_button = None
+        self.multi_roll_button = None
+        self.flash_sale_button = None
+        self.flash_sale_pokemon = []
+
         self.add_item(self.create_pokemon_select_menu())
         self.add_item(self.create_plate_select_menu())
 
-        self.pokemon_options = [SelectOption(label=pokemon['name'], value=pokemon['name']) for pokemon in shop_data]
-        self.plate_options = [SelectOption(label=plate['name'], value=plate['name']) for plate in plates_data]
+        self.initialize_roll_buttons()
 
-        self.current_crystals = self.db.get_crystals(user_id)
-        self.current_dust = self.db.get_dust(user_id)
-
-        self.add_item(self.create_select_menu('Select a Pokémon to buy with dust', 'pokemon'))
-        self.add_item(self.create_select_menu('Select a Plate to buy with dust', 'plate'))
-
-        self.add_roll_buttons()
-        self.single_roll_button = Button(label='Single Roll (50 Crystals)', style=ButtonStyle.primary, custom_id='single_roll', emoji='🎲')
+    def initialize_roll_buttons(self):
+        self.single_roll_button = Button(label='Single Roll (50 Crystals)', style=ButtonStyle.primary,
+                                         custom_id='single_roll', emoji='🎲')
         self.single_roll_button.callback = self.single_roll
         self.add_item(self.single_roll_button)
 
@@ -72,12 +75,12 @@ class ShopView(View):
             await interaction.response.send_message("Not enough crystals.", ephemeral=True)
             return
         new_crystal_count = current_crystals - 500
-        self.db.update_crystals(self.user_id, new_crystal_count)
+        self.db.update_crystals(user_id, new_crystal_count)
 
         rolls = []
         for _ in range(10):
             pokemon, rarity = self.roll()
-            self.add_to_inventory(pokemon, rarity)
+            self.add_to_inventory(user_id, pokemon, rarity)
             rolls.append(f"{pokemon} ({rarity})")
 
         await interaction.response.send_message(f"You've got the following Pokémon: {', '.join(rolls)}", ephemeral=True)
@@ -98,14 +101,12 @@ class ShopView(View):
             logging.error(f"File not found: {pokemon_data_path}")
             return []
 
-
-
     def roll(self):
         rolled_pokemon = random.choice(self.shop_data)
         return rolled_pokemon['name'], rolled_pokemon['rarity']
 
-    def add_to_inventory(self, item, rarity):
-        self.db.add_to_inventory(self.user_id, item, rarity)
+    def add_to_inventory(self, user_id, item, rarity):
+        self.db.add_to_inventory(user_id, item, rarity)
 
     def create_pokemon_select_menu(self):
         pokemon_select = Select(
@@ -132,7 +133,8 @@ class ShopView(View):
 
         self.flash_sale_pokemon = random.sample(ex_ux_pokemon, 1) + random.sample(other_pokemon, 1)
 
-    def calculate_dust_cost(self, rarity):
+    @staticmethod
+    def calculate_dust_cost(rarity):
         if rarity == 'UX' or rarity == 'EX':
             return 5000
         elif rarity == 'R':
@@ -145,32 +147,31 @@ class ShopView(View):
             return 0
 
     async def select_pokemon_callback(self, select, interaction):
+        user_id = interaction.user.id
         selected_pokemon = select.values[0]
         pokemon_details = next(item for item in self.shop_data if item["name"] == selected_pokemon)
         dust_cost = self.calculate_dust_cost(pokemon_details['rarity'])
 
-        self.current_dust = self.db.get_dust(self.user_id)
-        if self.current_dust < dust_cost:
+        current_dust = self.db.get_dust(user_id)
+        if current_dust < dust_cost:
             await interaction.response.send_message("Not enough dust.", ephemeral=True)
             return
 
-        self.add_to_inventory(self.user_id, selected_pokemon, pokemon_details['rarity'])
-        self.db.update_dust(self.user_id, self.current_dust - dust_cost)
+        self.add_to_inventory(user_id, selected_pokemon, pokemon_details['rarity'])
+        self.db.update_dust(user_id, current_dust - dust_cost)
         await interaction.response.send_message(f"You've bought a {selected_pokemon}!", ephemeral=True)
 
-
-
     async def select_plate_callback(self, select, interaction):
+        user_id = interaction.user.id
         selected_plate = select.values[0]
         plate_details = next(item for item in self.plates_data if item["name"] == selected_plate)
         plate_cost = plate_details['cost']
 
-        self.current_dust = self.db.get_dust(self.user_id)
-        if self.current_dust < plate_cost:
+        current_dust = self.db.get_dust(user_id)
+        if current_dust < plate_cost:
             await interaction.response.send_message("Not enough dust.", ephemeral=True)
             return
 
-        self.db.add_plate_to_inventory(self.user_id, selected_plate)
-        self.db.update_dust(self.user_id, self.current_dust - plate_cost)
-        await interaction.response.send_message(f"You've bought a {selected_plate} for {plate_cost} dust!",
-                                                ephemeral=True)
+        self.db.add_plate_to_inventory(user_id, selected_plate)
+        self.db.update_dust(user_id, current_dust - plate_cost)
+        await interaction.response.send_message(f"You've bought a {selected_plate} for {plate_cost} dust!", ephemeral=True)
