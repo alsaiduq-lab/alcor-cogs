@@ -47,11 +47,8 @@ def process_plates_data(plates_data):
     print("Type of plates_data:", type(plates_data))
     print("Content of plates_data:", plates_data)
 
-    if isinstance(plates_data, list) and plates_data:
-        print("Type of first element in plates_data:", type(plates_data[0]))
-        print("First element in plates_data:", plates_data[0])
-
     processed_data = []
+
     for plate in plates_data:
         cost = int(plate["Cost"]) if plate["Cost"].isdigit() else 0
 
@@ -70,7 +67,6 @@ def process_plates_data(plates_data):
 
 
 def create_shop_data_template(pokemon_data, plates_data, num_pokemon=5, num_plates=3):
-    # Convert dictionary values to lists if necessary
     if isinstance(pokemon_data, dict):
         pokemon_data = list(pokemon_data.values())
     if isinstance(plates_data, dict):
@@ -84,13 +80,22 @@ def create_shop_data_template(pokemon_data, plates_data, num_pokemon=5, num_plat
 
     pokemon_items = []
     for pokemon in selected_pokemon:
-        strongest_attack, attack_damage = find_strongest_attack(pokemon)
-        pokemon_items.append({
-            "name": pokemon['name'],
-            "rarity": pokemon['rarity'],
-            "strongest_attack": strongest_attack,
-            "attack_damage": attack_damage
-        })
+        attack_result = find_strongest_attack(pokemon)
+        if attack_result:
+            strongest_attack, attack_damage = attack_result
+            pokemon_items.append({
+                "name": pokemon['name'],
+                "rarity": pokemon['rarity'],
+                "strongest_attack": strongest_attack,
+                "attack_damage": attack_damage
+            })
+        else:
+            pokemon_items.append({
+                "name": pokemon['name'],
+                "rarity": pokemon['rarity'],
+                "strongest_attack": "Unknown",
+                "attack_damage": 0
+            })
 
     plate_items = []
     for plate in selected_plates:
