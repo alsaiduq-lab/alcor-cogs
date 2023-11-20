@@ -29,11 +29,9 @@ def find_strongest_attack(pokemon_data):
     return strongest_attack
 
 
-def process_pokemon_data(file_path):
-    with open(file_path, 'r') as file:
-        data = json.load(file)
+def process_pokemon_data(pokemon_data):
     processed_data = []
-    for name, details in data.items():
+    for name, details in pokemon_data.items():
         strongest_attack = find_strongest_attack(details)
         if strongest_attack:
             processed_data.append({
@@ -42,6 +40,20 @@ def process_pokemon_data(file_path):
                 "strongest_attack": strongest_attack["Name"],
                 "attack_damage": strongest_attack["Damage"]
             })
+    return processed_pokemon_data
+
+
+def process_plates_data(plates_data):
+    processed_data = []
+    for plate in plates_data:
+        plate_info = {
+            "name": plate["Name"],
+            "cost": int(plate["Cost"]),
+            "rarity": plate["Rarity"].strip(),
+            "color": plate["Color"],
+            "effect": plate["Effect"]
+        }
+        processed_data.append(plate_info)
     return processed_data
 
 
@@ -83,6 +95,7 @@ try:
 
     with open(plates_path, 'r') as data_file:
         raw_plates_data = json.load(data_file)
+    processed_plates_data = process_plates_data(raw_plates_data)
 
 except FileNotFoundError as e:
     logging.error(f"File not found: {e.filename}")
@@ -92,25 +105,29 @@ class ShopView(View):
     def __init__(self, db_path, init_pokemon_data, init_plates_data):
         super().__init__()
         self.db = DatabaseManager(db_path)
-        shop_data = create_shop_data_template(init_pokemon_data, init_plates_data)
 
-        self.pokemon_shop_data = shop_data['pokemon']
-        self.plates_shop_data = shop_data['plates']
-        self.shop_data = self.pokemon_shop_data
-        self.plates_data = self.plates_shop_data
-        self.pokemon_options = [
-            SelectOption(label=pokemon['name'] + " - " + pokemon['strongest_attack'], value=pokemon['name'])
-            for pokemon in self.pokemon_shop_data
-        ]
-        self.plate_options = [SelectOption(label=plate['name'], value=plate['name']) for plate in self.plates_shop_data]
         self.single_roll_button = None
         self.multi_roll_button = None
         self.flash_sale_button = None
         self.flash_sale_pokemon = []
 
-        self.add_item(self.create_pokemon_select_menu())
-        self.add_item(self.create_plate_select_menu())
+        shop_data = create_shop_data_template(init_pokemon_data, init_plates_data)
 
+        self.pokemon_shop_data = shop_data['pokemon']
+        self.plates_shop_data = shop_data['plates']
+        self.shop_data = self.pokemon_shop_data
+        self.plate_options = [
+            SelectOption(
+                label=f"{plate['name']} - Cost: {plate['cost']}, Rarity: {plate['rarity']}, Color: {plate['color']}",
+                value=plate['name'],
+                description=plate['effect']
+            )
+            for plate in self.plates_shop_data
+        ]
+        self.pokemon_options = [
+            SelectOption(label=pokemon['name'] + " - " + pokemon['strongest_attack'], value=pokemon['name'])
+            for pokemon in self.pokemon_shop_data
+        ]
         self.initialize_roll_buttons()
 
     def initialize_roll_buttons(self):
@@ -187,7 +204,14 @@ class ShopView(View):
     def create_plate_select_menu(self):
         plate_select = Select(
             placeholder='Select a Plate to buy with dust',
-            options=self.plate_options,
+            options=[
+                SelectOption(
+                    label=f"{plate['name']} (Cost: {plate['cost']}, Rarity: {plate['rarity']}, Color: {plate['color']})",
+                    value=plate['name'],
+                    description=f"Effect: {plate['effect'][:100]}..."
+                )
+                for plate in self.plates_shop_data
+            ],
             custom_id='plate_select'
         )
         plate_select.callback = self.select_plate_callback
@@ -233,7 +257,7 @@ class ShopView(View):
     async def select_plate_callback(self, select, interaction):
         user_id = interaction.user.id
         selected_plate = select.values[0]
-        plate_details = next(item for item in self.plates_data if item["name"] == selected_plate)
+        plate_details = next(item for item in self.plates_shop_data if item["name"] == selected_plate)
         plate_cost = plate_details['cost']
 
         current_dust = self.db.get_dust(user_id)
@@ -243,4 +267,5 @@ class ShopView(View):
 
         self.db.add_plate_to_inventory(user_id, selected_plate)
         self.db.update_dust(user_id, current_dust - plate_cost)
-        await interaction.response.send_message(f"You've bought a {selected_plate} for {plate_cost} dust!", ephemeral=True)
+        await interaction.response.send_message(f"You've bought a {selected_plate} for {plate_cost} dust!",
+                                                ephemeral=True)
