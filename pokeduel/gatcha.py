@@ -103,10 +103,7 @@ try:
 
     with open(plates_path, 'r') as data_file:
         raw_plates_data = json.load(data_file)
-        print(type(raw_plates_data))
-        print(type(raw_plates_data[0]))
-    processed_plates_data = process_plates_data(raw_plates_data)
-
+    processed_plates_data = process_plates_data(raw_plates_data["plates"])
 except FileNotFoundError as e:
     logging.error(f"File not found: {e.filename}")
 
