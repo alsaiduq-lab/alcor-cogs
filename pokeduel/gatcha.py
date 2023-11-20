@@ -70,13 +70,17 @@ def process_plates_data(plates_data):
 
 
 def create_shop_data_template(pokemon_data, plates_data, num_pokemon=5, num_plates=3):
+    # Convert dictionary values to lists if necessary
     if isinstance(pokemon_data, dict):
         pokemon_data = list(pokemon_data.values())
     if isinstance(plates_data, dict):
         plates_data = list(plates_data.values())
 
-    selected_pokemon = random.sample(pokemon_data, num_pokemon)
-    selected_plates = random.sample(plates_data, num_plates)
+    num_pokemon = min(num_pokemon, len(pokemon_data))
+    num_plates = min(num_plates, len(plates_data))
+
+    selected_pokemon = random.sample(pokemon_data, num_pokemon) if num_pokemon > 0 else []
+    selected_plates = random.sample(plates_data, num_plates) if num_plates > 0 else []
 
     pokemon_items = []
     for pokemon in selected_pokemon:
