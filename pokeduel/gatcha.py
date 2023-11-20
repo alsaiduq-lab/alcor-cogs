@@ -106,7 +106,7 @@ except FileNotFoundError as e:
 
 
 class ShopView(View):
-    def __init__(self, db_path, init_pokemon_data, init_plates_data):
+    def __init__(self, db_path, processed_pokemon_data, processed_plates_data):
         super().__init__()
         self.db = DatabaseManager(db_path)
 
@@ -115,8 +115,7 @@ class ShopView(View):
         self.flash_sale_button = None
         self.flash_sale_pokemon = []
 
-        shop_data = create_shop_data_template(init_pokemon_data, init_plates_data)
-
+        shop_data = create_shop_data_template(processed_pokemon_data, processed_plates_data)
         self.pokemon_shop_data = shop_data['pokemon']
         self.plates_shop_data = shop_data['plates']
         self.shop_data = self.pokemon_shop_data
