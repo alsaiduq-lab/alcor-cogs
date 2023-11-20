@@ -69,8 +69,10 @@ def process_plates_data(plates_data):
     return processed_data
 
 
-
 def create_shop_data_template(pokemon_data, plates_data, num_pokemon=5, num_plates=3):
+    if isinstance(pokemon_data, dict):
+        pokemon_data = list(pokemon_data.values())
+
     selected_pokemon = random.sample(pokemon_data, num_pokemon)
     selected_plates = random.sample(plates_data, num_plates)
 
@@ -83,6 +85,7 @@ def create_shop_data_template(pokemon_data, plates_data, num_pokemon=5, num_plat
             "strongest_attack": strongest_attack,
             "attack_damage": attack_damage
         })
+
     plate_items = []
     for plate in selected_plates:
         plate_items.append({
