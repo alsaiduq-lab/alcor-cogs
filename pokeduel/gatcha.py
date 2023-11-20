@@ -40,7 +40,8 @@ def process_pokemon_data(pokemon_data):
                 "strongest_attack": strongest_attack["Name"],
                 "attack_damage": strongest_attack["Damage"]
             })
-    return processed_pokemon_data
+    return processed_data
+
 
 
 def process_plates_data(plates_data):
