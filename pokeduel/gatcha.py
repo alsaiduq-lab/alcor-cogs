@@ -2,6 +2,7 @@ import json
 import random
 import os
 import logging
+import re
 from discord import ButtonStyle, SelectOption
 from discord.ui import Select, View, Button
 from .data.database import DatabaseManager
@@ -83,7 +84,7 @@ def create_shop_data_template(pokemon_data, plates_data, num_pokemon=5, num_plat
         pokemon_list = pokemon_data
 
     if 'plates' in plates_data:
-        plates_list = [{'plate_id': plate['ID'], **plate} for plate in plates_data['plates']]
+        plates_list = [{'plate_id': re.search(r'\d+', plate['ID']).group(), **plate} for plate in plates_data['plates']]
     else:
         plates_list = plates_data
 
@@ -97,6 +98,7 @@ def create_shop_data_template(pokemon_data, plates_data, num_pokemon=5, num_plat
     plate_items = [process_plate(p) for p in selected_plates]
 
     return {"pokemon": pokemon_items, "plates": plate_items}
+
 
 def process_pokemon(pokemon):
     attack_result = find_strongest_attack(pokemon)
@@ -115,9 +117,10 @@ def process_pokemon(pokemon):
         "attack_damage": 0
     }
 
+
 def process_plate(plate):
     return {
-        "id": plate["id"],
+        "id": plate["plate_id"],
         "color": plate["Color"],
         "name": plate["Name"],
         "rarity": plate["Rarity"].strip(),
