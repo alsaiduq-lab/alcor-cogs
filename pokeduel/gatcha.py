@@ -76,16 +76,14 @@ def process_plates_data(plates_data):
 
 
 def create_shop_data_template(pokemon_data, plates_data, num_pokemon=5, num_plates=3):
+
     if isinstance(pokemon_data, dict):
         pokemon_list = [{'name': name, **details} for name, details in pokemon_data.items()]
     else:
         pokemon_list = pokemon_data
 
-    print("Debug: Type of plates_data -", type(plates_data))
-    print("Debug: First element of plates_data -", plates_data[0] if plates_data else "Empty")
-
-    if isinstance(plates_data, dict):
-        plates_list = [{'plate_id': plate_id, **details} for plate_id, details in plates_data.items()]
+    if 'plates' in plates_data:
+        plates_list = [{'plate_id': plate['ID'], **plate} for plate in plates_data['plates']]
     else:
         plates_list = plates_data
 
@@ -99,7 +97,6 @@ def create_shop_data_template(pokemon_data, plates_data, num_pokemon=5, num_plat
     plate_items = [process_plate(p) for p in selected_plates]
 
     return {"pokemon": pokemon_items, "plates": plate_items}
-
 
 def process_pokemon(pokemon):
     attack_result = find_strongest_attack(pokemon)
