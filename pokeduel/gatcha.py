@@ -85,7 +85,7 @@ def create_shop_data_template(pokemon_data, plates_data, num_pokemon=5, num_plat
     print("Debug: First element of plates_data -", plates_data[0] if plates_data else "Empty")
 
     if isinstance(plates_data, dict):
-        plates_list = list(plates_data.values())
+        plates_list = [{'plate_id': plate_id, **details} for plate_id, details in plates_data.items()]
     else:
         plates_list = plates_data
 
@@ -95,39 +95,38 @@ def create_shop_data_template(pokemon_data, plates_data, num_pokemon=5, num_plat
     selected_pokemon = random.sample(pokemon_list, num_pokemon) if num_pokemon > 0 else []
     selected_plates = random.sample(plates_list, num_plates) if num_plates > 0 else []
 
-    pokemon_items = []
-    for pokemon in selected_pokemon:
-        attack_result = find_strongest_attack(pokemon)
-        if attack_result:
-            strongest_attack, attack_damage = attack_result
-            pokemon_items.append({
-                "name": pokemon['name'],
-                "rarity": pokemon['Rarity'],
-                "strongest_attack": strongest_attack,
-                "attack_damage": attack_damage
-            })
-        else:
-            pokemon_items.append({
-                "name": pokemon['name'],
-                "rarity": pokemon['Rarity'],
-                "strongest_attack": "Unknown",
-                "attack_damage": 0
-            })
-
-    plate_items = []
-    for plate in selected_plates:
-        print("Debug: Current plate data -", plate)
-
-        plate_items.append({
-            "id": plate["ID"],
-            "color": plate["Color"],
-            "name": plate["Name"],
-            "rarity": plate["Rarity"].strip(),
-            "cost": int(plate["Cost"]) if plate["Cost"].isdigit() else 0,
-            "effect": plate["Effect"]
-        })
+    pokemon_items = [process_pokemon(p) for p in selected_pokemon]
+    plate_items = [process_plate(p) for p in selected_plates]
 
     return {"pokemon": pokemon_items, "plates": plate_items}
+
+
+def process_pokemon(pokemon):
+    attack_result = find_strongest_attack(pokemon)
+    if attack_result:
+        strongest_attack, attack_damage = attack_result
+        return {
+            "name": pokemon['name'],
+            "rarity": pokemon['Rarity'],
+            "strongest_attack": strongest_attack,
+            "attack_damage": attack_damage
+        }
+    return {
+        "name": pokemon['name'],
+        "rarity": pokemon['Rarity'],
+        "strongest_attack": "Unknown",
+        "attack_damage": 0
+    }
+
+def process_plate(plate):
+    return {
+        "id": plate["id"],
+        "color": plate["Color"],
+        "name": plate["Name"],
+        "rarity": plate["Rarity"].strip(),
+        "cost": int(plate["Cost"]) if plate["Cost"].isdigit() else 0,
+        "effect": plate["Effect"]
+    }
 
 
 dir_path = os.path.dirname(os.path.abspath(__file__))
