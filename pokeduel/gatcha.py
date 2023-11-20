@@ -43,8 +43,14 @@ def process_pokemon_data(pokemon_data):
     return processed_data
 
 
-
 def process_plates_data(plates_data):
+    print("Type of plates_data:", type(plates_data))
+    print("Content of plates_data:", plates_data)
+
+    if isinstance(plates_data, list) and plates_data:
+        print("Type of first element in plates_data:", type(plates_data[0]))
+        print("First element in plates_data:", plates_data[0])
+
     processed_data = []
     for plate in plates_data:
         plate_info = {
@@ -57,8 +63,6 @@ def process_plates_data(plates_data):
         }
         processed_data.append(plate_info)
     return processed_data
-
-
 
 
 def create_shop_data_template(pokemon_data, plates_data, num_pokemon=5, num_plates=3):
@@ -99,6 +103,8 @@ try:
 
     with open(plates_path, 'r') as data_file:
         raw_plates_data = json.load(data_file)
+        print(type(raw_plates_data))
+        print(type(raw_plates_data[0]))
     processed_plates_data = process_plates_data(raw_plates_data)
 
 except FileNotFoundError as e:
@@ -106,19 +112,19 @@ except FileNotFoundError as e:
 
 
 class ShopView(View):
-    def __init__(self, db_path, processed_pokemon_data, processed_plates_data):
+    def __init__(self, db_path, init_pokemon_data, init_plates_data):
         super().__init__()
         self.db = DatabaseManager(db_path)
+        shop_data = create_shop_data_template(init_pokemon_data, init_plates_data)
+
+        self.pokemon_shop_data = shop_data['pokemon']
+        self.plates_shop_data = shop_data['plates']
 
         self.single_roll_button = None
         self.multi_roll_button = None
         self.flash_sale_button = None
         self.flash_sale_pokemon = []
 
-        shop_data = create_shop_data_template(processed_pokemon_data, processed_plates_data)
-        self.pokemon_shop_data = shop_data['pokemon']
-        self.plates_shop_data = shop_data['plates']
-        self.shop_data = self.pokemon_shop_data
         self.plate_options = [
             SelectOption(
                 label=f"{plate['name']} - Cost: {plate['cost']}, Rarity: {plate['rarity']}, Color: {plate['color']}",
@@ -186,8 +192,8 @@ class ShopView(View):
         await interaction.response.send_message(flash_sale_msg, ephemeral=True)
 
     def roll(self):
-        if self.shop_data:
-            rolled_pokemon = random.choice(self.shop_data)
+        if self.pokemon_shop_data:
+            rolled_pokemon = random.choice(self.pokemon_shop_data)
             return rolled_pokemon['name'], rolled_pokemon['rarity']
         else:
             return None, None
@@ -245,7 +251,8 @@ class ShopView(View):
     async def select_pokemon_callback(self, select, interaction):
         user_id = interaction.user.id
         selected_pokemon = select.values[0]
-        pokemon_details = next(item for item in self.shop_data if item["name"] == selected_pokemon)
+
+        pokemon_details = next(item for item in self.pokemon_shop_data if item["name"] == selected_pokemon)
         dust_cost = self.calculate_dust_cost(pokemon_details['rarity'])
 
         current_dust = self.db.get_dust(user_id)
