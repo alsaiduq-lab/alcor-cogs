@@ -68,15 +68,20 @@ def process_plates_data(plates_data):
 
 def create_shop_data_template(pokemon_data, plates_data, num_pokemon=5, num_plates=3):
     if isinstance(pokemon_data, dict):
-        pokemon_data = list(pokemon_data.values())
+        pokemon_list = [{'name': name, **details} for name, details in pokemon_data.items()]
+    else:
+        pokemon_list = pokemon_data
+
     if isinstance(plates_data, dict):
-        plates_data = list(plates_data.values())
+        plates_list = list(plates_data.values())
+    else:
+        plates_list = plates_data
 
-    num_pokemon = min(num_pokemon, len(pokemon_data))
-    num_plates = min(num_plates, len(plates_data))
+    num_pokemon = min(num_pokemon, len(pokemon_list))
+    num_plates = min(num_plates, len(plates_list))
 
-    selected_pokemon = random.sample(pokemon_data, num_pokemon) if num_pokemon > 0 else []
-    selected_plates = random.sample(plates_data, num_plates) if num_plates > 0 else []
+    selected_pokemon = random.sample(pokemon_list, num_pokemon) if num_pokemon > 0 else []
+    selected_plates = random.sample(plates_list, num_plates) if num_plates > 0 else []
 
     pokemon_items = []
     for pokemon in selected_pokemon:
@@ -85,14 +90,14 @@ def create_shop_data_template(pokemon_data, plates_data, num_pokemon=5, num_plat
             strongest_attack, attack_damage = attack_result
             pokemon_items.append({
                 "name": pokemon['name'],
-                "rarity": pokemon['rarity'],
+                "rarity": pokemon['Rarity'],
                 "strongest_attack": strongest_attack,
                 "attack_damage": attack_damage
             })
         else:
             pokemon_items.append({
                 "name": pokemon['name'],
-                "rarity": pokemon['rarity'],
+                "rarity": pokemon['Rarity'],
                 "strongest_attack": "Unknown",
                 "attack_damage": 0
             })
@@ -109,6 +114,7 @@ def create_shop_data_template(pokemon_data, plates_data, num_pokemon=5, num_plat
         })
 
     return {"pokemon": pokemon_items, "plates": plate_items}
+
 
 
 dir_path = os.path.dirname(os.path.abspath(__file__))
