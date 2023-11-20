@@ -46,17 +46,18 @@ def process_pokemon_data(pokemon_data):
 
 def process_plates_data(plates_data):
     processed_data = []
-    for plate_id, plate_details in plates_data.items():
+    for plate in plates_data:
         plate_info = {
-            "id": plate_id,
-            "name": plate_details["Name"],
-            "cost": int(plate_details["Cost"]),
-            "rarity": plate_details["Rarity"].strip(),
-            "color": plate_details["Color"],
-            "effect": plate_details["Effect"]
+            "id": plate["ID"],
+            "name": plate["Name"],
+            "cost": int(plate["Cost"]),
+            "rarity": plate["Rarity"].strip(),
+            "color": plate["Color"],
+            "effect": plate["Effect"]
         }
         processed_data.append(plate_info)
     return processed_data
+
 
 
 
