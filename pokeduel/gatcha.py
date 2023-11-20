@@ -81,6 +81,9 @@ def create_shop_data_template(pokemon_data, plates_data, num_pokemon=5, num_plat
     else:
         pokemon_list = pokemon_data
 
+    print("Debug: Type of plates_data -", type(plates_data))
+    print("Debug: First element of plates_data -", plates_data[0] if plates_data else "Empty")
+
     if isinstance(plates_data, dict):
         plates_list = list(plates_data.values())
     else:
@@ -112,7 +115,9 @@ def create_shop_data_template(pokemon_data, plates_data, num_pokemon=5, num_plat
             })
 
     plate_items = []
-    for plate in plates_data:
+    for plate in selected_plates:
+        print("Debug: Current plate data -", plate)
+
         plate_items.append({
             "id": plate["ID"],
             "color": plate["Color"],
