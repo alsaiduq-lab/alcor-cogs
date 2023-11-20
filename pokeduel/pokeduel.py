@@ -54,7 +54,7 @@ class PokeDuel(commands.Cog):
     async def start(self, ctx):
         await ctx.send("Welcome to PokeDuel! Type `start` to begin your journey!")
 
-    @commands.command(aliases=['begin', 'start'])
+    @commands.command(aliases=['pokeduel begin', 'pokeduel start'])
     async def newgame(self, ctx):
         await self.handle_new_game(ctx)
 
