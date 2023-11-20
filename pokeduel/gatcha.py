@@ -112,13 +112,13 @@ def create_shop_data_template(pokemon_data, plates_data, num_pokemon=5, num_plat
             })
 
     plate_items = []
-    for plate in selected_plates:
+    for plate in plates_data:
         plate_items.append({
             "id": plate["ID"],
             "color": plate["Color"],
             "name": plate["Name"],
             "rarity": plate["Rarity"].strip(),
-            "cost": int(plate["Cost"]),
+            "cost": int(plate["Cost"]) if plate["Cost"].isdigit() else 0,
             "effect": plate["Effect"]
         })
 
