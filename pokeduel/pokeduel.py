@@ -8,7 +8,7 @@ from discord.ui import View
 import os
 
 from pokeduel.gatcha import ShopView
-from pokeduel.party import PartyManager
+from pokeduel.party import PartyManager, PartyButtonView
 from pokeduel.ingame import GameManager
 from pokeduel.utils.board import BoardManager
 from pokeduel.data.database import DatabaseManager
@@ -54,17 +54,18 @@ class PokeDuel(commands.Cog):
     async def start(self, ctx):
         await ctx.send("Welcome to PokeDuel! Type `start` to begin your journey!")
 
-    @commands.command(aliases=['pokeduel newgame', 'pokeduel start'])
+    @commands.command(aliases=['start'])
     async def newgame(self, ctx):
         await self.handle_new_game(ctx)
 
-    @commands.command()
+    @commands.command(aliases=['buy', 'purchase'])
     @has_started_save()
     async def shop(self, ctx):
-        shop_view = ShopView(db_path, processed_pokemon_data, processed_plates_data)
+        user_id = ctx.author.id
+        shop_view = ShopView(user_id, self.db.path, self.pokemon_data, self.plates_data)
         await ctx.send("Welcome to the Shop!", view=shop_view)
 
-    @commands.command()
+    @commands.command(aliases=['customize', 'party'])
     @has_started_save()
     async def customize_party(self, ctx):
         user_id = ctx.author.id

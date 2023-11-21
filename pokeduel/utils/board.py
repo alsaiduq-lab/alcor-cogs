@@ -1,21 +1,17 @@
 from collections import deque
-from discord import ButtonStyle, Button
-from discord.ui import Select, View, Button
-from PIL import Image, ImageDraw
+from discord import ButtonStyle
+from discord.ui import View, Button
+
 
 class BoardManager:
     def __init__(self, party_manager):
         self.party_manager = party_manager
-        self.board = self.initialize_board()
+        self.board = [["E" for _ in range(7)] for _ in range(8)]
         self.action_history = deque([], maxlen=5)
 
     @staticmethod
     def initialize_board():
         board = [["E" for _ in range(7)] for _ in range(8)]
-        for i in [0, 7]:
-            for j in [0, 6]:
-                board[i][j] = "S"
-            board[i][3] = "G"
         return board
 
     def create_button_for_cell(self, x, y):
@@ -23,12 +19,9 @@ class BoardManager:
         label = self.get_label_for_cell(cell_value)
         return Button(style=ButtonStyle.secondary, label=label, custom_id=f"{x},{y}")
 
-    def get_label_for_cell(self, cell_value):
-        labels = {
-            "E": "Empty",
-            "S": "Spawn",
-            "G": "Goal"
-        }
+    @staticmethod
+    def get_label_for_cell(cell_value):
+        labels = {"E": "Empty", "S": "Spawn", "G": "Goal"}
         return labels.get(cell_value, "Unknown")
 
     def refresh_buttons(self, view: View):
@@ -36,7 +29,6 @@ class BoardManager:
             for y in range(7):
                 button = self.create_button_for_cell(x, y)
                 view.add_item(button)
-
 
 
 class BoardVisualizer:
@@ -75,14 +67,17 @@ class BoardVisualizer:
         for x, y in nodes:
             if (x + 1, y) in nodes:
                 self.draw.line([(x * self.cell_size + self.cell_size // 2, y * self.cell_size + self.cell_size // 2),
-                               ((x + 1) * self.cell_size + self.cell_size // 2, y * self.cell_size + self.cell_size // 2)], fill='black')
+                                ((x + 1) * self.cell_size + self.cell_size // 2,
+                                 y * self.cell_size + self.cell_size // 2)], fill='black')
             if (x, y + 1) in nodes:
                 self.draw.line([(x * self.cell_size + self.cell_size // 2, y * self.cell_size + self.cell_size // 2),
-                               (x * self.cell_size + self.cell_size // 2, (y + 1) * self.cell_size + self.cell_size // 2)], fill='black')
+                                (x * self.cell_size + self.cell_size // 2,
+                                 (y + 1) * self.cell_size + self.cell_size // 2)], fill='black')
 
         diagonal_connections = [((2, 1), (3, 2)), ((3, 4), (4, 5))]
         for start, end in diagonal_connections:
-            start_center = (start[0] * self.cell_size + self.cell_size // 2, start[1] * self.cell_size + self.cell_size // 2)
+            start_center = (
+                start[0] * self.cell_size + self.cell_size // 2, start[1] * self.cell_size + self.cell_size // 2)
             end_center = (end[0] * self.cell_size + self.cell_size // 2, end[1] * self.cell_size + self.cell_size // 2)
             self.draw.line([start_center, end_center], fill='black', width=2)
 
@@ -100,7 +95,8 @@ class BoardVisualizer:
         for y in range(self.board_height):
             for x in range(self.board_width):
                 cell_value = self.board_manager.board[y][x] if y < len(self.board_manager.board) else 'B'
-                cell_value = 'PC' if (y == 0 or y == self.board_height - 1) and x >= self.board_width - 2 else cell_value
+                cell_value = 'PC' if (
+                                             y == 0 or y == self.board_height - 1) and x >= self.board_width - 2 else cell_value
                 self.draw_cell(x, y, cell_value)
         self.draw_nodes_and_lines()
         self.draw_spawn_rectangle()
