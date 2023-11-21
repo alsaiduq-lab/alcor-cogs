@@ -82,6 +82,11 @@ class DatabaseManager:
         inventory.append(plate)
         self.update_inventory(user_id, inventory)
 
+    def has_started_save(self, user_id):
+        with self.conn:
+            cur = self.conn.execute("SELECT EXISTS(SELECT 1 FROM users WHERE id = ?)", (user_id,))
+            return cur.fetchone()[0] == 1
+
 
 class PokemonSelect(Select):
     def __init__(self, db, user_id, placeholder, callback_method):
