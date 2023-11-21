@@ -32,7 +32,8 @@ class PokemonSelect(Select):
                 pokemon_data = self.db.get_pokemon_data(pokemon_name)
                 z_moves = [move['Name'] for move in pokemon_data['Base Wheel Size'] if 'Z-Move' in move['Move Type']]
                 for z_move in z_moves:
-                    self.options.append(SelectOption(label=f"{pokemon_name}: {z_move}", value=f"{pokemon_name}:{z_move}"))
+                    self.options.append(
+                        SelectOption(label=f"{pokemon_name}: {z_move}", value=f"{pokemon_name}:{z_move}"))
         else:
             # Standard implementation for adding Pokémon to party
             available_pokemon = self.db.get_inventory(self.user_id)
@@ -47,6 +48,7 @@ class PokemonSelect(Select):
         else:
             await self.callback_method(self, selected_item, interaction)
 
+
 class PartyButtonView(View):
     def __init__(self, db, user_id):
         super().__init__()
@@ -60,10 +62,13 @@ class PartyButtonView(View):
         for i, pokemon in enumerate(party):
             self.add_item(Button(style=ButtonStyle.primary, label=pokemon, custom_id=f"remove_{i}"))
 
-        self.add_item(PokemonSelect(self.db, self.user_id, 'Add to Party', self.add_to_party))
+        self.add_item(PokemonSelect(self.db, self.user_id, 'Add to Party', self.add_pokemon_to_party))
         self.add_item(PokemonSelect(self.db, self.user_id, 'Select Z-Move', self.select_z_move, is_z_move_select=True))
 
-    async def add_pokemon_to_party(self, select, pokemon, interaction):
+    async def add_to_party(self, _select, pokemon, interaction):
+        pass
+
+    async def add_pokemon_to_party(self, _select, pokemon, interaction):
         try:
             party = self.db.get_user_party(self.user_id)
             if len(party) < MAX_PARTY_SIZE:
@@ -75,7 +80,7 @@ class PartyButtonView(View):
         except Exception as e:
             await interaction.response.send_message(f"An error occurred: {e}", ephemeral=True)
 
-    async def add_plate_to_party(self, select, plate, interaction):
+    async def add_plate_to_party(self, _select, plate, interaction):
         try:
             party = self.db.get_user_party(self.user_id)
             if len(party) < MAX_PARTY_SIZE:
@@ -86,4 +91,3 @@ class PartyButtonView(View):
                 await interaction.response.send_message("Your party is full.", ephemeral=True)
         except Exception as e:
             await interaction.response.send_message(f"An error occurred: {e}", ephemeral=True)
-
