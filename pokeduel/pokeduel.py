@@ -66,21 +66,44 @@ class PokeDuel(commands.Cog):
     async def pokeduel_start(self, ctx):
         embed = Embed(title="Welcome to PokeDuel!", color=0x00ff00)
 
-        file_path = './welcome.png'
-        await ctx.send(file=discord.File(file_path, filename='welcome.png'), embed=embed)
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+        file_name = 'welcome.png'
+        file_path = None
+
+        for root, dirs, files in os.walk(dir_path):
+            if file_name in files:
+                file_path = os.path.join(root, file_name)
+                break
+        if file_path and os.path.exists(file_path):
+            await ctx.send(file=discord.File(file_path, filename=file_name), embed=embed)
+        else:
+            await ctx.send("Welcome to PokeDuel! (Image not found)", embed=embed)
 
     @pokeduel.command(name="shop")
     async def pokeduel_shop(self, ctx):
         embed = Embed(title="PokeDuel Shop", description="Welcome to the shop!", color=0x00ff00)
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+        file_name = 'shop.png'
+        file_path = None
 
-        file_path = './shop.png'
-        await ctx.send(file=discord.File(file_path, filename='shop.png'), embed=embed)
+        for root, dirs, files in os.walk(dir_path):
+            if file_name in files:
+                file_path = os.path.join(root, file_name)
+                break
+        if file_path and os.path.exists(file_path):
+            await ctx.send(file=discord.File(file_path, filename=file_name), embed=embed)
+        else:
+            await ctx.send("Welcome to the PokeDuel Shop!", embed=embed)
 
     @pokeduel.command(name="customize")
     async def pokeduel_customize(self, ctx):
         user_id = ctx.author.id
-        party_button_view = PartyButtonView(self.db, user_id)
-        await party_button_view.refresh_view()
+        party = self.db.get_user_party(user_id)
+        if party is None:
+            await ctx.send("No party data found for your account.")
+        else:
+            party_button_view = PartyButtonView(self.db, user_id)
+            await party_button_view.refresh_view()
 
     @pokeduel.command(name="duel")
     @has_started_save()
@@ -240,24 +263,30 @@ class PokeDuelButtons(ui.View):
 
     @ui.button(label='Game Status', style=ButtonStyle.grey)
     async def game_status(self, interaction: Interaction, button: ui.Button):
+        # Get and display the game status
         status = self.pokeduel_cog.get_game_status(interaction.user)
-        await interaction.followup.send()(f"Game Status: {status}")
+        await interaction.response.send_message(f"Your Game Status: {status}")
+
         button.label = "Status Checked"
         button.disabled = True
         await interaction.message.edit(view=self)
 
     @ui.button(label='Help', style=ButtonStyle.grey)
     async def help(self, interaction: Interaction, button: ui.Button):
+        # Display a help message
         help_message = self.pokeduel_cog.get_help_message()
-        await interaction.followup.send()(help_message)
+        await interaction.response.send_message(help_message)
+
         button.label = "Help Viewed"
         button.disabled = True
         await interaction.message.edit(view=self)
 
     @ui.button(label='Enter Matchmaking', style=ButtonStyle.primary)
     async def matchmaking(self, interaction: Interaction, button: ui.Button):
+        # Enter the user into matchmaking and notify
         await self.pokeduel_cog.enter_matchmaking(interaction.user)
-        await interaction.followup.send("Entering matchmaking...", ephemeral=True)
+        await interaction.response.send_message("You have been entered into matchmaking.")
+
         button.label = "Matchmaking Entered"
         button.disabled = True
         await interaction.message.edit(view=self)

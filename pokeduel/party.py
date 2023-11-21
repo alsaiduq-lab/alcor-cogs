@@ -59,9 +59,14 @@ class PartyButtonView(View):
         self.user_id = user_id
         self.refresh_view()
 
-    def refresh_view(self):
+    async def refresh_view(self):
         self.clear_items()
         party = self.db.get_user_party(self.user_id)
+
+        if party is None:
+            await self.ctx.send("No party data found. Please set up your party first.")
+            return
+
         for i, pokemon in enumerate(party):
             self.add_item(Button(style=ButtonStyle.primary, label=pokemon, custom_id=f"remove_{i}"))
 
