@@ -1,17 +1,18 @@
-import json
-import random
 import asyncio
-from datetime import datetime, timedelta
-from redbot.core import commands, Config
-from discord import DiscordException, Interaction, ui, ButtonStyle, SelectOption, Member, Embed, File
-from discord.ui import View
+import json
 import os
+from datetime import datetime, timedelta
 
-from pokeduel.gatcha import ShopView
-from pokeduel.party import PartyManager, PartyButtonView
-from pokeduel.ingame import GameManager
-from pokeduel.utils.board import BoardManager
-from pokeduel.data.database import DatabaseManager
+import discord
+from discord import Interaction, ui, ButtonStyle, Member, Embed
+from discord.ui import View, Button
+from redbot.core import commands, Config
+
+from .data.database import DatabaseManager
+from .gatcha import ShopView
+from .ingame import GameManager
+from .party import PartyManager, PartyButtonView
+from .utils.board import BoardManager
 
 
 # predicate saves
@@ -22,25 +23,27 @@ def has_started_save():
     return commands.check(predicate)
 
 
-def load_json(file_path):
-    with open(file_path, 'r') as file:
-        return json.load(file)
-
-
 class PokeDuel(commands.Cog):
     def __init__(self, bot):
         super().__init__()
         self.bot = bot
-        self._load_config()
+        self._load_data()
         self.db = DatabaseManager(self.db_path)
         self._initialize_managers()
         self._register_default_user_config()
+        self.matchmaking_queue = {}
+        self.ongoing_duels = {}
 
-    def _load_config(self):
+    @staticmethod
+    def load_json(file_path):
+        with open(file_path, 'r') as file:
+            return json.load(file)
+
+    def _load_data(self):
         dir_path = os.path.dirname(os.path.realpath(__file__))
+        self.db_path = os.path.join(dir_path, 'data', 'pokeduel_db.sqlite')
         self.plates_data = self.load_json(os.path.join(dir_path, 'data', 'plates.json'))
         self.pokemon_data = self.load_json(os.path.join(dir_path, 'data', 'pokemon.json'))
-        self.db_path = os.path.join(dir_path, 'data', 'pokeduel_db.sqlite')
 
     def _initialize_managers(self):
         self.party_manager = PartyManager(self.bot, self.db_path)
@@ -77,7 +80,7 @@ class PokeDuel(commands.Cog):
     async def pokeduel_customize(self, ctx):
         user_id = ctx.author.id
         party_button_view = PartyButtonView(self.db, user_id)
-        await party_button_view.refresh(ctx)
+        await party_button_view.refresh_view()
 
     @pokeduel.command(name="duel")
     @has_started_save()
@@ -117,11 +120,34 @@ class PokeDuel(commands.Cog):
     def prepare_for_duel(self, player1, player2):
         self.setup_game(player1)
         self.setup_game(player2)
-        self.game_manager.start_game(player1, player2)
+        self.game_manager.start_duel(player1, player2)
 
-    def setup_game(self, player):
-        self.board_manager.setup_board()
-        self.party_manager.select_party(player)
+    async def start_duel(self, player1, player2):
+        # Notify players immediately and start the duel without unnecessary delays
+        message = "Your duel is starting now!"
+        await self.bot.send_ephemeral_message(player1, message)
+        await self.bot.send_ephemeral_message(player2, message)
+
+        # Begin the turn-based duel
+        current_player, other_player = player1, player2
+        while not self.is_duel_finished():
+            # Get the board state and send to the current player
+            board = self.board_manager.get_board_for_player(current_player)
+            await self.bot.send_message(current_player, f"Your turn! Here's the board:\n{board}")
+
+            # Handle the current player's turn (this would be your game logic)
+            # ...
+
+            # Switch players at the end of the turn
+            current_player, other_player = other_player, current_player
+
+        # Conclude the duel and announce the winner or draw
+        # ...
+
+    async def send_duel_start_notifications(self, player1, player2):
+        message = "Your duel is about to start in 15 seconds. Get ready!"
+        await self.bot.send_ephemeral_message(player1, message)
+        await self.bot.send_ephemeral_message(player2, message)
 
     def is_player_available_for_duel(self, player):
         return self.db.is_player_available(player.id)
@@ -129,19 +155,59 @@ class PokeDuel(commands.Cog):
     async def enter_matchmaking(self, player):
         self.matchmaking_queue[player.id] = datetime.now()
         await asyncio.sleep(30)  # Wait for 30 seconds
-        if player.id in self.matchmaking_queue:
-            await self.find_match(player)
+        await self.find_match(player)
 
     async def find_match(self, player):
         for opponent_id, time_joined in self.matchmaking_queue.items():
-            if opponent_id != player.id and datetime.now() - time_joined < timedelta(seconds=30):
+            if opponent_id != player.id and datetime.now() - time_joined < timedelta(minutes=5):
                 self.prepare_for_duel(player, self.bot.get_user(opponent_id))
                 self.leave_matchmaking(player)
                 self.leave_matchmaking(self.bot.get_user(opponent_id))
-                break
+                return True
+        return False
 
     def leave_matchmaking(self, player):
         self.matchmaking_queue.pop(player.id, None)
+
+    def setup_game(self, player):
+        # Example setup logic (modify as per your game's requirements)
+        initial_resources = 1000
+        self.db.initialize_player_game_state(player.id, initial_resources)
+
+    def get_game_status(self, user):
+        if user.id in self.bot.matchmaking_queue:
+            return "In matchmaking queue"
+        elif user.id in self.bot.ongoing_duels:
+            return "Currently in a duel"
+        else:
+            return "Idle"
+
+    @staticmethod
+    def get_help_message():
+        return ("Welcome to PokeDuel! Here are some commands you can use:\n"
+                "- `!pokeduel start`: Start your journey in PokeDuel\n"
+                "- `!pokeduel shop`: Visit the shop\n"
+                "- `!pokeduel customize`: Customize your party\n"
+                "- `!pokeduel duel <user>`: Challenge another player to a duel")
+
+    def is_duel_finished(self):
+        # Example condition: check if one player has won or a draw has occurred
+        # Replace this with your specific duel completion logic
+        if self.win_condition_met():
+            return True
+        elif self.draw_condition_met():
+            return True
+        return False
+
+    @staticmethod
+    def win_condition_met():
+        # Implement the logic to check if a player has won the game
+        return False  # Replace with actual condition
+
+    @staticmethod
+    def draw_condition_met():
+        # Implement the logic to check if the game is a draw
+        return False  # Replace with actual condition
 
 
 class StartGameView(View):
@@ -159,13 +225,14 @@ class StartGameView(View):
         await self.ctx.send("Game selection timed out.")
 
     async def on_error(self, interaction, error, item):
-        await interaction.response.send_message(f"An error occurred. Please try again or ping the dev")
+        await interaction.followup.send()(f"An error occurred. Please try again or ping the dev", ephemeral=True)
 
 
 class PokeDuelButtons(ui.View):
-    def __init__(self, bot):
+    def __init__(self, bot, pokeduel_cog):
         super().__init__()
         self.bot = bot
+        self.pokeduel_cog = pokeduel_cog
 
         self.add_item(ui.Button(label='Game Status', style=ButtonStyle.grey, custom_id='game_status'))
         self.add_item(ui.Button(label='Help', style=ButtonStyle.grey, custom_id='help'))
@@ -173,30 +240,24 @@ class PokeDuelButtons(ui.View):
 
     @ui.button(label='Game Status', style=ButtonStyle.grey)
     async def game_status(self, interaction: Interaction, button: ui.Button):
-        game_status = self.get_game_status(interaction.user)
-
-        await interaction.response.send_message(
-            f"Game Status: {game_status}" if game_status else "No active game found.")
-
+        status = self.pokeduel_cog.get_game_status(interaction.user)
+        await interaction.followup.send()(f"Game Status: {status}")
         button.label = "Status Checked"
         button.disabled = True
-
         await interaction.message.edit(view=self)
 
     @ui.button(label='Help', style=ButtonStyle.grey)
     async def help(self, interaction: Interaction, button: ui.Button):
-        help_message = self.get_help_message()
-        await interaction.response.send_message(help_message)
-
+        help_message = self.pokeduel_cog.get_help_message()
+        await interaction.followup.send()(help_message)
         button.label = "Help Viewed"
         button.disabled = True
         await interaction.message.edit(view=self)
 
     @ui.button(label='Enter Matchmaking', style=ButtonStyle.primary)
     async def matchmaking(self, interaction: Interaction, button: ui.Button):
-        await self.enter_matchmaking(interaction.user)
-        await interaction.response.send_message("Searching for an opponent...")
-
+        await self.pokeduel_cog.enter_matchmaking(interaction.user)
+        await interaction.followup.send("Entering matchmaking...", ephemeral=True)
         button.label = "Matchmaking Entered"
         button.disabled = True
         await interaction.message.edit(view=self)

@@ -87,6 +87,12 @@ class DatabaseManager:
             cur = self.conn.execute("SELECT EXISTS(SELECT 1 FROM users WHERE id = ?)", (user_id,))
             return cur.fetchone()[0] == 1
 
+    def is_player_available(self, user_id):
+        pass
+
+    def initialize_player_game_state(self, user_id, initial_resources):
+        pass
+
 
 class PokemonSelect(Select):
     def __init__(self, db, user_id, placeholder, callback_method):

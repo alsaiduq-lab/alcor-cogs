@@ -30,6 +30,12 @@ class BoardManager:
                 button = self.create_button_for_cell(x, y)
                 view.add_item(button)
 
+    def setup_board(self):
+        pass
+
+    def get_board_for_player(self, current_player):
+        pass
+
 
 class BoardVisualizer:
     def __init__(self, board_manager):

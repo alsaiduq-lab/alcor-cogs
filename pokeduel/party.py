@@ -15,6 +15,9 @@ class PartyManager(commands.Cog):
         view = PartyButtonView(self.db_manager, ctx.author.id)
         await ctx.send("Your party:", view=view)
 
+    def select_party(self, player):
+        pass
+
 
 class PokemonSelect(Select):
     def __init__(self, db, user_id, placeholder, callback_method, is_z_move_select=False):
