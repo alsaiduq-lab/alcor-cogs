@@ -61,29 +61,17 @@ class PokeDuel(commands.Cog):
 
     @pokeduel.command(name="start")
     async def pokeduel_start(self, ctx):
-        user_id = ctx.author.id
         embed = Embed(title="Welcome to PokeDuel!", color=0x00ff00)
 
-        if self.is_new_player(user_id):
-            self.initialize_new_player(user_id)
-            embed.description = "Here's how you can get started: [Placeholder Quick Start Guide]"
-        else:
-            embed.description = "Welcome back! Resuming your existing game."
-
-        embed.set_image(url="attachment://welcome.png")
-
         file_path = './welcome.png'
-        with open(file_path, 'rb') as file:
-            await ctx.send(file=File(file, 'welcome.png'), embed=embed)
+        await ctx.send(file=discord.File(file_path, filename='welcome.png'), embed=embed)
 
     @pokeduel.command(name="shop")
     async def pokeduel_shop(self, ctx):
         embed = Embed(title="PokeDuel Shop", description="Welcome to the shop!", color=0x00ff00)
-        embed.set_image(url="attachment://shop.png")
 
         file_path = './shop.png'
-        with open(file_path, 'rb') as file:
-            await ctx.send(file=File(file, 'shop.png'), embed=embed)
+        await ctx.send(file=discord.File(file_path, filename='shop.png'), embed=embed)
 
     @pokeduel.command(name="customize")
     async def pokeduel_customize(self, ctx):
@@ -100,7 +88,7 @@ class PokeDuel(commands.Cog):
         self.prepare_for_duel(ctx.author, opponent)
         await ctx.send(f"Duel between {ctx.author.mention} and {opponent.mention} has started!")
 
-    def is_duel_ineligible(self, ctx, opponent):
+    async def is_duel_ineligible(self, ctx, opponent):
         player = ctx.author
         queue_status = self.matchmaking_queue.get(player.id) or self.matchmaking_queue.get(opponent.id)
         duel_status = self.ongoing_duels.get(player.id) or self.ongoing_duels.get(opponent.id)
