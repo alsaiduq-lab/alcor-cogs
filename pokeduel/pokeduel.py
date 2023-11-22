@@ -64,36 +64,31 @@ class PokeDuel(commands.Cog):
 
     @pokeduel.command(name="start")
     async def pokeduel_start(self, ctx):
-        embed = Embed(title="Welcome to PokeDuel!", color=0x00ff00)
+        user_id = ctx.author.id
+        if self.is_new_player(user_id):
+            self.initialize_new_player(user_id)
+            embed = Embed(title="Welcome to PokeDuel!",
+                          description="You've received 5000 crystals to start your journey. Let's visit the shop to gear up!",
+                          color=0x00ff00)
 
-        dir_path = os.path.dirname(os.path.realpath(__file__))
-        file_name = 'welcome.png'
-        file_path = None
+            shop_button = Button(style=ButtonStyle.primary, label="Visit Shop", custom_id="visit_shop")
+            shop_button.callback = self.open_shop
 
-        for root, dirs, files in os.walk(dir_path):
-            if file_name in files:
-                file_path = os.path.join(root, file_name)
-                break
-        if file_path and os.path.exists(file_path):
-            await ctx.send(file=discord.File(file_path, filename=file_name), embed=embed)
+            await ctx.send(embed=embed, view=View(shop_button))
         else:
-            await ctx.send("Welcome to PokeDuel! (Image not found)", embed=embed)
+            await ctx.send("Resuming your existing game.")
 
-    @pokeduel.command(name="shop")
-    async def pokeduel_shop(self, ctx):
-        embed = Embed(title="PokeDuel Shop", description="Welcome to the shop!", color=0x00ff00)
+    async def open_shop(self, interaction: discord.Interaction):
+        shop_view = ShopView(self.db_path, self.pokemon_data, self.plates_data)
+        embed = Embed(title="PokeDuel Shop", description="Explore the shop and gear up for your adventures!", color=0x00ff00)
         dir_path = os.path.dirname(os.path.realpath(__file__))
         file_name = 'shop.png'
-        file_path = None
+        file_path = os.path.join(dir_path, 'data', file_name)
 
-        for root, dirs, files in os.walk(dir_path):
-            if file_name in files:
-                file_path = os.path.join(root, file_name)
-                break
-        if file_path and os.path.exists(file_path):
-            await ctx.send(file=discord.File(file_path, filename=file_name), embed=embed)
+        if os.path.exists(file_path):
+            await interaction.message.edit(file=discord.File(file_path, filename=file_name), embed=embed, view=shop_view, ephemeral=True)
         else:
-            await ctx.send("Welcome to the PokeDuel Shop!", embed=embed)
+            await interaction.message.edit("Welcome to the PokeDuel Shop!", embed=embed, view=shop_view, ephemeral=True)
 
     @pokeduel.command(name="customize")
     async def pokeduel_customize(self, ctx):
@@ -102,8 +97,8 @@ class PokeDuel(commands.Cog):
         if party is None:
             await ctx.send("No party data found for your account.")
         else:
-            party_button_view = PartyButtonView(self.db, user_id)
-            await party_button_view.refresh_view()
+            party_view = PartyButtonView(self.db, user_id)
+            await ctx.send("Manage your party:", view=party_view)
 
     @pokeduel.command(name="duel")
     @has_started_save()
@@ -257,36 +252,31 @@ class PokeDuelButtons(ui.View):
         self.bot = bot
         self.pokeduel_cog = pokeduel_cog
 
+        # Add buttons
         self.add_item(ui.Button(label='Game Status', style=ButtonStyle.grey, custom_id='game_status'))
         self.add_item(ui.Button(label='Help', style=ButtonStyle.grey, custom_id='help'))
         self.add_item(ui.Button(label='Enter Matchmaking', style=ButtonStyle.primary, custom_id='matchmaking'))
 
     @ui.button(label='Game Status', style=ButtonStyle.grey)
     async def game_status(self, interaction: Interaction, button: ui.Button):
-        # Get and display the game status
         status = self.pokeduel_cog.get_game_status(interaction.user)
-        await interaction.response.send_message(f"Your Game Status: {status}")
+        await interaction.message.edit(f"Your Game Status: {status}", ephemeral=True)
 
-        button.label = "Status Checked"
         button.disabled = True
         await interaction.message.edit(view=self)
 
     @ui.button(label='Help', style=ButtonStyle.grey)
     async def help(self, interaction: Interaction, button: ui.Button):
-        # Display a help message
         help_message = self.pokeduel_cog.get_help_message()
-        await interaction.response.send_message(help_message)
+        await interaction.message.edit(help_message, ephemeral=True)
 
-        button.label = "Help Viewed"
         button.disabled = True
         await interaction.message.edit(view=self)
 
     @ui.button(label='Enter Matchmaking', style=ButtonStyle.primary)
     async def matchmaking(self, interaction: Interaction, button: ui.Button):
-        # Enter the user into matchmaking and notify
-        await self.pokeduel_cog.enter_matchmaking(interaction.user)
-        await interaction.response.send_message("You have been entered into matchmaking.")
+        self.pokeduel_cog.enter_matchmaking(interaction.user)
+        await interaction.message.edit("You have been entered into matchmaking.", ephemeral=True)
 
-        button.label = "Matchmaking Entered"
         button.disabled = True
         await interaction.message.edit(view=self)
