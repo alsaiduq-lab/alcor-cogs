@@ -276,7 +276,7 @@ class ShopView(View):
         # Logic to display the user's inventory
         pass
 
-    async def roll_callback(self, interaction, roll_count):
+    async def single_roll_callback(self, interaction, roll_count):
         user_id = interaction.user.id
         crystal_cost = 50 if roll_count == 1 else 500
         success, message = self.handle_roll(user_id, roll_count, crystal_cost)
