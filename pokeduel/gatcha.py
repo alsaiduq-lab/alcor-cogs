@@ -56,7 +56,7 @@ def process_pokemon_data(pokemon_data):
 def process_plates_data(plates_data):
     processed_data = []
 
-    for plate in plates_data['plates']:
+    for plate in plates_data:
         cost = int(plate["Cost"]) if plate["Cost"].isdigit() else 0
 
         plate_info = {
@@ -70,6 +70,7 @@ def process_plates_data(plates_data):
         processed_data.append(plate_info)
 
     return processed_data
+
 
 
 def create_shop_data_template(pokemon_data, plates_data, num_pokemon=5, num_plates=3):
