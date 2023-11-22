@@ -77,7 +77,6 @@ def process_plates_data(plates_data):
 
 
 def create_shop_data_template(pokemon_data, plates_data, num_pokemon=5, num_plates=3):
-
     if isinstance(pokemon_data, dict):
         pokemon_list = [{'name': name, **details} for name, details in pokemon_data.items()]
     else:
@@ -154,16 +153,24 @@ class ShopView(View):
         self.pokemon_shop_data = shop_data['pokemon']
         self.plates_shop_data = shop_data['plates']
 
-        view_inventory_button = Button(label='View Inventory', style=ButtonStyle.secondary, custom_id='view_inventory')
-        view_inventory_button.callback = self.view_inventory_callback
-        self.add_item(view_inventory_button)
+        self.view_inventory_button = Button(label='View Inventory', style=ButtonStyle.secondary,
+                                            custom_id='view_inventory')
+        self.view_inventory_button.callback = self.view_inventory_callback
+        self.add_item(self.view_inventory_button)
 
-        check_balance_button = Button(label='Check Balance', style=ButtonStyle.secondary, custom_id='check_balance')
-        check_balance_button.callback = self.check_balance_callback
-        self.add_item(check_balance_button)
+        self.check_balance_button = Button(label='Check Balance', style=ButtonStyle.secondary,
+                                           custom_id='check_balance')
+        self.check_balance_button.callback = self.check_balance_callback
+        self.add_item(self.check_balance_button)
 
-        self.single_roll_button = None
-        self.multi_roll_button = None
+        self.single_roll_button = Button(label='Roll', style=ButtonStyle.secondary, custom_id='roll')
+        self.single_roll_button.callback = self.single_roll_callback
+        self.add_item(self.single_roll_button)
+
+        self.multi_roll_button = Button(label='Multi Roll', style=ButtonStyle.secondary, custom_id='multi_roll')
+        self.multi_roll_button.callback = self.multi_roll_callback
+        self.add_item(self.multi_roll_button)
+
         self.flash_sale_button = None
         self.flash_sale_pokemon = []
 
