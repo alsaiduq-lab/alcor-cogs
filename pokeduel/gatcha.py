@@ -190,11 +190,10 @@ class ShopView(View):
 
     def prepare_shop_data(self, pokemon_data, plates_data):
         self.pokemon_shop_data = process_pokemon_data(pokemon_data)
-        self.plates_shop_data = process_plates_data(plates_data)
+        self.plates_shop_data = process_plates_data(plates_data["plates"])
         return process_pokemon_data(pokemon_data), process_plates_data(plates_data)
 
     def initialize_buttons(self):
-        # Initialize view inventory, check balance, roll, and multi-roll buttons
         self.add_item(self.create_button('View Inventory', 'view_inventory', self.view_inventory_callback))
         self.add_item(self.create_button('Check Balance', 'check_balance', self.check_balance_callback))
         self.add_item(self.create_button('Roll', 'roll', self.single_roll_callback))
