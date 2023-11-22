@@ -71,10 +71,12 @@ class PokeDuel(commands.Cog):
                           description="You've received 5000 crystals to start your journey. Let's visit the shop to gear up!",
                           color=0x00ff00)
 
+            view = View()
             shop_button = Button(style=ButtonStyle.primary, label="Visit Shop", custom_id="visit_shop")
             shop_button.callback = self.open_shop
+            view.add_item(shop_button)
 
-            await ctx.send(embed=embed, view=View(shop_button))
+            await ctx.send(embed=embed, view=view)
         else:
             await ctx.send("Resuming your existing game.")
 
