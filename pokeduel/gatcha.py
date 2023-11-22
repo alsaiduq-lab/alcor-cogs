@@ -154,13 +154,13 @@ class ShopView(View):
         self.pokemon_shop_data = shop_data['pokemon']
         self.plates_shop_data = shop_data['plates']
 
-        self.view_inventory_button = Button(label='View Inventory', style=ButtonStyle.secondary, custom_id='view_inventory')
-        self.view_inventory_button.callback = self.view_inventory_callback
-        self.add_item(self.view_inventory_button)
+        view_inventory_button = Button(label='View Inventory', style=ButtonStyle.secondary, custom_id='view_inventory')
+        view_inventory_button.callback = self.view_inventory_callback
+        self.add_item(view_inventory_button)
 
-        self.check_balance_button = Button(label='Check Balance', style=ButtonStyle.secondary, custom_id='check_balance')
-        self.check_balance_button.callback = self.check_balance_callback
-        self.add_item(self.check_balance_button)
+        check_balance_button = Button(label='Check Balance', style=ButtonStyle.secondary, custom_id='check_balance')
+        check_balance_button.callback = self.check_balance_callback
+        self.add_item(check_balance_button)
 
         self.single_roll_button = None
         self.multi_roll_button = None
