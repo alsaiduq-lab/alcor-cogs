@@ -148,7 +148,8 @@ class ShopView(View):
     def __init__(self, db_path, init_pokemon_data, init_plates_data):
         super().__init__()
         self.db = DatabaseManager(db_path)
-        shop_data = create_shop_data_template(init_pokemon_data, init_plates_data)
+        self.pokemon_shop_data, self.plates_shop_data = self.prepare_shop_data(init_pokemon_data, init_plates_data)
+        self.initialize_buttons()
 
         self.pokemon_shop_data = shop_data['pokemon']
         self.plates_shop_data = shop_data['plates']
@@ -187,6 +188,30 @@ class ShopView(View):
             for pokemon in self.pokemon_shop_data
         ]
         self.initialize_roll_buttons()
+
+    def prepare_shop_data(self, pokemon_data, plates_data):
+        self.pokemon_shop_data = process_pokemon_data(pokemon_data)
+        self.plates_shop_data = process_plates_data(plates_data)
+        return process_pokemon_data(pokemon_data), process_plates_data(plates_data)
+
+    def initialize_buttons(self):
+        # Initialize view inventory, check balance, roll, and multi-roll buttons
+        self.add_item(self.create_button('View Inventory', 'view_inventory', self.view_inventory_callback))
+        self.add_item(self.create_button('Check Balance', 'check_balance', self.check_balance_callback))
+        self.add_item(self.create_button('Roll', 'roll', self.single_roll_callback))
+        self.add_item(self.create_button('Multi Roll', 'multi_roll', self.multi_roll_callback))
+
+    @staticmethod
+    def process_shop_data(pokemon_data, plates_data):
+        process_for_shop_pokemon_data = process_pokemon_data(pokemon_data)
+        process_for_shop_plates_data = process_plates_data(plates_data)
+        return process_for_shop_pokemon_data, process_for_shop_plates_data
+
+    @staticmethod
+    def create_button(label, custom_id, callback_method, style=ButtonStyle.secondary, roll_count=1):
+        button = Button(label=label, style=style, custom_id=custom_id)
+        button.callback = lambda interaction: callback_method(interaction, roll_count)
+        return button
 
     def initialize_roll_buttons(self):
         self.single_roll_button = Button(label='Single Roll (50 Crystals)', style=ButtonStyle.primary,
@@ -240,16 +265,52 @@ class ShopView(View):
         flash_sale_msg += "\n".join([f"{pokemon['name']} ({pokemon['rarity']})" for pokemon in self.flash_sale_pokemon])
         await interaction.response.send_message(flash_sale_msg, ephemeral=True)
 
-    def roll(self):
-        if self.pokemon_shop_data:
-            rolled_pokemon = random.choice(self.pokemon_shop_data)
-            return rolled_pokemon['name'], rolled_pokemon['rarity']
-        else:
-            return None, None
+    def handle_roll(self, user_id, roll_count, crystal_cost):
+        if not self.update_crystals(user_id, -crystal_cost):
+            return False, "Not enough crystals."
+        rolls = [self.roll() for _ in range(roll_count)]
+        self.add_to_inventory(user_id, rolls)
+        roll_results = ', '.join([f"{rarity} {pokemon}" for pokemon, rarity in rolls if pokemon])
+        return True, f"Roll Results: {roll_results}"
 
     async def view_inventory_callback(self, interaction: Interaction):
         # Logic to display the user's inventory
         pass
+
+    async def roll_callback(self, interaction, roll_count):
+        user_id = interaction.user.id
+        crystal_cost = 50 if roll_count == 1 else 500
+        success, message = self.handle_roll(user_id, roll_count, crystal_cost)
+        await interaction.response.send_message(message, ephemeral=True)
+
+    async def multi_roll_callback(self, interaction: Interaction):
+        user_id = interaction.user.id
+        current_crystals = self.db.get_crystals(user_id)
+
+        if current_crystals < 500:
+            await interaction.response.send_message("Not enough crystals for a multi roll.", ephemeral=True)
+            return
+
+        self.db.update_crystals(user_id, current_crystals - 500)
+        rolls = []
+        for _ in range(10):
+            rolled_pokemon = self.roll()
+            if rolled_pokemon:
+                pokemon_name, rarity = rolled_pokemon
+                self.add_to_inventory(user_id, pokemon_name, rarity)
+                rolls.append(f"{rarity} {pokemon_name}")
+
+        if rolls:
+            await interaction.response.send_message(f"Multi roll results: {', '.join(rolls)}", ephemeral=True)
+        else:
+            await interaction.response.send_message("No Pokémon found to roll.", ephemeral=True)
+
+    def update_crystals(self, user_id, amount):
+        current_crystals = self.db.get_crystals(user_id)
+        if current_crystals + amount < 0:
+            return False
+        self.db.update_crystals(user_id, current_crystals + amount)
+        return True
 
     def add_to_inventory(self, user_id, item, rarity):
         self.db.add_to_inventory(user_id, item, rarity)
