@@ -75,6 +75,7 @@ def process_plates_data(plates_data):
 
     return processed_data
 
+
 def create_shop_data_template(pokemon_data, plates_data, num_pokemon=5, num_plates=3):
     if isinstance(pokemon_data, dict):
         pokemon_list = [{'name': name, **details} for name, details in pokemon_data.items()]
@@ -151,7 +152,7 @@ class ShopView(View):
         self.initialize_buttons()
 
         self.pokemon_shop_data = shop_data['pokemon']
-        self.plates_shop_data = shop_data['plates']
+        self.plates_shop_data = process_plates_data(plates_data["plates"])
 
         self.view_inventory_button = Button(label='View Inventory', style=ButtonStyle.secondary,
                                             custom_id='view_inventory')
