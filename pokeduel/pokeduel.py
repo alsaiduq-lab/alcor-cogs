@@ -49,7 +49,7 @@ class PokeDuel(commands.Cog):
         self.party_manager = PartyManager(self.bot, self.db_path)
         self.board_manager = BoardManager(self.party_manager)
         self.game_manager = GameManager(self.bot, self.db_path, self.party_manager)
-        self.gacha = ShopView(self.db_path, self.pokemon_data, self.plates_data)
+        self.gacha = ShopView(self.db_path, self.pokemon_data, self.plates_data["plates"])
 
     def _register_default_user_config(self):
         default_user = {'key1': 'default_value1', 'key2': 'default_value2'}
