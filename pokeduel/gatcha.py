@@ -3,7 +3,7 @@ import random
 import os
 import logging
 import re
-from discord import ButtonStyle, SelectOption
+from discord import ButtonStyle, SelectOption, Interaction
 from discord.ui import Select, View, Button
 from .data.database import DatabaseManager
 
