@@ -191,7 +191,7 @@ class ShopView(View):
 
     def prepare_shop_data(self, pokemon_data, plates_data):
         self.pokemon_shop_data = process_pokemon_data(pokemon_data)
-        self.plates_shop_data = process_plates_data(plates_data["plates"])
+        self.plates_shop_data = process_plates_data(plates_data)
         return process_pokemon_data(pokemon_data), process_plates_data(plates_data)
 
     def initialize_buttons(self):
