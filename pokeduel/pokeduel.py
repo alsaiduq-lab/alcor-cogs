@@ -60,35 +60,49 @@ class PokeDuel(commands.Cog):
     async def pokeduel(self, ctx):
         """Commands for PokeDuel."""
         if ctx.invoked_subcommand is None:
-            await ctx.send_help('pokeduel')
+            await ctx.get_help_message('pokeduel')
 
     @pokeduel.command(name="start")
     async def pokeduel_start(self, ctx):
         user_id = ctx.author.id
         if self.is_new_player(user_id):
             self.initialize_new_player(user_id)
+
             embed = Embed(title="Welcome to PokeDuel!",
                           description="You've received 5000 crystals to start your journey. Let's visit the shop to gear up!",
                           color=0x00ff00)
+
+            dir_path = os.path.dirname(os.path.realpath(__file__))
+            file_name = 'welcome.png'
+            file_path = os.path.join(dir_path, file_name)
 
             view = View()
             shop_button = Button(style=ButtonStyle.primary, label="Visit Shop", custom_id="visit_shop")
             shop_button.callback = self.open_shop
             view.add_item(shop_button)
 
-            await ctx.send(embed=embed, view=view)
+            if os.path.exists(file_path):
+                await ctx.send(file=discord.File(file_path, filename=file_name), embed=embed, view=view)
+            else:
+                await ctx.send("Welcome to PokeDuel!", embed=embed, view=view)
         else:
             await ctx.send("Resuming your existing game.")
 
+    def initialize_new_player(self, user_id):
+        self.db.initialize_new_user(user_id, 5000)
+        # Add additional initialization logic here if needed
+
     async def open_shop(self, interaction: discord.Interaction):
         shop_view = ShopView(self.db_path, self.pokemon_data, self.plates_data)
-        embed = Embed(title="PokeDuel Shop", description="Explore the shop and gear up for your adventures!", color=0x00ff00)
+        embed = Embed(title="PokeDuel Shop", description="Explore the shop and gear up for your adventures!",
+                      color=0x00ff00)
         dir_path = os.path.dirname(os.path.realpath(__file__))
         file_name = 'shop.png'
         file_path = os.path.join(dir_path, 'data', file_name)
 
         if os.path.exists(file_path):
-            await interaction.message.edit(file=discord.File(file_path, filename=file_name), embed=embed, view=shop_view, ephemeral=True)
+            await interaction.message.edit(file=discord.File(file_path, filename=file_name), embed=embed,
+                                           view=shop_view, ephemeral=True)
         else:
             await interaction.message.edit("Welcome to the PokeDuel Shop!", embed=embed, view=shop_view, ephemeral=True)
 
@@ -135,35 +149,22 @@ class PokeDuel(commands.Cog):
     def is_new_player(self, user_id):
         return not self.db.has_started_save(user_id)
 
-    def initialize_new_player(self, user_id):
-        self.db.initialize_new_user(user_id, 5000)
-
     def prepare_for_duel(self, player1, player2):
         self.setup_game(player1)
         self.setup_game(player2)
         self.game_manager.start_duel(player1, player2)
 
     async def start_duel(self, player1, player2):
-        # Notify players immediately and start the duel without unnecessary delays
         message = "Your duel is starting now!"
         await self.bot.send_ephemeral_message(player1, message)
         await self.bot.send_ephemeral_message(player2, message)
 
-        # Begin the turn-based duel
         current_player, other_player = player1, player2
         while not self.is_duel_finished():
-            # Get the board state and send to the current player
             board = self.board_manager.get_board_for_player(current_player)
             await self.bot.send_message(current_player, f"Your turn! Here's the board:\n{board}")
 
-            # Handle the current player's turn (this would be your game logic)
-            # ...
-
-            # Switch players at the end of the turn
             current_player, other_player = other_player, current_player
-
-        # Conclude the duel and announce the winner or draw
-        # ...
 
     async def send_duel_start_notifications(self, player1, player2):
         message = "Your duel is about to start in 15 seconds. Get ready!"
@@ -191,7 +192,6 @@ class PokeDuel(commands.Cog):
         self.matchmaking_queue.pop(player.id, None)
 
     def setup_game(self, player):
-        # Example setup logic (modify as per your game's requirements)
         initial_resources = 1000
         self.db.initialize_player_game_state(player.id, initial_resources)
 
@@ -212,8 +212,6 @@ class PokeDuel(commands.Cog):
                 "- `!pokeduel duel <user>`: Challenge another player to a duel")
 
     def is_duel_finished(self):
-        # Example condition: check if one player has won or a draw has occurred
-        # Replace this with your specific duel completion logic
         if self.win_condition_met():
             return True
         elif self.draw_condition_met():
@@ -222,12 +220,10 @@ class PokeDuel(commands.Cog):
 
     @staticmethod
     def win_condition_met():
-        # Implement the logic to check if a player has won the game
         return False  # Replace with actual condition
 
     @staticmethod
     def draw_condition_met():
-        # Implement the logic to check if the game is a draw
         return False  # Replace with actual condition
 
 
@@ -255,7 +251,6 @@ class PokeDuelButtons(ui.View):
         self.bot = bot
         self.pokeduel_cog = pokeduel_cog
 
-        # Add buttons
         self.add_item(ui.Button(label='Game Status', style=ButtonStyle.grey, custom_id='game_status'))
         self.add_item(ui.Button(label='Help', style=ButtonStyle.grey, custom_id='help'))
         self.add_item(ui.Button(label='Enter Matchmaking', style=ButtonStyle.primary, custom_id='matchmaking'))
