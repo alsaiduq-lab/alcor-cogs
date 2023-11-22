@@ -54,12 +54,9 @@ def process_pokemon_data(pokemon_data):
 
 
 def process_plates_data(plates_data):
-    print("Type of plates_data:", type(plates_data))
-    print("Content of plates_data:", plates_data)
-
     processed_data = []
 
-    for plate in plates_data:
+    for plate in plates_data['plates']:
         cost = int(plate["Cost"]) if plate["Cost"].isdigit() else 0
 
         plate_info = {
@@ -71,7 +68,6 @@ def process_plates_data(plates_data):
             "effect": plate["Effect"]
         }
         processed_data.append(plate_info)
-        print("Processed plate info:", plate_info)
 
     return processed_data
 
