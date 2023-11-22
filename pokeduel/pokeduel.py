@@ -96,8 +96,9 @@ class PokeDuel(commands.Cog):
     async def pokeduel_customize(self, ctx):
         user_id = ctx.author.id
         party = self.db.get_user_party(user_id)
+
         if party is None:
-            await ctx.send("No party data found for your account.")
+            await ctx.send("No party data found for your account. Set up your party first.", ephemeral=True)
         else:
             party_view = PartyButtonView(self.db, user_id)
             await ctx.send("Manage your party:", view=party_view)
