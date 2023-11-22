@@ -148,11 +148,10 @@ class ShopView(View):
     def __init__(self, db_path, init_pokemon_data, init_plates_data):
         super().__init__()
         self.db = DatabaseManager(db_path)
-        self.pokemon_shop_data, self.plates_shop_data = self.prepare_shop_data(init_pokemon_data, init_plates_data)
+        processed_pokemon_data_for_shop, processed_plates_data_for_shop = self.prepare_shop_data(init_pokemon_data, init_plates_data)
+        self.pokemon_shop_data = processed_pokemon_data_for_shop
+        self.plates_shop_data = processed_plates_data_for_shop
         self.initialize_buttons()
-
-        self.pokemon_shop_data = shop_data['pokemon']
-        self.plates_shop_data = process_plates_data(plates_data["plates"])
 
         self.view_inventory_button = Button(label='View Inventory', style=ButtonStyle.secondary,
                                             custom_id='view_inventory')
