@@ -96,7 +96,6 @@ class PokeDuel(commands.Cog):
         shop_view = ShopView(self.db_path, self.pokemon_data, self.plates_data)
         embed = Embed(title="PokeDuel Shop", description="Explore the shop and gear up for your adventures!",
                       color=0x00ff00)
-        await interaction.message.edit(embed=embed, view=shop_view, ephemeral=True)
 
         dir_path = os.path.dirname(os.path.realpath(__file__))
         file_name = 'shop.png'
