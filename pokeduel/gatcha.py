@@ -154,6 +154,9 @@ class ShopView(View):
         self.pokemon_shop_data = shop_data['pokemon']
         self.plates_shop_data = shop_data['plates']
 
+        self.add_item(Button(label='View Inventory', style=ButtonStyle.secondary, custom_id='view_inventory', callback=self.view_inventory_callback))
+        self.add_item(Button(label='Check Balance', style=ButtonStyle.secondary, custom_id='check_balance', callback=self.check_balance_callback()))
+
         self.single_roll_button = None
         self.multi_roll_button = None
         self.flash_sale_button = None
@@ -232,6 +235,10 @@ class ShopView(View):
         else:
             return None, None
 
+    async def view_inventory_callback(self, interaction: Interaction):
+        # Logic to display the user's inventory
+        pass
+
     def add_to_inventory(self, user_id, item, rarity):
         self.db.add_to_inventory(user_id, item, rarity)
 
@@ -268,6 +275,15 @@ class ShopView(View):
             self.flash_sale_pokemon = random.sample(ex_ux_pokemon, 1) + random.sample(other_pokemon, 1)
         else:
             self.flash_sale_pokemon = []
+
+    async def check_balance_callback(self, interaction: Interaction):
+        user_id = interaction.user.id
+        current_dust = self.db.get_dust(user_id)
+        current_crystals = self.db.get_crystals(user_id)
+        embed = Embed(title="Your Balances", color=0x00ff00)
+        embed.add_field(name="Dust", value=f"{current_dust} 💨", inline=True)
+        embed.add_field(name="Crystals", value=f"{current_crystals} 💎", inline=True)
+        await interaction.response.send_message(embed=embed, ephemeral=True)
 
     @staticmethod
     def calculate_dust_cost(rarity):

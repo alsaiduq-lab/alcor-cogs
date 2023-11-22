@@ -60,7 +60,7 @@ class PokeDuel(commands.Cog):
     async def pokeduel(self, ctx):
         """Commands for PokeDuel."""
         if ctx.invoked_subcommand is None:
-            await ctx.get_help_message('pokeduel')
+            await ctx.send_help('pokeduel')
 
     @pokeduel.command(name="start")
     async def pokeduel_start(self, ctx):
@@ -96,13 +96,14 @@ class PokeDuel(commands.Cog):
         shop_view = ShopView(self.db_path, self.pokemon_data, self.plates_data)
         embed = Embed(title="PokeDuel Shop", description="Explore the shop and gear up for your adventures!",
                       color=0x00ff00)
+        await interaction.message.edit(embed=embed, view=shop_view, ephemeral=True)
+
         dir_path = os.path.dirname(os.path.realpath(__file__))
         file_name = 'shop.png'
         file_path = os.path.join(dir_path, 'data', file_name)
 
         if os.path.exists(file_path):
-            await interaction.message.edit(file=discord.File(file_path, filename=file_name), embed=embed,
-                                           view=shop_view, ephemeral=True)
+            await interaction.message.edit(file=discord.File(file_path, filename=file_name), embed=embed, view=shop_view, ephemeral=True)
         else:
             await interaction.message.edit("Welcome to the PokeDuel Shop!", embed=embed, view=shop_view, ephemeral=True)
 
