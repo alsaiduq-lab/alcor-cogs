@@ -93,18 +93,24 @@ class PokeDuel(commands.Cog):
         # Add additional initialization logic here if needed
 
     async def open_shop(self, interaction: discord.Interaction):
-        shop_view = ShopView(self.db_path, self.pokemon_data, self.plates_data)
-        embed = Embed(title="PokeDuel Shop", description="Explore the shop and gear up for your adventures!",
-                      color=0x00ff00)
+        print("open_shop called")
+        try:
+            shop_view = ShopView(self.db_path, self.pokemon_data, self.plates_data)
+            embed = Embed(title="PokeDuel Shop", description="Explore the shop and gear up for your adventures!",
+                          color=0x00ff00)
 
-        dir_path = os.path.dirname(os.path.realpath(__file__))
-        file_name = 'shop.png'
-        file_path = os.path.join(dir_path, 'data', file_name)
+            dir_path = os.path.dirname(os.path.realpath(__file__))
+            file_name = 'shop.png'
+            file_path = os.path.join(dir_path, 'data', file_name)
 
-        if os.path.exists(file_path):
-            await interaction.message.edit(file=discord.File(file_path, filename=file_name), embed=embed, view=shop_view, ephemeral=True)
-        else:
-            await interaction.message.edit("Welcome to the PokeDuel Shop!", embed=embed, view=shop_view, ephemeral=True)
+            if os.path.exists(file_path):
+                await interaction.message.edit(file=discord.File(file_path, filename=file_name), embed=embed,
+                                               view=shop_view, ephemeral=True)
+            else:
+                await interaction.message.edit("Welcome to the PokeDuel Shop!", embed=embed, view=shop_view,
+                                               ephemeral=True)
+        except Exception as e:
+            print(f"Error in open_shop: {e}")
 
     @pokeduel.command(name="customize")
     async def pokeduel_customize(self, ctx):
