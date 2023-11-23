@@ -59,8 +59,7 @@ class PokeDuel(commands.Cog):
     @commands.group(name="pokeduel")
     async def pokeduel(self, ctx):
         """Commands for PokeDuel."""
-        if ctx.invoked_subcommand is None:
-            await ctx.send_help('pokeduel')
+        pass
 
     @pokeduel.command(name="start")
     async def pokeduel_start(self, ctx):
@@ -113,6 +112,7 @@ class PokeDuel(commands.Cog):
             print(f"Error in open_shop: {e}")
 
     @pokeduel.command(name="customize")
+    @has_started_save()
     async def pokeduel_customize(self, ctx):
         user_id = ctx.author.id
         party = self.db.get_user_party(user_id)
@@ -122,6 +122,27 @@ class PokeDuel(commands.Cog):
         else:
             party_view = PartyButtonView(self.db, user_id)
             await ctx.send("Manage your party:", view=party_view)
+
+    @pokeduel.command(name="shop")
+    @has_started_save()
+    async def pokeduel_shop(self, ctx):
+        user_id = ctx.author.id
+        if not self.db.has_started_save(user_id):
+            await ctx.send("You need to start a game first using `pokeduel start`.")
+            return
+
+        shop_view = ShopView(self.db_path, self.pokemon_data, self.plates_data)
+        embed = Embed(title="PokeDuel Shop", description="Explore the shop and gear up for your adventures!",
+                      color=0x00ff00)
+
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+        file_name = 'shop.png'
+        file_path = os.path.join(dir_path, 'data', file_name)
+
+        if os.path.exists(file_path):
+            await ctx.send(file=discord.File(file_path, filename=file_name), embed=embed, view=shop_view)
+        else:
+            await ctx.send("Welcome to the PokeDuel Shop!", embed=embed, view=shop_view)
 
     @pokeduel.command(name="duel")
     @has_started_save()
@@ -209,13 +230,15 @@ class PokeDuel(commands.Cog):
         else:
             return "Idle"
 
-    @staticmethod
-    def get_help_message():
-        return ("Welcome to PokeDuel! Here are some commands you can use:\n"
-                "- `!pokeduel start`: Start your journey in PokeDuel\n"
-                "- `!pokeduel shop`: Visit the shop\n"
-                "- `!pokeduel customize`: Customize your party\n"
-                "- `!pokeduel duel <user>`: Challenge another player to a duel")
+    @commands.command(name="help")
+    async def pokeduel_help(self, ctx):
+        prefix = (await ctx.bot.get_prefix(ctx.message))[0]
+        help_message = (f"Welcome to PokeDuel! Here are some commands you can use:\n"
+                        f"- `{prefix}pokeduel start`: Start your journey in PokeDuel\n"
+                        f"- `{prefix}pokeduel shop`: Visit the shop\n"
+                        f"- `{prefix}pokeduel customize`: Customize your party\n"
+                        f"- `{prefix}pokeduel duel <user>`: Challenge another player to a duel")
+        await ctx.send(help_message)
 
     def is_duel_finished(self):
         if self.win_condition_met():
