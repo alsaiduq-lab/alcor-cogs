@@ -230,7 +230,7 @@ class PokeDuel(commands.Cog):
         else:
             return "Idle"
 
-    @commands.command(name="help")
+    @pokeduel.command(name="help")
     async def pokeduel_help(self, ctx):
         prefix = (await ctx.bot.get_prefix(ctx.message))[0]
         help_message = (f"Welcome to PokeDuel! Here are some commands you can use:\n"
