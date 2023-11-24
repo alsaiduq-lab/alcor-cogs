@@ -198,7 +198,7 @@ class ShopView(View):
             style=ButtonStyle.secondary,
             custom_id=f'roll_{unique_suffix}'
         )
-        self.single_roll_button.callback = lambda interaction: self.single_roll_callback(interaction, 1)
+        self.single_roll_button.callback = lambda interaction: self.single_roll_callback(interaction)
         self.add_item(self.single_roll_button)
 
         self.multi_roll_button = Button(
@@ -206,7 +206,7 @@ class ShopView(View):
             style=ButtonStyle.secondary,
             custom_id=f'multi_roll_{unique_suffix}'
         )
-        self.multi_roll_button.callback = lambda interaction: self.multi_roll_callback(interaction, 10)
+        self.multi_roll_button.callback = lambda interaction: self.multi_roll_callback(interaction)
         self.add_item(self.multi_roll_button)
 
     @staticmethod
