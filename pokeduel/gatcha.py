@@ -187,7 +187,7 @@ class ShopView(View):
             SelectOption(label=pokemon['name'] + " - " + pokemon['strongest_attack'], value=pokemon['name'])
             for pokemon in self.pokemon_shop_data
         ]
-        self.initialize_roll_buttons()
+        self.initialize_buttons()
 
     def prepare_shop_data(self, pokemon_data, plates_data):
         self.pokemon_shop_data = process_pokemon_data(pokemon_data)
