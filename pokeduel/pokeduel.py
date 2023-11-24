@@ -56,12 +56,12 @@ class PokeDuel(commands.Cog):
         self.config = Config.get_conf(self, identifier=10112123, force_registration=True)
         self.config.register_user(**default_user)
 
-    @commands.group(name="pokeduel")
+    @commands.group(name="pduel")
     async def pokeduel(self, ctx):
         """Commands for PokeDuel."""
         pass
 
-    @pokeduel.command(name="start")
+    @pduel.command(name="start")
     async def pokeduel_start(self, ctx):
         user_id = ctx.author.id
         if self.is_new_player(user_id):
@@ -111,7 +111,7 @@ class PokeDuel(commands.Cog):
         except Exception as e:
             print(f"Error in open_shop: {e}")
 
-    @pokeduel.command(name="customize")
+    @pduel.command(name="customize")
     @has_started_save()
     async def pokeduel_customize(self, ctx):
         user_id = ctx.author.id
@@ -123,7 +123,7 @@ class PokeDuel(commands.Cog):
             party_view = PartyButtonView(self.db, user_id)
             await ctx.send("Manage your party:", view=party_view)
 
-    @pokeduel.command(name="shop")
+    @pduel.command(name="shop")
     @has_started_save()
     async def pokeduel_shop(self, ctx):
         user_id = ctx.author.id
@@ -147,7 +147,7 @@ class PokeDuel(commands.Cog):
         except Exception as e:
             await ctx.send(f"An error occurred: {e}")
 
-    @pokeduel.command(name="duel")
+    @pduel.command(name="duel")
     @has_started_save()
     async def pokeduel_duel(self, ctx, opponent: Member):
         if self.is_duel_ineligible(ctx, opponent):
@@ -233,14 +233,14 @@ class PokeDuel(commands.Cog):
         else:
             return "Idle"
 
-    @pokeduel.command(name="help")
+    @pduel.command(name="help")
     async def pokeduel_help(self, ctx):
         prefix = (await ctx.bot.get_prefix(ctx.message))[0]
         help_message = (f"Welcome to PokeDuel! Here are some commands you can use:\n"
-                        f"- `{prefix}pokeduel start`: Start your journey in PokeDuel\n"
-                        f"- `{prefix}pokeduel shop`: Visit the shop\n"
-                        f"- `{prefix}pokeduel customize`: Customize your party\n"
-                        f"- `{prefix}pokeduel duel <user>`: Challenge another player to a duel")
+                        f"- `{prefix}pduel start`: Start your journey in PokeDuel\n"
+                        f"- `{prefix}pduel shop`: Visit the shop\n"
+                        f"- `{prefix}pduel customize`: Customize your party\n"
+                        f"- `{prefix}pduel duel <user>`: Challenge another player to a duel")
         await ctx.send(help_message)
 
     def is_duel_finished(self):
