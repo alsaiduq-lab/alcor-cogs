@@ -4,6 +4,7 @@ import os
 import logging
 import re
 import uuid
+import discord
 from discord import ButtonStyle, SelectOption, Interaction, Embed
 from discord.ui import Select, View, Button
 from .data.database import DatabaseManager
@@ -270,25 +271,33 @@ class ShopView(View):
         chosen_pokemon = random.choices(pokemon_list, weights=cumulative_weights, k=1)[0]
         return chosen_pokemon[0], chosen_pokemon[1]
 
-    def handle_roll(self, user_id, roll_count, crystal_cost):
+    async def handle_roll(self, user_id, roll_count, crystal_cost):
         if not self.update_crystals(user_id, -crystal_cost):
             return False, "Not enough crystals."
+
         rolls = [self.roll() for _ in range(roll_count)]
+        ex_ux_count = sum(1 for _, rarity in rolls if rarity in ["EX", "UX"])
+        last_pokemon = None
         for pokemon, rarity in rolls:
             self.add_to_inventory(user_id, pokemon, rarity)
+            if rarity in ["EX", "UX"]:
+                last_pokemon = pokemon
+
         roll_results = ', '.join([f"{rarity} {pokemon}" for pokemon, rarity in rolls if pokemon])
-        return True, f"Roll Results: {roll_results}"
+        special_message = f"{user_id} pulled {last_pokemon}! Congratulate this epic moment!" \
+            if (ex_ux_count >= 4 and roll_count > 1) or (ex_ux_count > 0 and roll_count == 1) and last_pokemon else ""
+        return True, f"Roll Results: {roll_results} {special_message}"
 
     async def view_inventory_callback(self, interaction: Interaction):
         user_id = interaction.user.id
         try:
             inventory = self.db.get_inventory(user_id)
             if not inventory:
-                await interaction.response.send_message("Your inventory is empty.", ephemeral=True)
+                await interaction.message.edit("Your inventory is empty.", ephemeral=True)
             else:
                 inventory_display = [f"{item['item']} (Rarity: {item['rarity']})" for item in inventory]
                 chunk_size = 25
-                await interaction.response.defer(ephemeral=True)
+                await interaction.message.edit("Your inventory is empty.", ephemeral=True)
                 for i in range(0, len(inventory_display), chunk_size):
                     chunk = inventory_display[i:i + chunk_size]
                     await interaction.followup.send('\n'.join(chunk), ephemeral=True)
@@ -376,7 +385,7 @@ class ShopView(View):
         embed = Embed(title="Your Balances", color=0x00ff00)
         embed.add_field(name="Dust", value=f"{current_dust} 💨", inline=True)
         embed.add_field(name="Crystals", value=f"{current_crystals} 💎", inline=True)
-        await interaction.response.send_message(embed=embed, ephemeral=True)
+        await interaction.message.edit(embed=embed, ephemeral=True)
 
     @staticmethod
     def calculate_dust_cost(rarity):
@@ -422,3 +431,45 @@ class ShopView(View):
         self.db.update_dust(user_id, current_dust - plate_cost)
         await interaction.response.send_message(f"You've bought a {selected_plate} for {plate_cost} dust!",
                                                 ephemeral=True)
+
+
+class InventoryView(View):
+    def __init__(self, user_id, db, sort_key='item', page=0):
+        super().__init__()
+        self.content = None
+        self.user_id = user_id
+        self.db = db
+        self.sort_key = sort_key
+        self.page = page
+        self.max_items_per_page = 8
+        self.update_view()
+
+    def update_view(self):
+        self.clear_items()
+        inventory = self.db.get_inventory(self.user_id)
+        sorted_inventory = sorted(inventory, key=lambda x: x[self.sort_key])
+
+        start = self.page * self.max_items_per_page
+        end = start + self.max_items_per_page
+        page_items = sorted_inventory[start:end]
+
+        inventory_display = [f"{item['item']} (Rarity: {item['rarity']})" for item in page_items]
+        self.add_item(
+            Button(label='Previous', style=ButtonStyle.grey, disabled=self.page == 0, custom_id='previous_page'))
+        self.add_item(
+            Button(label='Next', style=ButtonStyle.grey, disabled=end >= len(sorted_inventory), custom_id='next_page'))
+
+        self.content = '\n'.join(inventory_display)
+
+    @discord.ui.button(label='Previous', style=discord.ButtonStyle.grey)
+    async def previous_button_callback(self, interaction, _):
+        if self.page > 0:
+            self.page -= 1
+            self.update_view()
+            await interaction.response.edit_message(content=self.content, view=self)
+
+    @discord.ui.button(label='Next', style=discord.ButtonStyle.grey)
+    async def next_button_callback(self, interaction, _):
+        self.page += 1
+        self.update_view()
+        await interaction.response.edit_message(content=self.content, view=self)
