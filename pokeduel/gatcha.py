@@ -194,10 +194,12 @@ class ShopView(View):
         return process_pokemon_data(pokemon_data), process_plates_data(plates_data)
 
     def initialize_buttons(self):
-        self.add_item(self.create_button('View Inventory', 'view_inventory', self.view_inventory_callback))
-        self.add_item(self.create_button('Check Balance', 'check_balance', self.check_balance_callback))
-        self.add_item(self.create_button('Roll', 'roll', self.single_roll_callback))
-        self.add_item(self.create_button('Multi Roll', 'multi_roll', self.multi_roll_callback))
+        unique_suffix = str(uuid.uuid4())[:8]
+
+        self.add_item(self.create_button('View Inventory', f'view_inventory_{unique_suffix}', self.view_inventory_callback))
+        self.add_item(self.create_button('Check Balance', f'check_balance_{unique_suffix}', self.check_balance_callback))
+        self.add_item(self.create_button('Roll', f'roll_{unique_suffix}', self.single_roll_callback))
+        self.add_item(self.create_button('Multi Roll', f'multi_roll_{unique_suffix}', self.multi_roll_callback))
 
     @staticmethod
     def process_shop_data(pokemon_data, plates_data):
@@ -210,22 +212,6 @@ class ShopView(View):
         button = Button(label=label, style=style, custom_id=custom_id)
         button.callback = lambda interaction: callback_method(interaction, roll_count)
         return button
-
-    def initialize_roll_buttons(self):
-        self.single_roll_button = Button(label='Single Roll (50 Crystals)', style=ButtonStyle.primary,
-                                         custom_id='single_roll', emoji='🎲')
-        self.single_roll_button.callback = self.single_roll
-        self.add_item(self.single_roll_button)
-
-        self.multi_roll_button = Button(label='Multi Roll (10x for 500 Crystals)', style=ButtonStyle.primary,
-                                        custom_id='multi_roll', emoji='🎰')
-        self.multi_roll_button.callback = self.multi_roll
-        self.add_item(self.multi_roll_button)
-
-        self.flash_sale_button = Button(label='Flash Sale!', style=ButtonStyle.danger, custom_id='flash_sale',
-                                        emoji='⚡')
-        self.flash_sale_button.callback = self.flash_sale
-        self.add_item(self.flash_sale_button)
 
     async def single_roll(self, interaction):
         user_id = interaction.user.id
