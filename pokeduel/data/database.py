@@ -65,14 +65,17 @@ class DatabaseManager:
             self.conn.execute("UPDATE users SET dust = ? WHERE id = ?", (new_dust_amount, user_id))
 
     def get_inventory(self, user_id):
+        logging.debug(f"Attempting to fetch inventory for user ID: {user_id}")
         try:
             with self.conn:
                 cur = self.conn.execute("SELECT inventory FROM users WHERE id = ?", (user_id,))
                 inventory_str = cur.fetchone()[0]
-                logging.debug(f"Inventory for user {user_id}: {inventory_str}")
-                return json.loads(inventory_str)
+                logging.debug(f"Inventory string fetched from database for user {user_id}: {inventory_str}")
+                inventory = json.loads(inventory_str)
+                logging.debug(f"Inventory for user {user_id} after JSON parsing: {inventory}")
+                return inventory
         except Exception as e:
-            logging.error(f"Error getting inventory for user {user_id}: {e}")
+            logging.error(f"Error getting inventory for user {user_id}: {e}", exc_info=True)
             return []
 
     def update_inventory(self, user_id, new_inventory):
