@@ -82,6 +82,7 @@ class DatabaseManager:
         with self.conn:
             inventory_str = json.dumps(new_inventory)
             self.conn.execute("UPDATE users SET inventory = ? WHERE id = ?", (inventory_str, user_id))
+            self.conn.commit()
 
     def get_user_party(self, user_id):
         try:
