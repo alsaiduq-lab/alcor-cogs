@@ -168,8 +168,9 @@ class ShopView(View):
         self.single_roll_button.callback = self.single_roll_callback
         self.add_item(self.single_roll_button)
 
-        self.multi_roll_button = Button(label='Multi Roll', style=ButtonStyle.secondary, custom_id='multi_roll')
-        self.multi_roll_button.callback = self.multi_roll_callback
+        self.multi_roll_button = Button(label='Multi Roll', style=ButtonStyle.secondary,
+                                        custom_id=f'multi_roll_{unique_suffix}')
+        self.multi_roll_button.callback = lambda interaction: self.multi_roll_callback(interaction)
         self.add_item(self.multi_roll_button)
 
         self.flash_sale_button = None
@@ -197,10 +198,25 @@ class ShopView(View):
     def initialize_buttons(self):
         unique_suffix = str(uuid.uuid4())[:8]
 
-        self.add_item(self.create_button('View Inventory', f'view_inventory_{unique_suffix}', self.view_inventory_callback))
-        self.add_item(self.create_button('Check Balance', f'check_balance_{unique_suffix}', self.check_balance_callback))
-        self.add_item(self.create_button('Roll', f'roll_{unique_suffix}', self.single_roll_callback))
-        self.add_item(self.create_button('Multi Roll', f'multi_roll_{unique_suffix}', self.multi_roll_callback))
+        self.view_inventory_button = Button(label='View Inventory', style=ButtonStyle.secondary,
+                                            custom_id=f'view_inventory_{unique_suffix}')
+        self.view_inventory_button.callback = lambda interaction: self.view_inventory_callback(interaction)
+        self.add_item(self.view_inventory_button)
+
+        self.check_balance_button = Button(label='Check Balance', style=ButtonStyle.secondary,
+                                           custom_id=f'check_balance_{unique_suffix}')
+        self.check_balance_button.callback = lambda interaction: self.check_balance_callback(interaction)
+        self.add_item(self.check_balance_button)
+
+        self.single_roll_button = Button(label='Roll', style=ButtonStyle.secondary,
+                                         custom_id=f'roll_{unique_suffix}')
+        self.single_roll_button.callback = lambda interaction: self.single_roll_callback(interaction)
+        self.add_item(self.single_roll_button)
+
+        self.multi_roll_button = Button(label='Multi Roll', style=ButtonStyle.secondary,
+                                        custom_id=f'multi_roll_{unique_suffix}')
+        self.multi_roll_button.callback = lambda interaction: self.multi_roll_callback(interaction)
+        self.add_item(self.multi_roll_button)
 
     @staticmethod
     def process_shop_data(pokemon_data, plates_data):
