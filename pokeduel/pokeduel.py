@@ -131,18 +131,21 @@ class PokeDuel(commands.Cog):
             await ctx.send("You need to start a game first using `pokeduel start`.")
             return
 
-        shop_view = ShopView(self.db_path, self.pokemon_data, self.plates_data)
-        embed = Embed(title="PokeDuel Shop", description="Explore the shop and gear up for your adventures!",
-                      color=0x00ff00)
+        try:
+            shop_view = ShopView(self.db_path, self.pokemon_data, self.plates_data)
+            embed = Embed(title="PokeDuel Shop", description="Explore the shop and gear up for your adventures!",
+                          color=0x00ff00)
 
-        dir_path = os.path.dirname(os.path.realpath(__file__))
-        file_name = 'shop.png'
-        file_path = os.path.join(dir_path, 'data', file_name)
+            dir_path = os.path.dirname(os.path.realpath(__file__))
+            file_name = 'shop.png'
+            file_path = os.path.join(dir_path, 'data', file_name)
 
-        if os.path.exists(file_path):
-            await ctx.send(file=discord.File(file_path, filename=file_name), embed=embed, view=shop_view)
-        else:
-            await ctx.send("Welcome to the PokeDuel Shop!", embed=embed, view=shop_view)
+            if os.path.exists(file_path):
+                await ctx.send(file=discord.File(file_path, filename=file_name), embed=embed, view=shop_view)
+            else:
+                await ctx.send("Welcome to the PokeDuel Shop!", embed=embed, view=shop_view)
+        except Exception as e:
+            await ctx.send(f"An error occurred: {e}")
 
     @pokeduel.command(name="duel")
     @has_started_save()
