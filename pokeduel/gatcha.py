@@ -286,8 +286,11 @@ class ShopView(View):
             if not inventory:
                 await interaction.response.send_message("Your inventory is empty.", ephemeral=True)
             else:
-                inventory_display = '\n'.join([f"{item['item']} (Rarity: {item['rarity']})" for item in inventory])
-                await interaction.response.send_message(f"Your Inventory:\n{inventory_display}", ephemeral=True)
+                inventory_display = [f"{item['item']} (Rarity: {item['rarity']})" for item in inventory]
+                chunk_size = 25
+                for i in range(0, len(inventory_display), chunk_size):
+                    chunk = inventory_display[i:i + chunk_size]
+                    await interaction.followup.send('\n'.join(chunk), ephemeral=True)
         except Exception as e:
             logging.error(f"Error fetching inventory for user {user_id}: {e}")
             await interaction.response.send_message(
