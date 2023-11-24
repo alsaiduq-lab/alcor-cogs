@@ -92,7 +92,6 @@ class PokeDuel(commands.Cog):
         # Add additional initialization logic here if needed
 
     async def open_shop(self, interaction: discord.Interaction):
-        print("open_shop called")
         try:
             shop_view = ShopView(self.db_path, self.pokemon_data, self.plates_data)
             embed = Embed(title="PokeDuel Shop", description="Explore the shop and gear up for your adventures!",
@@ -103,10 +102,10 @@ class PokeDuel(commands.Cog):
             file_path = os.path.join(dir_path, 'data', file_name)
 
             if os.path.exists(file_path):
-                await interaction.message.edit(file=discord.File(file_path, filename=file_name), embed=embed,
-                                               view=shop_view)
+                await interaction.followup.send(file=discord.File(file_path, filename=file_name), embed=embed,
+                                                view=shop_view)
             else:
-                await interaction.message.edit(content="Welcome to the PokeDuel Shop!", embed=embed, view=shop_view)
+                await interaction.followup.send(content="Welcome to the PokeDuel Shop!", embed=embed, view=shop_view)
 
         except Exception as e:
             print(f"Error in open_shop: {e}")

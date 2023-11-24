@@ -306,22 +306,22 @@ class ShopView(View):
             await interaction.followup.send(
                 "There was an error retrieving your inventory. Please try again later.", ephemeral=True)
 
-    async def single_roll_callback(self, interaction, roll_count):
+    async def single_roll_callback(self, interaction):
         user_id = interaction.user.id
-        crystal_cost = 50 if roll_count == 1 else 500
-        success, message = await self.handle_roll(user_id, roll_count, crystal_cost)
+        crystal_cost = 50
+        if not self.update_crystals(user_id, -crystal_cost):
+            await interaction.response.send_message("Not enough crystals.", ephemeral=True)
+            return
+        success, message = await self.handle_roll(user_id, 1, crystal_cost)
         await interaction.response.send_message(message, ephemeral=True)
 
-    async def multi_roll_callback(self, interaction, roll_count):
+    async def multi_roll_callback(self, interaction):
         user_id = interaction.user.id
-        current_crystals = self.db.get_crystals(user_id)
-
-        if current_crystals < 500:
-            await interaction.response.send_message("Not enough crystals for a multi roll.", ephemeral=True)
+        crystal_cost = 500
+        if not self.update_crystals(user_id, -crystal_cost):
+            await interaction.response.send_message("Not enough crystals.", ephemeral=True)
             return
-
-        self.db.update_crystals(user_id, current_crystals - 500)
-        success, message = await self.handle_roll(user_id, roll_count, 500)
+        success, message = await self.handle_roll(user_id, 10, crystal_cost)
         await interaction.response.send_message(message, ephemeral=True)
 
     def update_crystals(self, user_id, amount):
