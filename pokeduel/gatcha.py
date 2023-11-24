@@ -145,21 +145,6 @@ except FileNotFoundError as e:
     logging.error(f"File not found: {e.filename}")
 
 
-def roll(self):
-    rarity_weights = {
-        'EX': 0.075,
-        'UX': 0.075,
-        'R': 0.15,
-        'UC': 0.30,
-        'C': 0.40
-    }
-    pokemon_list = [(name, data['Rarity']) for name, data in self.pokemon_shop_data.items()]
-    cumulative_weights = [rarity_weights[pokemon[1]] for pokemon in pokemon_list]
-    chosen_pokemon = random.choices(pokemon_list, weights=cumulative_weights, k=1)[0]
-
-    return chosen_pokemon[0], chosen_pokemon[1]
-
-
 class ShopView(View):
     def __init__(self, db_path, init_pokemon_data, init_plates_data):
         super().__init__()
@@ -275,6 +260,15 @@ class ShopView(View):
         flash_sale_msg = "Flash sale is live! The following Pokémon are available at half-off dust prices:\n"
         flash_sale_msg += "\n".join([f"{pokemon['name']} ({pokemon['rarity']})" for pokemon in self.flash_sale_pokemon])
         await interaction.response.send_message(flash_sale_msg, ephemeral=True)
+
+    def roll(self):
+        rarity_weights = {
+            'EX': 0.075, 'UX': 0.075, 'R': 0.15, 'UC': 0.30, 'C': 0.40
+        }
+        pokemon_list = [(name, data['Rarity']) for name, data in self.pokemon_shop_data.items()]
+        cumulative_weights = [rarity_weights[pokemon[1]] for pokemon in pokemon_list]
+        chosen_pokemon = random.choices(pokemon_list, weights=cumulative_weights, k=1)[0]
+        return chosen_pokemon[0], chosen_pokemon[1]
 
     def handle_roll(self, user_id, roll_count, crystal_cost):
         if not self.update_crystals(user_id, -crystal_cost):
