@@ -288,12 +288,13 @@ class ShopView(View):
             else:
                 inventory_display = [f"{item['item']} (Rarity: {item['rarity']})" for item in inventory]
                 chunk_size = 25
+                await interaction.response.defer(ephemeral=True)
                 for i in range(0, len(inventory_display), chunk_size):
                     chunk = inventory_display[i:i + chunk_size]
                     await interaction.followup.send('\n'.join(chunk), ephemeral=True)
-        except Exception as e:
-            logging.error(f"Error fetching inventory for user {user_id}: {e}")
-            await interaction.response.send_message(
+        except Exception as ex:
+            logging.error(f"Error fetching inventory for user {user_id}: {ex}")
+            await interaction.followup.send(
                 "There was an error retrieving your inventory. Please try again later.", ephemeral=True)
 
     async def single_roll_callback(self, interaction, roll_count):
