@@ -57,7 +57,7 @@ class PokeDuel(commands.Cog):
         self.config.register_user(**default_user)
 
     @commands.group(name="pduel")
-    async def pokeduel(self, ctx):
+    async def pduel(self, ctx):
         """Commands for PokeDuel."""
         pass
 
