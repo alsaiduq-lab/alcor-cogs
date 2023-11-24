@@ -145,6 +145,22 @@ except FileNotFoundError as e:
     logging.error(f"File not found: {e.filename}")
 
 
+def roll(self):
+    rarity_weights = {
+        'EX': 0.075,
+        'UX': 0.075,
+        'R': 0.15,
+        'UC': 0.30,
+        'C': 0.40
+    }
+    pokemon_list = [(name, data['Rarity']) for name, data in self.pokemon_shop_data.items()]
+    cumulative_weights = [rarity_weights[pokemon[1]] for pokemon in pokemon_list]
+    chosen_pokemon = random.choices(pokemon_list, weights=cumulative_weights, k=1)[0]
+
+    return chosen_pokemon[0], chosen_pokemon[1]
+
+
+
 class ShopView(View):
     def __init__(self, db_path, init_pokemon_data, init_plates_data):
         super().__init__()
@@ -236,9 +252,8 @@ class ShopView(View):
         if current_crystals < 50:
             await interaction.response.send_message("Not enough crystals.", ephemeral=True)
             return
-        new_crystal_count = current_crystals - 50
-        self.db.update_crystals(user_id, new_crystal_count)
 
+        self.db.update_crystals(user_id, current_crystals - 50)
         pokemon, rarity = self.roll()
         self.add_to_inventory(user_id, pokemon, rarity)
         await interaction.response.send_message(f"You've got a {pokemon} of rarity {rarity}!", ephemeral=True)
@@ -249,16 +264,14 @@ class ShopView(View):
         if current_crystals < 500:
             await interaction.response.send_message("Not enough crystals.", ephemeral=True)
             return
-        new_crystal_count = current_crystals - 500
-        self.db.update_crystals(user_id, new_crystal_count)
 
-        rolls = []
-        for _ in range(10):
-            pokemon, rarity = self.roll()
+        self.db.update_crystals(user_id, current_crystals - 500)
+        rolls = [self.roll() for _ in range(10)]
+        for pokemon, rarity in rolls:
             self.add_to_inventory(user_id, pokemon, rarity)
-            rolls.append(f"{pokemon} ({rarity})")
 
-        await interaction.response.send_message(f"You've got the following Pokémon: {', '.join(rolls)}", ephemeral=True)
+        roll_messages = [f"{pokemon} ({rarity})" for pokemon, rarity in rolls]
+        await interaction.response.send_message(f"You've got the following Pokémon: {', '.join(roll_messages)}", ephemeral=True)
 
     async def flash_sale(self, interaction):
         self.generate_flash_sale_pokemon()
