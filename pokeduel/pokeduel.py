@@ -104,10 +104,10 @@ class PokeDuel(commands.Cog):
 
             if os.path.exists(file_path):
                 await interaction.message.edit(file=discord.File(file_path, filename=file_name), embed=embed,
-                                               view=shop_view, ephemeral=True)
+                                               view=shop_view)
             else:
-                await interaction.message.edit("Welcome to the PokeDuel Shop!", embed=embed, view=shop_view,
-                                               ephemeral=True)
+                await interaction.message.edit(content="Welcome to the PokeDuel Shop!", embed=embed, view=shop_view)
+
         except Exception as e:
             print(f"Error in open_shop: {e}")
 
