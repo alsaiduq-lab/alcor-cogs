@@ -154,9 +154,10 @@ class ShopView(View):
         self.plates_shop_data = processed_plates_data_for_shop
         self.initialize_buttons()
 
-        self.view_inventory_button = Button(label='View Inventory', style=ButtonStyle.secondary,
-                                            custom_id='view_inventory')
-        self.view_inventory_button.callback = self.view_inventory_callback
+        unique_suffix = str(uuid.uuid4())[:8]
+
+        self.view_inventory_button = Button(label='View Inventory', style=ButtonStyle.secondary, custom_id=f'view_inventory_{unique_suffix}')
+        self.view_inventory_button.callback = lambda interaction: self.view_inventory_callback(interaction)
         self.add_item(self.view_inventory_button)
 
         self.check_balance_button = Button(label='Check Balance', style=ButtonStyle.secondary,
@@ -188,7 +189,6 @@ class ShopView(View):
             SelectOption(label=pokemon['name'] + " - " + pokemon['strongest_attack'], value=pokemon['name'])
             for pokemon in self.pokemon_shop_data
         ]
-        self.initialize_buttons()
 
     def prepare_shop_data(self, pokemon_data, plates_data):
         self.pokemon_shop_data = process_pokemon_data(pokemon_data)
