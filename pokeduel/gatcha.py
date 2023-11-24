@@ -289,7 +289,7 @@ class ShopView(View):
         success, message = self.handle_roll(user_id, roll_count, crystal_cost)
         await interaction.response.send_message(message, ephemeral=True)
 
-    async def multi_roll_callback(self, interaction: Interaction):
+    async def multi_roll_callback(self, interaction, roll_count):
         user_id = interaction.user.id
         current_crystals = self.db.get_crystals(user_id)
 
@@ -299,7 +299,7 @@ class ShopView(View):
 
         self.db.update_crystals(user_id, current_crystals - 500)
         rolls = []
-        for _ in range(10):
+        for _ in range(roll_count):
             rolled_pokemon = self.roll()
             if rolled_pokemon:
                 pokemon_name, rarity = rolled_pokemon
