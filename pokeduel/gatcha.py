@@ -224,14 +224,20 @@ class ShopView(View):
         self.check_balance_button.callback = lambda interaction: self.check_balance_callback(interaction)
         self.add_item(self.check_balance_button)
 
-        self.single_roll_button = Button(label='Roll', style=ButtonStyle.secondary,
-                                         custom_id=f'roll_{unique_suffix}')
-        self.single_roll_button.callback = lambda interaction: self.single_roll_callback(interaction)
+        self.single_roll_button = Button(
+            label='Roll',
+            style=ButtonStyle.secondary,
+            custom_id=f'roll_{unique_suffix}'
+        )
+        self.single_roll_button.callback = lambda interaction: self.single_roll_callback(interaction, 1)
         self.add_item(self.single_roll_button)
 
-        self.multi_roll_button = Button(label='Multi Roll', style=ButtonStyle.secondary,
-                                        custom_id=f'multi_roll_{unique_suffix}')
-        self.multi_roll_button.callback = lambda interaction: self.multi_roll_callback(interaction)
+        self.multi_roll_button = Button(
+            label='Multi Roll',
+            style=ButtonStyle.secondary,
+            custom_id=f'multi_roll_{unique_suffix}'
+        )
+        self.multi_roll_button.callback = lambda interaction: self.multi_roll_callback(interaction, 10)
         self.add_item(self.multi_roll_button)
 
     @staticmethod
