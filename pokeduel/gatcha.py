@@ -274,7 +274,8 @@ class ShopView(View):
         if not self.update_crystals(user_id, -crystal_cost):
             return False, "Not enough crystals."
         rolls = [self.roll() for _ in range(roll_count)]
-        self.add_to_inventory(user_id, rolls)
+        for pokemon, rarity in rolls:
+            self.add_to_inventory(user_id, pokemon, rarity)
         roll_results = ', '.join([f"{rarity} {pokemon}" for pokemon, rarity in rolls if pokemon])
         return True, f"Roll Results: {roll_results}"
 
