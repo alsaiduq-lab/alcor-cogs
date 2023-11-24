@@ -309,7 +309,7 @@ class ShopView(View):
     async def single_roll_callback(self, interaction, roll_count):
         user_id = interaction.user.id
         crystal_cost = 50 if roll_count == 1 else 500
-        success, message = self.handle_roll(user_id, roll_count, crystal_cost)
+        success, message = await self.handle_roll(user_id, roll_count, crystal_cost)
         await interaction.response.send_message(message, ephemeral=True)
 
     async def multi_roll_callback(self, interaction, roll_count):
@@ -321,18 +321,8 @@ class ShopView(View):
             return
 
         self.db.update_crystals(user_id, current_crystals - 500)
-        rolls = []
-        for _ in range(roll_count):
-            rolled_pokemon = self.roll()
-            if rolled_pokemon:
-                pokemon_name, rarity = rolled_pokemon
-                self.add_to_inventory(user_id, pokemon_name, rarity)
-                rolls.append(f"{rarity} {pokemon_name}")
-
-        if rolls:
-            await interaction.response.send_message(f"Multi roll results: {', '.join(rolls)}", ephemeral=True)
-        else:
-            await interaction.response.send_message("No Pokémon found to roll.", ephemeral=True)
+        success, message = await self.handle_roll(user_id, roll_count, 500)
+        await interaction.response.send_message(message, ephemeral=True)
 
     def update_crystals(self, user_id, amount):
         current_crystals = self.db.get_crystals(user_id)
@@ -385,7 +375,7 @@ class ShopView(View):
         embed = Embed(title="Your Balances", color=0x00ff00)
         embed.add_field(name="Dust", value=f"{current_dust} 💨", inline=True)
         embed.add_field(name="Crystals", value=f"{current_crystals} 💎", inline=True)
-        await interaction.message.edit(embed=embed, ephemeral=True)
+        await interaction.message.edit(embed=embed)
 
     @staticmethod
     def calculate_dust_cost(rarity):
