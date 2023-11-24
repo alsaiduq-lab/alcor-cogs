@@ -265,7 +265,7 @@ class ShopView(View):
         rarity_weights = {
             'EX': 0.075, 'UX': 0.075, 'R': 0.15, 'UC': 0.30, 'C': 0.40
         }
-        pokemon_list = [(name, data['Rarity']) for name, data in self.pokemon_shop_data.items()]
+        pokemon_list = [(pokemon['name'], pokemon['rarity']) for pokemon in self.pokemon_shop_data]
         cumulative_weights = [rarity_weights[pokemon[1]] for pokemon in pokemon_list]
         chosen_pokemon = random.choices(pokemon_list, weights=cumulative_weights, k=1)[0]
         return chosen_pokemon[0], chosen_pokemon[1]
