@@ -184,9 +184,8 @@ class ShopView(View):
         self.clear_items()
         unique_suffix = str(uuid.uuid4())[:8]
 
-        self.view_inventory_button = Button(label='View Inventory', style=ButtonStyle.secondary,
-                                            custom_id=f'view_inventory_{unique_suffix}')
-        self.view_inventory_button.callback = lambda interaction: self.view_inventory_callback(interaction)
+        self.view_inventory_button = Button(label='View Inventory', style=ButtonStyle.secondary, custom_id='view_inventory')
+        self.view_inventory_button.callback = self.view_inventory_callback
         self.add_item(self.view_inventory_button)
 
         self.check_balance_button = Button(label='Check Balance', style=ButtonStyle.secondary,
@@ -290,21 +289,12 @@ class ShopView(View):
 
     async def view_inventory_callback(self, interaction: Interaction):
         user_id = interaction.user.id
-        try:
-            inventory = self.db.get_inventory(user_id)
-            if not inventory:
-                await interaction.message.edit("Your inventory is empty.", ephemeral=True)
-            else:
-                inventory_display = [f"{item['item']} (Rarity: {item['rarity']})" for item in inventory]
-                chunk_size = 25
-                await interaction.message.edit("Your inventory is empty.", ephemeral=True)
-                for i in range(0, len(inventory_display), chunk_size):
-                    chunk = inventory_display[i:i + chunk_size]
-                    await interaction.followup.send('\n'.join(chunk), ephemeral=True)
-        except Exception as ex:
-            logging.error(f"Error fetching inventory for user {user_id}: {ex}")
-            await interaction.followup.send(
-                "There was an error retrieving your inventory. Please try again later.", ephemeral=True)
+        inventory = self.db.get_inventory(user_id)
+        if not inventory:
+            await interaction.message.edit("Your inventory is empty.", ephemeral=True)
+        else:
+            inventory_view = InventoryView(user_id=user_id, db=self.db)
+            await interaction.message.edit(content=inventory_view.content, view=inventory_view, ephemeral=True)
 
     async def single_roll_callback(self, interaction):
         user_id = interaction.user.id
