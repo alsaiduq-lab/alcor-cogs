@@ -280,8 +280,18 @@ class ShopView(View):
         return True, f"Roll Results: {roll_results}"
 
     async def view_inventory_callback(self, interaction: Interaction):
-        # Logic to display the user's inventory
-        pass
+        user_id = interaction.user.id
+        try:
+            inventory = self.db.get_inventory(user_id)
+            if not inventory:
+                await interaction.response.send_message("Your inventory is empty.", ephemeral=True)
+            else:
+                inventory_display = '\n'.join([f"{item['item']} (Rarity: {item['rarity']})" for item in inventory])
+                await interaction.response.send_message(f"Your Inventory:\n{inventory_display}", ephemeral=True)
+        except Exception as e:
+            logging.error(f"Error fetching inventory for user {user_id}: {e}")
+            await interaction.response.send_message(
+                "There was an error retrieving your inventory. Please try again later.", ephemeral=True)
 
     async def single_roll_callback(self, interaction, roll_count):
         user_id = interaction.user.id
