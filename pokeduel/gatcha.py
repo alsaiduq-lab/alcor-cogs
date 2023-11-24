@@ -160,36 +160,19 @@ def roll(self):
     return chosen_pokemon[0], chosen_pokemon[1]
 
 
-
 class ShopView(View):
     def __init__(self, db_path, init_pokemon_data, init_plates_data):
         super().__init__()
+        self.multi_roll_button = None
+        self.single_roll_button = None
+        self.check_balance_button = None
+        self.view_inventory_button = None
         self.db = DatabaseManager(db_path)
-        processed_pokemon_data_for_shop, processed_plates_data_for_shop = self.prepare_shop_data(init_pokemon_data, init_plates_data)
+        processed_pokemon_data_for_shop, processed_plates_data_for_shop = self.prepare_shop_data(init_pokemon_data,
+                                                                                                 init_plates_data)
         self.pokemon_shop_data = processed_pokemon_data_for_shop
         self.plates_shop_data = processed_plates_data_for_shop
         self.initialize_buttons()
-
-        unique_suffix = str(uuid.uuid4())[:8]
-
-        self.view_inventory_button = Button(label='View Inventory', style=ButtonStyle.secondary, custom_id=f'view_inventory_{unique_suffix}')
-        self.view_inventory_button.callback = lambda interaction: self.view_inventory_callback(interaction)
-        self.add_item(self.view_inventory_button)
-
-        self.check_balance_button = Button(label='Check Balance', style=ButtonStyle.secondary,
-                                           custom_id='check_balance')
-        self.check_balance_button.callback = self.check_balance_callback
-        self.add_item(self.check_balance_button)
-
-        self.single_roll_button = Button(label='Roll', style=ButtonStyle.secondary, custom_id='roll')
-        self.single_roll_button.callback = self.single_roll_callback
-        self.add_item(self.single_roll_button)
-
-        self.multi_roll_button = Button(label='Multi Roll', style=ButtonStyle.secondary,
-                                        custom_id=f'multi_roll_{unique_suffix}')
-        self.multi_roll_button.callback = lambda interaction: self.multi_roll_callback(interaction)
-        self.add_item(self.multi_roll_button)
-
         self.flash_sale_button = None
         self.flash_sale_pokemon = []
 
@@ -212,6 +195,7 @@ class ShopView(View):
         return process_pokemon_data(pokemon_data), process_plates_data(plates_data)
 
     def initialize_buttons(self):
+        self.clear_items()
         unique_suffix = str(uuid.uuid4())[:8]
 
         self.view_inventory_button = Button(label='View Inventory', style=ButtonStyle.secondary,
@@ -262,7 +246,8 @@ class ShopView(View):
         self.db.update_crystals(user_id, current_crystals - 50)
         pokemon, rarity = self.roll()
         self.add_to_inventory(user_id, pokemon, rarity)
-        await interaction.response.send_message(f"You've got a {pokemon} of rarity {rarity}!", ephemeral=True)
+        ephemeral = rarity not in ["EX", "UX"]
+        await interaction.response.send_message(f"You've got a {pokemon} of rarity {rarity}!", ephemeral=ephemeral)
 
     async def multi_roll(self, interaction):
         user_id = interaction.user.id
@@ -272,12 +257,18 @@ class ShopView(View):
             return
 
         self.db.update_crystals(user_id, current_crystals - 500)
-        rolls = [self.roll() for _ in range(10)]
-        for pokemon, rarity in rolls:
+        rolls = []
+        any_ex_ux = False
+        for _ in range(10):
+            pokemon, rarity = self.roll()
             self.add_to_inventory(user_id, pokemon, rarity)
+            rolls.append(f"{pokemon} ({rarity})")
+            if rarity in ["EX", "UX"]:
+                any_ex_ux = True
 
-        roll_messages = [f"{pokemon} ({rarity})" for pokemon, rarity in rolls]
-        await interaction.response.send_message(f"You've got the following Pokémon: {', '.join(roll_messages)}", ephemeral=True)
+        roll_results_message = f"You've got the following Pokémon: {', '.join(rolls)}"
+        ephemeral = not any_ex_ux
+        await interaction.response.send_message(roll_results_message, ephemeral=ephemeral)
 
     async def flash_sale(self, interaction):
         self.generate_flash_sale_pokemon()
