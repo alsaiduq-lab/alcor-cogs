@@ -253,13 +253,7 @@ class PokeDuel(commands.Cog):
         logging.info(f"Attempting to reroll data for user {member.id}")
 
         try:
-            self.db.initialize_new_user(member.id)
-
-            self.db.update_crystals(member.id, 5000)
-            self.db.update_dust(member.id, 0)
-            self.db.update_inventory(member.id, [])
-            self.db.update_user_party(member.id, [])
-
+            self.db.initialize_new_user(member.id, crystals=5000, dust=0, inventory=[], party=[])
             logging.info(f"Successfully rerolled data for user {member.id}")
             await ctx.send(f"Data has been successfully rerolled for {member.display_name}.")
 
