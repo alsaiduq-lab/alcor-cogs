@@ -326,11 +326,13 @@ class ShopView(View):
         await interaction.followup.send(message, ephemeral=True)
 
     async def multi_roll_callback(self, interaction):
-        await interaction.response.defer(ephemeral=True)
         user_id = interaction.user.id
         crystal_cost = 500
+        if not interaction.response.is_done():
+            await interaction.response.defer(ephemeral=True)
+
         success, message = await self.handle_roll(user_id, 10, crystal_cost, interaction)
-        await interaction.response.send_message(message, ephemeral=True)
+        await interaction.followup.send(message, ephemeral=True)
 
     def update_crystals(self, user_id, amount):
         current_crystals = self.db.get_crystals(user_id)
