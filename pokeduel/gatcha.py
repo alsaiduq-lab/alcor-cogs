@@ -309,10 +309,10 @@ class ShopView(View):
             inventory = self.db.get_inventory(user_id)
             logging.debug(f"Inventory for user_id {user_id}: {inventory}")
             if not inventory:
-                await interaction.followup.send("Your inventory is empty.", ephemeral=True)
+                await interaction.response.send_message("Your inventory is empty.", ephemeral=True)
             else:
                 inventory_view = InventoryView(user_id=user_id, db=self.db)
-                await interaction.followup.send(content=inventory_view.content, view=inventory_view, ephemeral=True)
+                await interaction.response.send_message(content=inventory_view.content, view=inventory_view, ephemeral=True)
         except Exception as ex:
             logging.error(f"Error during inventory check for user {user_id}: {ex}", exc_info=True)
             await interaction.response.send_message("An error occurred while accessing your inventory.", ephemeral=True)
