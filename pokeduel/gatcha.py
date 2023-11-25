@@ -285,6 +285,8 @@ class ShopView(View):
         rolls = self.roll(roll_count)
         ex_ux_count = sum(1 for _, rarity in rolls if rarity in ["EX", "UX"])
         last_pokemon = next((pokemon for pokemon, rarity in rolls if rarity in ["EX", "UX"]), None)
+        for pokemon, rarity in rolls:
+            self.add_to_inventory(user_id, pokemon, rarity)
 
         user_mention = interaction.user.mention
         special_message = self.generate_special_message(ex_ux_count, roll_count, last_pokemon, rolls, user_mention)
