@@ -287,7 +287,7 @@ class ShopView(View):
         logging.info(f"Final message for user {user_id}: Roll Results: {roll_results} {special_message}")
 
         if interaction.channel.type != discord.ChannelType.private and special_message:
-            await interaction.response.send_messag(special_message)
+            await interaction.response.send_message(special_message)
             return True, f"Roll Results: {roll_results}"
         else:
             return True, f"Roll Results: {roll_results} {special_message}"
