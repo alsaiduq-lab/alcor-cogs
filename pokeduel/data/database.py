@@ -25,14 +25,12 @@ class DatabaseManager:
             ''')
 
     def initialize_new_user(self, user_id, crystals=0, dust=0, inventory=None, party=None):
-        if inventory is None:
-            inventory = json.dumps([])
-        if party is None:
-            party = json.dumps([])
+        inventory_json = json.dumps([]) if inventory is None else json.dumps(inventory)
+        party_json = json.dumps([]) if party is None else json.dumps(party)
         with self.conn:
             self.conn.execute(
-                "INSERT OR IGNORE INTO users (id, crystals, dust, inventory, party) VALUES (?, ?, ?, ?, ?)",
-                (user_id, crystals, dust, inventory, party))
+                "INSERT OR REPLACE INTO users (id, crystals, dust, inventory, party) VALUES (?, ?, ?, ?, ?)",
+                (user_id, crystals, dust, inventory_json, party_json))
 
     def get_crystals(self, user_id):
         try:
