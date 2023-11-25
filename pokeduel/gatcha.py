@@ -274,32 +274,32 @@ class ShopView(View):
 
         rolls = self.roll(roll_count)
         ex_ux_count = sum(1 for _, rarity in rolls if rarity in ["EX", "UX"])
+        last_pokemon = next((pokemon for pokemon, rarity in rolls if rarity in ["EX", "UX"]), None)
 
-        last_pokemon = None
-        for pokemon, rarity in rolls:
-            self.add_to_inventory(user_id, pokemon, rarity)
-            if rarity in ["EX", "UX"]:
-                last_pokemon = pokemon
+        user_mention = interaction.user.mention
+        special_message = self.generate_special_message(ex_ux_count, roll_count, last_pokemon, rolls, user_mention)
 
         roll_results = ', '.join([f"{rarity} {pokemon}" for pokemon, rarity in rolls if pokemon])
-        special_message = self.generate_special_message(ex_ux_count, roll_count, last_pokemon, rolls)
 
         logging.info(f"Final message for user {user_id}: Roll Results: {roll_results} {special_message}")
 
-        if interaction.channel.type != discord.ChannelType.private and special_message:
-            await interaction.response.send_message(special_message)
+        if interaction.channel.type == discord.ChannelType.private:
             return True, f"Roll Results: {roll_results}"
-        else:
-            return True, f"Roll Results: {roll_results} {special_message}"
+
+        if special_message:
+            await interaction.followup.send(special_message)
+        return True, f"Roll Results: {roll_results}"
 
     @staticmethod
-    def generate_special_message(ex_ux_count, roll_count, last_pokemon, rolls):
+    def generate_special_message(ex_ux_count, roll_count, last_pokemon, rolls, user_mention):
         special_message = ""
         if ex_ux_count >= 4 and roll_count > 1:
             ex_ux_pokemon_list = ', '.join(pokemon for pokemon, rarity in rolls if rarity in ["EX", "UX"])
-            special_message = f"User pulled EX/UX Pokémon: {ex_ux_pokemon_list}! Congratulate this epic moment!"
+            special_message = (f"🌟🎉 {user_mention} pulled over 4 EX/UX Pokémon: {ex_ux_pokemon_list}! "
+                               f"🎊 Congratulations on this epic moment! 🌟")
         elif ex_ux_count > 0 and roll_count == 1 and last_pokemon:
-            special_message = f"User pulled {last_pokemon}! Congratulate this epic moment!"
+            special_message = (f"🌟✨ {user_mention} pulled a rare {last_pokemon}! "
+                               f"💫 Celebrate this amazing find! ✨🌟")
         return special_message
 
     async def view_inventory_callback(self, interaction: Interaction):
@@ -319,12 +319,14 @@ class ShopView(View):
         logging.debug(f"Inventory check completed for user_id: {user_id}")
 
     async def single_roll_callback(self, interaction):
+        await interaction.response.defer(ephemeral=True)
         user_id = interaction.user.id
         crystal_cost = 50
         success, message = await self.handle_roll(user_id, 1, crystal_cost, interaction)
-        await interaction.response.send_message(message, ephemeral=True)
+        await interaction.followup.send(message, ephemeral=True)
 
     async def multi_roll_callback(self, interaction):
+        await interaction.response.defer(ephemeral=True)
         user_id = interaction.user.id
         crystal_cost = 500
         success, message = await self.handle_roll(user_id, 10, crystal_cost, interaction)
