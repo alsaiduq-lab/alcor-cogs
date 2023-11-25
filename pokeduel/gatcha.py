@@ -237,16 +237,12 @@ class ShopView(View):
 
     async def multi_roll(self, interaction):
         user_id = interaction.user.id
-        rolls = []
-        any_ex_ux = False
-        for _ in range(10):
-            pokemon, rarity = self.roll()
+        roll_results = self.roll(roll_count=10)
+        for pokemon, rarity in roll_results:
             self.add_to_inventory(user_id, pokemon, rarity)
-            rolls.append(f"{pokemon} ({rarity})")
-            if rarity in ["EX", "UX"]:
-                any_ex_ux = True
 
-        roll_results_message = f"You've got the following Pokémon: {', '.join(rolls)}"
+        any_ex_ux = any(rarity in ["EX", "UX"] for _, rarity in roll_results)
+        roll_results_message = f"You've got the following Pokémon: {', '.join([f'{pokemon} ({rarity})' for pokemon, rarity in roll_results])}"
         ephemeral = not any_ex_ux
         await interaction.response.send_message(roll_results_message, ephemeral=ephemeral)
 
@@ -325,19 +321,14 @@ class ShopView(View):
     async def single_roll_callback(self, interaction):
         user_id = interaction.user.id
         crystal_cost = 50
-        if not self.update_crystals(user_id, -crystal_cost):
-            await interaction.response.send_message("Not enough crystals.", ephemeral=True)
-            return
-        success, message = await self.handle_roll(user_id, 1, crystal_cost)
+        success, message = await self.handle_roll(user_id, 1, crystal_cost, interaction)
         await interaction.response.send_message(message, ephemeral=True)
 
     async def multi_roll_callback(self, interaction):
         user_id = interaction.user.id
         crystal_cost = 500
-        if not self.update_crystals(user_id, -crystal_cost):
-            await interaction.response.send_message("Not enough crystals.", ephemeral=True)
-            return
-        await self.multi_roll(interaction)
+        success, message = await self.handle_roll(user_id, 10, crystal_cost, interaction)
+        await interaction.response.send_message(message, ephemeral=True)
 
     def update_crystals(self, user_id, amount):
         current_crystals = self.db.get_crystals(user_id)
