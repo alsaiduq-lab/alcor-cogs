@@ -479,24 +479,24 @@ class InventoryView(View):
                 else:
                     aggregated_inventory[key] = {'count': 1, 'item': item['item'], 'rarity': item['rarity']}
 
-            sorted_aggregated_inventory = sorted(aggregated_inventory.values(),
-                                                 key=lambda x: (-self.rarity_to_int(x['rarity']), x['item']))
+            sorted_aggregated_inventory = sorted(aggregated_inventory.values(), key=lambda x: (-self.rarity_to_int(x['rarity']), x['item']))
+            total_items = len(sorted_aggregated_inventory)
+            total_pages = (total_items + self.max_items_per_page - 1) // self.max_items_per_page
 
             start = self.page * self.max_items_per_page
             end = start + self.max_items_per_page
             page_items = sorted_aggregated_inventory[start:end]
-
             self.content = '\n'.join([f"{item['item']} ({item['rarity']}) ({item['count']})" for item in page_items])
 
-            previous_button = Button(label='Previous', style=ButtonStyle.grey, disabled=self.page == 0,
-                                     custom_id=self.previous_button_id)
-            previous_button.callback = self.previous_button_callback
-            self.add_item(previous_button)
+            if self.page > 0:
+                previous_button = Button(label='Previous', style=ButtonStyle.grey, custom_id=self.previous_button_id)
+                previous_button.callback = self.previous_button_callback
+                self.add_item(previous_button)
 
-            next_button = Button(label='Next', style=ButtonStyle.grey, disabled=end >= len(sorted_inventory),
-                                 custom_id=self.next_button_id)
-            next_button.callback = self.next_button_callback
-            self.add_item(next_button)
+            if self.page < total_pages - 1:
+                next_button = Button(label='Next', style=ButtonStyle.grey, custom_id=self.next_button_id)
+                next_button.callback = self.next_button_callback
+                self.add_item(next_button)
 
             logging.debug(f"Updated content: {self.content}")
         except Exception as ex:
