@@ -237,12 +237,6 @@ class ShopView(View):
 
     async def multi_roll(self, interaction):
         user_id = interaction.user.id
-        current_crystals = self.db.get_crystals(user_id)
-        if current_crystals < 500:
-            await interaction.response.send_message("Not enough crystals.", ephemeral=True)
-            return
-
-        self.db.update_crystals(user_id, current_crystals - 500)
         rolls = []
         any_ex_ux = False
         for _ in range(10):
