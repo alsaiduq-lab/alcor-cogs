@@ -472,6 +472,11 @@ class InventoryView(View):
             inventory = self.db.get_inventory(self.user_id)
             sorted_inventory = sorted(inventory, key=lambda x: (-self.rarity_to_int(x['rarity']), x['item']))
 
+            item_counts = {}
+            for item in sorted_inventory:
+                key = (item['item'], item['rarity'])
+                item_counts[key] = item_counts.get(key, 0) + 1
+
             start = self.page * self.max_items_per_page
             end = start + self.max_items_per_page
             page_items = sorted_inventory[start:end]
