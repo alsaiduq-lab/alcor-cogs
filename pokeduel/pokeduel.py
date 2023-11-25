@@ -77,6 +77,8 @@ class PokeDuel(commands.Cog):
             file_name = 'welcome.png'
             file_path = os.path.join(dir_path, file_name)
 
+            view = discord.ui.View()
+
             shop_button = discord.ui.Button(style=ButtonStyle.primary, label="Visit Shop", custom_id="visit_shop")
             shop_button.callback = self.open_shop
             view.add_item(shop_button)
@@ -268,7 +270,7 @@ class PokeDuel(commands.Cog):
         embed = discord.Embed(title="PokeDuel Shop",
                               description="Explore the shop and gear up for your adventures!",
                               color=0x00ff00)
-        await interaction.response.send_message(embed=embed, view=shop_view, ephemeral=True)
+        await interaction.response.edit_message(embed=embed, view=shop_view)
 
 
 class StartGameView(View):
