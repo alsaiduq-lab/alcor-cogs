@@ -331,7 +331,7 @@ class ShopView(View):
     async def multi_roll_callback(self, interaction):
         user_id = interaction.user.id
         crystal_cost = 500
-        if not self.update_crystals(user_id, crystal_cost):
+        if not self.update_crystals(user_id, -crystal_cost):
             await interaction.response.send_message("Not enough crystals.", ephemeral=True)
             return
         await self.multi_roll(interaction)
