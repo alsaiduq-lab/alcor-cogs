@@ -486,7 +486,7 @@ class InventoryView(View):
         rarity_order = {"UX": 5, "EX": 4, "R": 3, "UC": 2, "C": 1}
         return rarity_order.get(rarity, 0)
 
-    async def previous_button_callback(self, interaction, _):
+    async def previous_button_callback(self, interaction):
         logging.debug("Previous button pressed")
         if self.page > 0:
             self.page -= 1
@@ -494,7 +494,7 @@ class InventoryView(View):
             await interaction.response.edit_message(content=self.content, view=self)
         logging.debug(f"Previous button processing complete: new page={self.page}")
 
-    async def next_button_callback(self, interaction, _):
+    async def next_button_callback(self, interaction):
         logging.debug("Next button pressed")
         self.page += 1
         self.update_view()
