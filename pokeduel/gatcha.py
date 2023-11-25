@@ -470,18 +470,23 @@ class InventoryView(View):
         self.clear_items()
         try:
             inventory = self.db.get_inventory(self.user_id)
-            sorted_inventory = sorted(inventory, key=lambda x: (-self.rarity_to_int(x['rarity']), x['item']))
 
-            item_counts = {}
-            for item in sorted_inventory:
+            aggregated_inventory = {}
+            for item in inventory:
                 key = (item['item'], item['rarity'])
-                item_counts[key] = item_counts.get(key, 0) + 1
+                if key in aggregated_inventory:
+                    aggregated_inventory[key]['count'] += 1
+                else:
+                    aggregated_inventory[key] = {'count': 1, 'item': item['item'], 'rarity': item['rarity']}
+
+            sorted_aggregated_inventory = sorted(aggregated_inventory.values(),
+                                                 key=lambda x: (-self.rarity_to_int(x['rarity']), x['item']))
 
             start = self.page * self.max_items_per_page
             end = start + self.max_items_per_page
-            page_items = sorted_inventory[start:end]
+            page_items = sorted_aggregated_inventory[start:end]
 
-            self.content = '\n'.join([f"{item['item']} ({item['rarity']})" for item in page_items])
+            self.content = '\n'.join([f"{item['item']} ({item['rarity']}) ({item['count']})" for item in page_items])
 
             previous_button = Button(label='Previous', style=ButtonStyle.grey, disabled=self.page == 0,
                                      custom_id=self.previous_button_id)
