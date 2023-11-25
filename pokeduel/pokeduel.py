@@ -91,25 +91,6 @@ class PokeDuel(commands.Cog):
         self.db.initialize_new_user(user_id, 5000)
         # Add additional initialization logic here if needed
 
-    async def open_shop(self, interaction: discord.Interaction):
-        try:
-            shop_view = ShopView(self.db_path, self.pokemon_data, self.plates_data)
-            embed = Embed(title="PokeDuel Shop", description="Explore the shop and gear up for your adventures!",
-                          color=0x00ff00)
-
-            dir_path = os.path.dirname(os.path.realpath(__file__))
-            file_name = 'shop.png'
-            file_path = os.path.join(dir_path, 'data', file_name)
-
-            if os.path.exists(file_path):
-                await interaction.followup.send(file=discord.File(file_path, filename=file_name), embed=embed,
-                                                view=shop_view)
-            else:
-                await interaction.followup.send(content="Welcome to the PokeDuel Shop!", embed=embed, view=shop_view)
-
-        except Exception as e:
-            print(f"Error in open_shop: {e}")
-
     @pduel.command(name="customize")
     @has_started_save()
     async def pokeduel_customize(self, ctx):
