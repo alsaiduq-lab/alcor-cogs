@@ -198,7 +198,7 @@ class ShopView(View):
             style=ButtonStyle.secondary,
             custom_id=f'roll_{unique_suffix}'
         )
-        self.single_roll_button.callback = lambda interaction: self.single_roll_callback(interaction)
+        self.single_roll_button.callback = self.single_roll_callback
         self.add_item(self.single_roll_button)
 
         self.multi_roll_button = Button(
@@ -206,7 +206,7 @@ class ShopView(View):
             style=ButtonStyle.secondary,
             custom_id=f'multi_roll_{unique_suffix}'
         )
-        self.multi_roll_button.callback = lambda interaction: self.multi_roll_callback(interaction)
+        self.multi_roll_button.callback = self.multi_roll_callback
         self.add_item(self.multi_roll_button)
 
     @staticmethod
@@ -283,8 +283,14 @@ class ShopView(View):
                 last_pokemon = pokemon
 
         roll_results = ', '.join([f"{rarity} {pokemon}" for pokemon, rarity in rolls if pokemon])
-        special_message = f"{user_id} pulled {last_pokemon}! Congratulate this epic moment!" \
-            if (ex_ux_count >= 4 and roll_count > 1) or (ex_ux_count > 0 and roll_count == 1) and last_pokemon else ""
+        special_message = ""
+        ex_ux_pokemon_names = [pokemon for pokemon, rarity in rolls if rarity in ["EX", "UX"]]
+        if ex_ux_count >= 4 and roll_count > 1:
+            ex_ux_pokemon_list = ', '.join(ex_ux_pokemon_names)
+            special_message = f"{user_id} pulled over 4 EX/UX Pokémon: {ex_ux_pokemon_list}! Congratulate this epic moment!"
+        elif ex_ux_count > 0 and roll_count == 1 and last_pokemon:
+            special_message = f"{user_id} pulled {last_pokemon}! Congratulate this epic moment!"
+
         return True, f"Roll Results: {roll_results} {special_message}"
 
     async def view_inventory_callback(self, interaction: Interaction):
@@ -294,7 +300,7 @@ class ShopView(View):
             await interaction.message.edit("Your inventory is empty.", ephemeral=True)
         else:
             inventory_view = InventoryView(user_id=user_id, db=self.db)
-            await interaction.message.edit(content=inventory_view.content, view=inventory_view, ephemeral=True)
+            await interaction.send.message(content=inventory_view.content, view=inventory_view, ephemeral=True)
 
     async def single_roll_callback(self, interaction):
         user_id = interaction.user.id
@@ -365,7 +371,8 @@ class ShopView(View):
         embed = Embed(title="Your Balances", color=0x00ff00)
         embed.add_field(name="Dust", value=f"{current_dust} 💨", inline=True)
         embed.add_field(name="Crystals", value=f"{current_crystals} 💎", inline=True)
-        await interaction.message.edit(embed=embed)
+        await interaction.response.send_message(embed=embed)
+
 
     @staticmethod
     def calculate_dust_cost(rarity):
