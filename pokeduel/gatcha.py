@@ -467,14 +467,16 @@ class InventoryView(View):
 
             self.content = '\n'.join([f"{item['item']} ({item['rarity']})" for item in page_items])
 
-            self.add_item(
-                Button(label='Previous', style=ButtonStyle.grey, disabled=self.page == 0,
-                       custom_id=self.previous_button_id, callback=self.previous_button_callback)
-            )
-            self.add_item(
-                Button(label='Next', style=ButtonStyle.grey, disabled=end >= len(sorted_inventory),
-                       custom_id=self.next_button_id, callback=self.next_button_callback)
-            )
+            previous_button = Button(label='Previous', style=ButtonStyle.grey, disabled=self.page == 0,
+                                     custom_id=self.previous_button_id)
+            previous_button.callback = self.previous_button_callback
+            self.add_item(previous_button)
+
+            next_button = Button(label='Next', style=ButtonStyle.grey, disabled=end >= len(sorted_inventory),
+                                 custom_id=self.next_button_id)
+            next_button.callback = self.next_button_callback
+            self.add_item(next_button)
+
             logging.debug(f"Updated content: {self.content}")
         except Exception as ex:
             logging.error(f"Error in update_view: {ex}", exc_info=True)
