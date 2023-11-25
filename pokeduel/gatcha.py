@@ -476,10 +476,11 @@ class InventoryView(View):
         if self.page > 0:
             self.page -= 1
             self.update_view()
-            await interaction.response.edit_message(content=self.content, view=self)
+            await interaction.followup.edit_message(content=self.content, view=self, message_id=interaction.message.id)
 
     @discord.ui.button(label='Next', style=discord.ButtonStyle.grey)
     async def next_button_callback(self, interaction, _):
         self.page += 1
         self.update_view()
-        await interaction.response.edit_message(content=self.content, view=self)
+        await interaction.followup.edit_message(content=self.content, view=self, message_id=interaction.message.id)
+        
