@@ -262,6 +262,14 @@ class PokeDuel(commands.Cog):
             logging.error(f"Error rerolling data for user {member.id}: {e}", exc_info=True)
             await ctx.send(f"Failed to reroll data for {member.display_name}. Error: {e}")
 
+    async def open_shop(self, interaction: discord.Interaction):
+        """Method to handle shop button interaction."""
+        shop_view = ShopView(self.db_path, self.pokemon_data, self.plates_data)
+        embed = discord.Embed(title="PokeDuel Shop",
+                              description="Explore the shop and gear up for your adventures!",
+                              color=0x00ff00)
+        await interaction.response.send_message(embed=embed, view=shop_view, ephemeral=True)
+
 
 class StartGameView(View):
     def __init__(self, ctx):
@@ -279,14 +287,6 @@ class StartGameView(View):
 
     async def on_error(self, interaction, error, item):
         await interaction.followup.send()(f"An error occurred. Please try again or ping the dev", ephemeral=True)
-
-    async def open_shop(self, interaction: discord.Interaction):
-        """Method to handle shop button interaction."""
-        shop_view = ShopView(self.db_path, self.pokemon_data, self.plates_data)
-        embed = discord.Embed(title="PokeDuel Shop",
-                              description="Explore the shop and gear up for your adventures!",
-                              color=0x00ff00)
-        await interaction.response.send_message(embed=embed, view=shop_view, ephemeral=True)
 
 
 class PokeDuelButtons(ui.View):
