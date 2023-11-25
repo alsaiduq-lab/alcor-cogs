@@ -443,12 +443,11 @@ class ShopView(View):
 
 
 class InventoryView(View):
-    def __init__(self, user_id, db, sort_key='item', page=0):
+    def __init__(self, user_id, db, page=0):
         super().__init__()
         self.content = None
         self.user_id = user_id
         self.db = db
-        self.sort_key = sort_key
         self.page = page
         self.max_items_per_page = 8
         self.update_view()
@@ -456,29 +455,33 @@ class InventoryView(View):
     def update_view(self):
         self.clear_items()
         inventory = self.db.get_inventory(self.user_id)
-        sorted_inventory = sorted(inventory, key=lambda x: x[self.sort_key])
+        sorted_inventory = sorted(inventory, key=lambda x: (-self.rarity_to_int(x['rarity']), x['item']))
 
         start = self.page * self.max_items_per_page
         end = start + self.max_items_per_page
         page_items = sorted_inventory[start:end]
 
-        inventory_display = [f"{item['item']} (Rarity: {item['rarity']})" for item in page_items]
+        self.content = '\n'.join([f"{item['item']} (Rarity: {item['rarity']})" for item in page_items])
+
         self.add_item(
             Button(label='Previous', style=ButtonStyle.grey, disabled=self.page == 0, custom_id='previous_page'))
         self.add_item(
             Button(label='Next', style=ButtonStyle.grey, disabled=end >= len(sorted_inventory), custom_id='next_page'))
 
-        self.content = '\n'.join(inventory_display)
+    @staticmethod
+    def rarity_to_int(rarity):
+        rarity_order = {"UX": 5, "EX": 4, "R": 3, "UC": 2, "C": 1}
+        return rarity_order.get(rarity, 0)
 
     @discord.ui.button(label='Previous', style=discord.ButtonStyle.grey)
     async def previous_button_callback(self, interaction, _):
         if self.page > 0:
             self.page -= 1
             self.update_view()
-            await interaction.followup.edit_message(content=self.content, view=self, message_id=interaction.message.id)
+            await interaction.response.edit_message(content=self.content, view=self)
 
     @discord.ui.button(label='Next', style=discord.ButtonStyle.grey)
     async def next_button_callback(self, interaction, _):
         self.page += 1
         self.update_view()
-        await interaction.followup.edit_message(content=self.content, view=self, message_id=interaction.message.id)
+        await interaction.response.edit_message(content=self.content, view=self)
