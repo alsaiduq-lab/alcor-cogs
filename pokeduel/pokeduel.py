@@ -77,8 +77,7 @@ class PokeDuel(commands.Cog):
             file_name = 'welcome.png'
             file_path = os.path.join(dir_path, file_name)
 
-            view = View()
-            shop_button = Button(style=ButtonStyle.primary, label="Visit Shop", custom_id="visit_shop")
+            shop_button = discord.ui.Button(style=ButtonStyle.primary, label="Visit Shop", custom_id="visit_shop")
             shop_button.callback = self.open_shop
             view.add_item(shop_button)
 
@@ -281,6 +280,14 @@ class StartGameView(View):
 
     async def on_error(self, interaction, error, item):
         await interaction.followup.send()(f"An error occurred. Please try again or ping the dev", ephemeral=True)
+
+    async def open_shop(self, interaction: discord.Interaction):
+        """Method to handle shop button interaction."""
+        shop_view = ShopView(self.db_path, self.pokemon_data, self.plates_data)
+        embed = discord.Embed(title="PokeDuel Shop",
+                              description="Explore the shop and gear up for your adventures!",
+                              color=0x00ff00)
+        await interaction.response.send_message(embed=embed, view=shop_view, ephemeral=True)
 
 
 class PokeDuelButtons(ui.View):
