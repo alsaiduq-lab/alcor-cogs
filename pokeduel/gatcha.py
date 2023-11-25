@@ -450,16 +450,14 @@ class InventoryView(View):
         self.db = db
         self.page = page
         self.max_items_per_page = 8
-        self.update_view()
-        unique_id = str(uuid.uuid4())
-        self.previous_button_id = f'previous_{unique_id}'
-        self.next_button_id = f'next_{unique_id}'
+        self.previous_button_id = f"previous_{user_id}"
+        self.next_button_id = f"next_{user_id}"
         self.update_view()
 
     def update_view(self):
         logging.debug(f"Updating view: page={self.page}")
+        self.clear_items()
         try:
-            self.clear_items()
             inventory = self.db.get_inventory(self.user_id)
             sorted_inventory = sorted(inventory, key=lambda x: (-self.rarity_to_int(x['rarity']), x['item']))
 
@@ -469,11 +467,14 @@ class InventoryView(View):
 
             self.content = '\n'.join([f"{item['item']} ({item['rarity']})" for item in page_items])
 
-            self.add_item(Button(label='Previous', style=ButtonStyle.grey, disabled=self.page == 0,
-                                 custom_id=self.previous_button_id))
-            self.add_item(Button(label='Next', style=ButtonStyle.grey, disabled=end >= len(sorted_inventory),
-                                 custom_id=self.next_button_id))
-
+            self.add_item(
+                Button(label='Previous', style=ButtonStyle.grey, disabled=self.page == 0,
+                       custom_id=self.previous_button_id)
+            )
+            self.add_item(
+                Button(label='Next', style=ButtonStyle.grey, disabled=end >= len(sorted_inventory),
+                       custom_id=self.next_button_id)
+            )
             logging.debug(f"Updated content: {self.content}")
         except Exception as ex:
             logging.error(f"Error in update_view: {ex}", exc_info=True)
@@ -483,8 +484,8 @@ class InventoryView(View):
         rarity_order = {"UX": 5, "EX": 4, "R": 3, "UC": 2, "C": 1}
         return rarity_order.get(rarity, 0)
 
-    @discord.ui.button(label='Previous', style=discord.ButtonStyle.grey, custom_id=f"previous_{user_id}")
-    async def previous_button_callback(self, interaction, button):
+    @discord.ui.button(label='Previous', style=discord.ButtonStyle.grey, custom_id=self.previous_button_id)
+    async def previous_button_callback(self, interaction, _):
         logging.debug("Previous button pressed")
         if self.page > 0:
             self.page -= 1
@@ -492,8 +493,8 @@ class InventoryView(View):
             await interaction.response.edit_message(content=self.content, view=self)
         logging.debug(f"Previous button processing complete: new page={self.page}")
 
-    @discord.ui.button(label='Next', style=discord.ButtonStyle.grey, custom_id=f"next_{user_id}")
-    async def next_button_callback(self, interaction, button):
+    @discord.ui.button(label='Next', style=discord.ButtonStyle.grey, custom_id=self.next_button_id)
+    async def next_button_callback(self, interaction, _):
         logging.debug("Next button pressed")
         self.page += 1
         self.update_view()
