@@ -101,13 +101,14 @@ class DatabaseManager:
     def add_to_inventory(self, user_id, item, rarity):
         try:
             inventory = self.get_inventory(user_id)
-            new_item = {'item': item, 'rarity': rarity}
-            logging.debug(f"Adding to inventory for user {user_id}: {new_item}")
+            logging.debug(f"Current inventory for user {user_id}: {inventory}")
 
+            new_item = {'item': item, 'rarity': rarity}
             inventory.append(new_item)
             self.update_inventory(user_id, inventory)
 
             logging.info(f"Added {item} of rarity {rarity} to user {user_id}'s inventory.")
+            logging.debug(f"Updated inventory for user {user_id}: {inventory}")
         except Exception as e:
             logging.error(f"Error adding item to inventory for user {user_id}: {e}")
 

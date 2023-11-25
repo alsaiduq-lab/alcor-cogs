@@ -225,26 +225,36 @@ class ShopView(View):
     async def single_roll(self, interaction):
         user_id = interaction.user.id
         current_crystals = self.db.get_crystals(user_id)
+
         if current_crystals < 50:
             await interaction.response.send_message("Not enough crystals.", ephemeral=True)
             return
 
-        self.db.update_crystals(user_id, current_crystals - 50)
         pokemon, rarity = self.roll()
-        self.add_to_inventory(user_id, pokemon, rarity)
-        ephemeral = rarity not in ["EX", "UX"]
-        await interaction.response.send_message(f"You've got a {pokemon} of rarity {rarity}!", ephemeral=ephemeral)
+        if pokemon:
+            self.add_to_inventory(user_id, pokemon, rarity)
+            self.db.update_crystals(user_id, current_crystals - 50)
+            await interaction.response.send_message(f"You've got a {pokemon} of rarity {rarity}!", ephemeral=True)
+        else:
+            await interaction.response.send_message("No Pokémon were rolled. Your crystals have been refunded.", ephemeral=True)
 
     async def multi_roll(self, interaction):
         user_id = interaction.user.id
-        roll_results = self.roll(roll_count=10)
-        for pokemon, rarity in roll_results:
-            self.add_to_inventory(user_id, pokemon, rarity)
+        current_crystals = self.db.get_crystals(user_id)
 
-        any_ex_ux = any(rarity in ["EX", "UX"] for _, rarity in roll_results)
-        roll_results_message = f"You've got the following Pokémon: {', '.join([f'{pokemon} ({rarity})' for pokemon, rarity in roll_results])}"
-        ephemeral = not any_ex_ux
-        await interaction.response.send_message(roll_results_message, ephemeral=ephemeral)
+        if current_crystals < 500:
+            await interaction.response.send_message("Not enough crystals.", ephemeral=True)
+            return
+
+        roll_results = self.roll(roll_count=10)
+        if any(roll_results):
+            for pokemon, rarity in roll_results:
+                self.add_to_inventory(user_id, pokemon, rarity)
+            self.db.update_crystals(user_id, current_crystals - 500)
+            roll_results_message = f"You've got the following Pokémon: {', '.join([f'{pokemon} ({rarity})' for pokemon, rarity in roll_results])}"
+            await interaction.response.send_message(roll_results_message, ephemeral=True)
+        else:
+            await interaction.response.send_message("No Pokémon were rolled. Your crystals have been refunded.", ephemeral=True)
 
     async def flash_sale(self, interaction):
         self.generate_flash_sale_pokemon()
