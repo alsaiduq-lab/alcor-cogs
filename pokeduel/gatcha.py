@@ -334,8 +334,7 @@ class ShopView(View):
         if not self.update_crystals(user_id, -crystal_cost):
             await interaction.response.send_message("Not enough crystals.", ephemeral=True)
             return
-        success, message = await self.handle_roll(user_id, 10, crystal_cost)
-        await interaction.response.send_message(message, ephemeral=True)
+        await self.multi_roll(interaction)
 
     def update_crystals(self, user_id, amount):
         current_crystals = self.db.get_crystals(user_id)
@@ -483,4 +482,3 @@ class InventoryView(View):
         self.page += 1
         self.update_view()
         await interaction.followup.edit_message(content=self.content, view=self, message_id=interaction.message.id)
-        
