@@ -271,11 +271,17 @@ class ShopView(View):
         return chosen_pokemon[0], chosen_pokemon[1]
 
     async def handle_roll(self, user_id, roll_count, crystal_cost):
+        logging.info(
+            f"Initiating roll for user_id {user_id} with roll_count {roll_count} and crystal_cost {crystal_cost}")
+
         if not self.update_crystals(user_id, -crystal_cost):
+            logging.warning(f"User {user_id} does not have enough crystals.")
             return False, "Not enough crystals."
 
         rolls = [self.roll() for _ in range(roll_count)]
         ex_ux_count = sum(1 for _, rarity in rolls if rarity in ["EX", "UX"])
+        logging.info(f"Roll results for user {user_id}: {rolls}")
+
         last_pokemon = None
         for pokemon, rarity in rolls:
             self.add_to_inventory(user_id, pokemon, rarity)
@@ -285,12 +291,14 @@ class ShopView(View):
         roll_results = ', '.join([f"{rarity} {pokemon}" for pokemon, rarity in rolls if pokemon])
         special_message = ""
         ex_ux_pokemon_names = [pokemon for pokemon, rarity in rolls if rarity in ["EX", "UX"]]
+
         if ex_ux_count >= 4 and roll_count > 1:
             ex_ux_pokemon_list = ', '.join(ex_ux_pokemon_names)
             special_message = f"{user_id} pulled over 4 EX/UX Pokémon: {ex_ux_pokemon_list}! Congratulate this epic moment!"
         elif ex_ux_count > 0 and roll_count == 1 and last_pokemon:
             special_message = f"{user_id} pulled {last_pokemon}! Congratulate this epic moment!"
 
+        logging.info(f"Final message for user {user_id}: Roll Results: {roll_results} {special_message}")
         return True, f"Roll Results: {roll_results} {special_message}"
 
     async def view_inventory_callback(self, interaction: Interaction):
