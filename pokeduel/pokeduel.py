@@ -236,7 +236,23 @@ class PokeDuel(commands.Cog):
 
     @staticmethod
     def draw_condition_met():
-        return False  # Replace with actual condition
+        return False  # Replace with actual
+
+    @commands.is_owner()
+    @pduel.command(name="reroll")
+    async def pokeduel_reroll(self, ctx, member: discord.Member = None):
+        """Reinitializes the game data for a user. Bot owner only."""
+        if member is None:
+            member = ctx.author
+
+        logging.info(f"Attempting to reroll data for user {member.id}")
+        try:
+            self.db.initialize_new_user(member.id, 5000, 0, json.dumps([]), json.dumps([]))
+            logging.info(f"Successfully rerolled data for user {member.id}")
+            await ctx.send(f"Data has been rerolled for {member.display_name}.")
+        except Exception as e:
+            logging.error(f"Error rerolling data for user {member.id}: {e}", exc_info=True)
+            await ctx.send(f"Failed to reroll data for {member.display_name}.")
 
 
 class StartGameView(View):

@@ -184,7 +184,8 @@ class ShopView(View):
         self.clear_items()
         unique_suffix = str(uuid.uuid4())[:8]
 
-        self.view_inventory_button = Button(label='View Inventory', style=ButtonStyle.secondary, custom_id='view_inventory')
+        self.view_inventory_button = Button(label='View Inventory', style=ButtonStyle.secondary,
+                                            custom_id='view_inventory')
         self.view_inventory_button.callback = self.view_inventory_callback
         self.add_item(self.view_inventory_button)
 
@@ -303,12 +304,22 @@ class ShopView(View):
 
     async def view_inventory_callback(self, interaction: Interaction):
         user_id = interaction.user.id
-        inventory = self.db.get_inventory(user_id)
-        if not inventory:
-            await interaction.followup.send("Your inventory is empty.", ephemeral=True)
-        else:
-            inventory_view = InventoryView(user_id=user_id, db=self.db)
-            await interaction.followup.send(content=inventory_view.content, view=inventory_view, ephemeral=True)
+        logging.debug(f"Starting inventory check for user_id: {user_id}")
+        try:
+            inventory = self.db.get_inventory(user_id)
+            logging.debug(f"Inventory for user_id {user_id}: {inventory}")
+
+            if not inventory:
+                await interaction.followup.send("Your inventory is empty.", ephemeral=True)
+            else:
+                inventory_view = InventoryView(user_id=user_id, db=self.db)
+                await interaction.followup.send(content=inventory_view.content, view=inventory_view, ephemeral=True)
+
+        except Exception as ex:
+            logging.error(f"Error during inventory check for user {user_id}: {ex}", exc_info=True)
+            await interaction.followup.send("An error occurred while accessing your inventory.", ephemeral=True)
+
+        logging.debug(f"Inventory check completed for user_id: {user_id}")
 
     async def single_roll_callback(self, interaction):
         user_id = interaction.user.id
@@ -374,13 +385,18 @@ class ShopView(View):
 
     async def check_balance_callback(self, interaction: Interaction):
         user_id = interaction.user.id
-        current_dust = self.db.get_dust(user_id)
-        current_crystals = self.db.get_crystals(user_id)
-        embed = Embed(title="Your Balances", color=0x00ff00)
-        embed.add_field(name="Dust", value=f"{current_dust} 💨", inline=True)
-        embed.add_field(name="Crystals", value=f"{current_crystals} 💎", inline=True)
-        await interaction.followup.send(embed=embed, ephemeral=True)
-
+        logging.debug(f"Starting balance check for user_id: {user_id}")
+        try:
+            current_dust = self.db.get_dust(user_id)
+            current_crystals = self.db.get_crystals(user_id)
+            logging.debug(f"Dust: {current_dust}, Crystals: {current_crystals} for user_id: {user_id}")
+            embed = Embed(title="Your Balances", color=0x00ff00)
+            embed.add_field(name="Dust", value=f"{current_dust} 💨", inline=True)
+            embed.add_field(name="Crystals", value=f"{current_crystals} 💎", inline=True)
+            await interaction.followup.send(embed=embed, ephemeral=True)
+        except Exception as ex:
+            logging.error(f"Error during balance check for user {user_id}: {ex}", exc_info=True)
+        logging.debug(f"Balance check completed for user_id: {user_id}")
 
     @staticmethod
     def calculate_dust_cost(rarity):
