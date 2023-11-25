@@ -255,6 +255,7 @@ class PokeDuel(commands.Cog):
         try:
             self.db.initialize_new_user(member.id, crystals=5000, dust=0, inventory=[], party=[])
             logging.info(f"Successfully rerolled data for user {member.id}")
+
             await ctx.send(f"Data has been successfully rerolled for {member.display_name}.")
 
         except Exception as e:

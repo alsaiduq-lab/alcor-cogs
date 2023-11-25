@@ -118,8 +118,20 @@ class DatabaseManager:
 
     def has_started_save(self, user_id):
         with self.conn:
-            cur = self.conn.execute("SELECT EXISTS(SELECT 1 FROM users WHERE id = ?)", (user_id,))
-            return cur.fetchone()[0] == 1
+            cur = self.conn.execute("SELECT crystals, inventory, party FROM users WHERE id = ?", (user_id,))
+            result = cur.fetchone()
+
+            if result is None:
+                return False
+
+            crystals, inventory, party = result
+            inventory = json.loads(inventory)
+            party = json.loads(party)
+
+            if crystals == 5000 and len(inventory) == 0 and len(party) == 0:
+                return False
+
+            return True
 
     def is_player_available(self, user_id):
         pass
