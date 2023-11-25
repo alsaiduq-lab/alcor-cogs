@@ -305,10 +305,10 @@ class ShopView(View):
         user_id = interaction.user.id
         inventory = self.db.get_inventory(user_id)
         if not inventory:
-            await interaction.message.edit("Your inventory is empty.", ephemeral=True)
+            await interaction.followup.send("Your inventory is empty.", ephemeral=True)
         else:
             inventory_view = InventoryView(user_id=user_id, db=self.db)
-            await interaction.send.message(content=inventory_view.content, view=inventory_view, ephemeral=True)
+            await interaction.followup.send(content=inventory_view.content, view=inventory_view, ephemeral=True)
 
     async def single_roll_callback(self, interaction):
         user_id = interaction.user.id
@@ -379,7 +379,7 @@ class ShopView(View):
         embed = Embed(title="Your Balances", color=0x00ff00)
         embed.add_field(name="Dust", value=f"{current_dust} 💨", inline=True)
         embed.add_field(name="Crystals", value=f"{current_crystals} 💎", inline=True)
-        await interaction.response.send_message(embed=embed)
+        await interaction.followup.send(embed=embed, ephemeral=True)
 
 
     @staticmethod
