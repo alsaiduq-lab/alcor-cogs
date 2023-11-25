@@ -469,11 +469,11 @@ class InventoryView(View):
 
             self.add_item(
                 Button(label='Previous', style=ButtonStyle.grey, disabled=self.page == 0,
-                       custom_id=self.previous_button_id)
+                       custom_id=self.previous_button_id, callback=self.previous_button_callback)
             )
             self.add_item(
                 Button(label='Next', style=ButtonStyle.grey, disabled=end >= len(sorted_inventory),
-                       custom_id=self.next_button_id)
+                       custom_id=self.next_button_id, callback=self.next_button_callback)
             )
             logging.debug(f"Updated content: {self.content}")
         except Exception as ex:
@@ -484,7 +484,6 @@ class InventoryView(View):
         rarity_order = {"UX": 5, "EX": 4, "R": 3, "UC": 2, "C": 1}
         return rarity_order.get(rarity, 0)
 
-    @discord.ui.button(label='Previous', style=discord.ButtonStyle.grey, custom_id=self.previous_button_id)
     async def previous_button_callback(self, interaction, _):
         logging.debug("Previous button pressed")
         if self.page > 0:
@@ -493,7 +492,6 @@ class InventoryView(View):
             await interaction.response.edit_message(content=self.content, view=self)
         logging.debug(f"Previous button processing complete: new page={self.page}")
 
-    @discord.ui.button(label='Next', style=discord.ButtonStyle.grey, custom_id=self.next_button_id)
     async def next_button_callback(self, interaction, _):
         logging.debug("Next button pressed")
         self.page += 1
