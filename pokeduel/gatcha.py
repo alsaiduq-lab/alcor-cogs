@@ -309,11 +309,10 @@ class ShopView(View):
             inventory = self.db.get_inventory(user_id)
             logging.debug(f"Inventory for user_id {user_id}: {inventory}")
             if not inventory:
-                await interaction.response.send_message("Your inventory is empty.", ephemeral=True)
+                await interaction.followup.send("Your inventory is empty.", ephemeral=True)
             else:
                 inventory_view = InventoryView(user_id=user_id, db=self.db)
-                await interaction.response.send_message(content=inventory_view.content, view=inventory_view,
-                                                        ephemeral=True)
+                await interaction.followup.send(content=inventory_view.content, view=inventory_view, ephemeral=True)
         except Exception as ex:
             logging.error(f"Error during inventory check for user {user_id}: {ex}", exc_info=True)
             await interaction.response.send_message("An error occurred while accessing your inventory.", ephemeral=True)
@@ -452,6 +451,10 @@ class InventoryView(View):
         self.page = page
         self.max_items_per_page = 8
         self.update_view()
+        unique_id = str(uuid.uuid4())
+        self.previous_button_id = f'previous_{unique_id}'
+        self.next_button_id = f'next_{unique_id}'
+        self.update_view()
 
     def update_view(self):
         logging.debug(f"Updating view: page={self.page}")
@@ -464,12 +467,13 @@ class InventoryView(View):
             end = start + self.max_items_per_page
             page_items = sorted_inventory[start:end]
 
-            self.content = '\n'.join([f"{item['item']} (Rarity: {item['rarity']})" for item in page_items])
-            self.add_item(
-                Button(label='Previous', style=ButtonStyle.grey, disabled=self.page == 0, custom_id='previous_page'))
-            self.add_item(
-                Button(label='Next', style=ButtonStyle.grey, disabled=end >= len(sorted_inventory),
-                       custom_id='next_page'))
+            self.content = '\n'.join([f"{item['item']} ({item['rarity']})" for item in page_items])
+
+            self.add_item(Button(label='Previous', style=ButtonStyle.grey, disabled=self.page == 0,
+                                 custom_id=self.previous_button_id))
+            self.add_item(Button(label='Next', style=ButtonStyle.grey, disabled=end >= len(sorted_inventory),
+                                 custom_id=self.next_button_id))
+
             logging.debug(f"Updated content: {self.content}")
         except Exception as ex:
             logging.error(f"Error in update_view: {ex}", exc_info=True)
@@ -479,7 +483,7 @@ class InventoryView(View):
         rarity_order = {"UX": 5, "EX": 4, "R": 3, "UC": 2, "C": 1}
         return rarity_order.get(rarity, 0)
 
-    @discord.ui.button(label='Previous', style=discord.ButtonStyle.grey)
+    @discord.ui.button(label='Previous', style=discord.ButtonStyle.grey, custom_id=self.previous_button_id)
     async def previous_button_callback(self, interaction, _):
         logging.debug("Previous button pressed")
         if self.page > 0:
@@ -488,7 +492,7 @@ class InventoryView(View):
             await interaction.response.edit_message(content=self.content, view=self)
         logging.debug(f"Previous button processing complete: new page={self.page}")
 
-    @discord.ui.button(label='Next', style=discord.ButtonStyle.grey)
+    @discord.ui.button(label='Next', style=discord.ButtonStyle.grey, custom_id=self.next_button_id)
     async def next_button_callback(self, interaction, _):
         logging.debug("Next button pressed")
         self.page += 1
