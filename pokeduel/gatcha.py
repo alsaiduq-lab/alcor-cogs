@@ -308,17 +308,15 @@ class ShopView(View):
         try:
             inventory = self.db.get_inventory(user_id)
             logging.debug(f"Inventory for user_id {user_id}: {inventory}")
-
             if not inventory:
-                await interaction.followup.send("Your inventory is empty.", ephemeral=True)
+                await interaction.response.send_message("Your inventory is empty.", ephemeral=True)
             else:
                 inventory_view = InventoryView(user_id=user_id, db=self.db)
-                await interaction.followup.send(content=inventory_view.content, view=inventory_view, ephemeral=True)
-
+                await interaction.response.send_message(content=inventory_view.content, view=inventory_view,
+                                                        ephemeral=True)
         except Exception as ex:
             logging.error(f"Error during inventory check for user {user_id}: {ex}", exc_info=True)
-            await interaction.followup.send("An error occurred while accessing your inventory.", ephemeral=True)
-
+            await interaction.response.send_message("An error occurred while accessing your inventory.", ephemeral=True)
         logging.debug(f"Inventory check completed for user_id: {user_id}")
 
     async def single_roll_callback(self, interaction):
@@ -393,9 +391,10 @@ class ShopView(View):
             embed = Embed(title="Your Balances", color=0x00ff00)
             embed.add_field(name="Dust", value=f"{current_dust} 💨", inline=True)
             embed.add_field(name="Crystals", value=f"{current_crystals} 💎", inline=True)
-            await interaction.followup.send(embed=embed, ephemeral=True)
+            await interaction.response.send_message(embed=embed, ephemeral=True)
         except Exception as ex:
             logging.error(f"Error during balance check for user {user_id}: {ex}", exc_info=True)
+            await interaction.response.send_message("An error occurred while checking your balance.", ephemeral=True)
         logging.debug(f"Balance check completed for user_id: {user_id}")
 
     @staticmethod

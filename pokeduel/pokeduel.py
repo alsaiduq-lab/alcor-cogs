@@ -64,8 +64,9 @@ class PokeDuel(commands.Cog):
 
     @pduel.command(name="start")
     async def pokeduel_start(self, ctx):
+        """Start the game for a new player."""
         user_id = ctx.author.id
-        if self.is_new_player(user_id):
+        if not self.db.has_started_save(user_id):
             self.initialize_new_player(user_id)
 
             embed = Embed(title="Welcome to PokeDuel!",
@@ -95,6 +96,7 @@ class PokeDuel(commands.Cog):
     @pduel.command(name="customize")
     @has_started_save()
     async def pokeduel_customize(self, ctx):
+        """Customize your party."""
         user_id = ctx.author.id
         party = self.db.get_user_party(user_id)
 
@@ -107,6 +109,7 @@ class PokeDuel(commands.Cog):
     @pduel.command(name="shop")
     @has_started_save()
     async def pokeduel_shop(self, ctx):
+        """Shop to purchase figures and plates."""
         user_id = ctx.author.id
         if not self.db.has_started_save(user_id):
             await ctx.send("You need to start a game first using `pokeduel start`.")
@@ -131,6 +134,7 @@ class PokeDuel(commands.Cog):
     @pduel.command(name="duel")
     @has_started_save()
     async def pokeduel_duel(self, ctx, opponent: Member):
+        """Begin dueling!"""
         if self.is_duel_ineligible(ctx, opponent):
             return
 
@@ -216,6 +220,7 @@ class PokeDuel(commands.Cog):
 
     @pduel.command(name="help")
     async def pokeduel_help(self, ctx):
+        """Shows the help menu."""
         prefix = (await ctx.bot.get_prefix(ctx.message))[0]
         help_message = (f"Welcome to PokeDuel! Here are some commands you can use:\n"
                         f"- `{prefix}pduel start`: Start your journey in PokeDuel\n"
@@ -248,7 +253,11 @@ class PokeDuel(commands.Cog):
 
         logging.info(f"Attempting to reroll data for user {member.id}")
         try:
-            self.db.initialize_new_user(member.id, 5000, 0, json.dumps([]), json.dumps([]))
+            self.db.initialize_new_user(member.id)
+            self.db.update_crystals(member.id, 5000)
+            self.db.update_dust(member.id, 0)
+            self.db.update_inventory(member.id, [])
+            self.db.update_user_party(member.id, [])
             logging.info(f"Successfully rerolled data for user {member.id}")
             await ctx.send(f"Data has been rerolled for {member.display_name}.")
         except Exception as e:
