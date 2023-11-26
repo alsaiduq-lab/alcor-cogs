@@ -5,9 +5,11 @@ import logging
 import re
 import uuid
 import discord
+
 from discord import ButtonStyle, SelectOption, Interaction, Embed
 from discord.ui import Select, View, Button
 from .data.database import DatabaseManager
+from .utils import pokemonapi
 
 
 def find_strongest_attack(pokemon_data):
@@ -161,6 +163,7 @@ class ShopView(View):
         self.initialize_buttons()
         self.flash_sale_button = None
         self.flash_sale_pokemon = []
+        self.client = pokepy.V2Client()
 
         self.plate_options = [
             SelectOption(
@@ -275,8 +278,7 @@ class ShopView(View):
         return [random.choices(pokemon_list, weights=cumulative_weights, k=1)[0] for _ in range(roll_count)]
 
     async def handle_roll(self, user_id, roll_count, crystal_cost, interaction):
-        logging.info(
-            f"Initiating roll for user_id {user_id} with roll_count {roll_count} and crystal_cost {crystal_cost}")
+        logging.info(f"Initiating roll for user_id {user_id} with roll_count {roll_count} and crystal_cost {crystal_cost}")
 
         if not self.update_crystals(user_id, -crystal_cost):
             logging.warning(f"User {user_id} does not have enough crystals.")
@@ -285,22 +287,30 @@ class ShopView(View):
         rolls = self.roll(roll_count)
         ex_ux_count = sum(1 for _, rarity in rolls if rarity in ["EX", "UX"])
         last_pokemon = next((pokemon for pokemon, rarity in rolls if rarity in ["EX", "UX"]), None)
+
+        roll_results_with_icons = []
         for pokemon, rarity in rolls:
             self.add_to_inventory(user_id, pokemon, rarity)
+            sprite_filename = pokemonapi.get_pokemon_data(pokemon, self.pokemon_shop_data)
+            if sprite_filename:
+                file = discord.File(sprite_filename, filename="sprite.png")
+                roll_results_with_icons.append(f"{rarity} {pokemon} {interaction.channel.send(file=file)}")
+            else:
+                roll_results_with_icons.append(f"{rarity} {pokemon}")
+
+        roll_results_message = ', '.join(roll_results_with_icons)
 
         user_mention = interaction.user.mention
         special_message = self.generate_special_message(ex_ux_count, roll_count, last_pokemon, rolls, user_mention)
 
-        roll_results = ', '.join([f"{rarity} {pokemon}" for pokemon, rarity in rolls if pokemon])
-
-        logging.info(f"Final message for user {user_id}: Roll Results: {roll_results} {special_message}")
+        logging.info(f"Final message for user {user_id}: Roll Results: {roll_results_message} {special_message}")
 
         if interaction.channel.type == discord.ChannelType.private:
-            return True, f"Roll Results: {roll_results}"
+            return True, roll_results_message
 
         if special_message:
             await interaction.followup.send(special_message)
-        return True, f"Roll Results: {roll_results}"
+        return True, roll_results_message
 
     @staticmethod
     def generate_special_message(ex_ux_count, roll_count, last_pokemon, rolls, user_mention):
