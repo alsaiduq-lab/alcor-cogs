@@ -21,6 +21,7 @@ def channel_is_nsfw(channel) -> bool:
 
 class AkiView(discord.ui.View):
     last_win_time = None
+
     def __init__(self, game, color, author_id, sfw_mode):
         super().__init__(timeout=60)
         self.aki = game
@@ -182,18 +183,18 @@ class AkiView(discord.ui.View):
             e.set_footer(text=f"{round(self.aki.progression, 2)}% guessed")
         return e
 
-    def get_winner_embed(self, winner: dict) -> discord.Embed:
-        if 'absolute_picture_path' in winner and winner['absolute_picture_path']:
-            image_url = winner["absolute_picture_path"]
+    def get_winner_embed(self, winner: asyncakinator.Guess) -> discord.Embed:
+        if winner.absolute_picture_path:
+            image_url = winner.absolute_picture_path
         else:
-            image_url = search_image(winner['name'])
+            image_url = self.search_image(winner.name)
             if not image_url:
                 image_url = 'default_image_url'
 
         win_embed = discord.Embed(
             color=self.color,
-            title=f"I'm {round(float(winner['proba']) * 100)}% sure it's {winner['name']}!",
-            description=winner["description"]
+            title=f"I'm {round(float(winner.proba) * 100)}% sure it's {winner.name}!",
+            description=winner.description
         )
         win_embed.set_image(url=image_url)
         return win_embed
