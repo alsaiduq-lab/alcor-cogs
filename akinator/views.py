@@ -127,7 +127,7 @@ class AkiView(discord.ui.View):
             akinator_answer = self.convert_to_akinator_answer(answer)
             question = await self.aki.answer(akinator_answer)
             if question:
-                await self.send_current_question(interaction, question)
+                await self.send_current_question(interaction)
             else:
                 await self.win(interaction)
         except Exception as error:
