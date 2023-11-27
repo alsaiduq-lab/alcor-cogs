@@ -101,9 +101,12 @@ class AkiView(discord.ui.View):
 
         try:
             view = discord.ui.View()
-            view.add_item(self.play_again)
-            view.add_item(self.continue_game)
-            view.add_item(self.cancel_game)
+            view.add_item(
+                discord.ui.Button(label="Play Again", style=discord.ButtonStyle.green, row=1, callback=self.play_again))
+            view.add_item(discord.ui.Button(label="Continue", style=discord.ButtonStyle.blurple, row=1,
+                                            callback=self.continue_game))
+            view.add_item(
+                discord.ui.Button(label="Cancel", style=discord.ButtonStyle.gray, row=1, callback=self.cancel_game))
             await interaction.message.edit(embed=embed, view=view)
 
         except Exception as e:
@@ -259,12 +262,12 @@ class AkiView(discord.ui.View):
                 view = discord.ui.View()
                 view.add_item(self.play_again)
                 view.add_item(self.continue_game)
-                view.add_item(self.cancel_game)
+                view.add_item(self.cancel)
                 await interaction.message.edit(embed=embed, view=view)
             else:
                 view = discord.ui.View()
                 view.add_item(self.play_again)
-                view.add_item(self.cancel_game)
+                view.add_item(self.cancel)
                 await interaction.message.edit(embed=embed, view=view)
                 self.stop()
 
