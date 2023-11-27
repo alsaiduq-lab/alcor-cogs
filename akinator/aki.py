@@ -68,15 +68,20 @@ class Aki(commands.Cog):
     @commands.max_concurrency(1, commands.BucketType.channel)
     @commands.bot_has_permissions(embed_links=True, add_reactions=True)
     @commands.command(aliases=["akinator"])
-    async def aki(self, ctx: commands.Context, language: str.lower = "en"):
+    async def aki(self, ctx: commands.Context):
         """
         Start a game of Akinator!
         """
         await ctx.typing()
-        child_mode = not channel_is_nsfw(ctx.channel)
+        sfw_mode = not channel_is_nsfw(ctx.channel)
         try:
-            async with asyncakinator.Akinator() as aki:
-                await aki.start_game(language=language.replace(" ", "_"), child_mode=child_mode)
+            game = asyncakinator.Akinator()
+            await game.start()
+
+            view = AkiView(game=game, color=discord.Color.blue(), author_id=ctx.author.id, sfw_mode=sfw_mode)
+
+            await view.send_initial_message(ctx.channel)
+
         except Exception as e:
             await ctx.send(f"Error starting the game: {str(e)}")
             return

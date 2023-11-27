@@ -28,6 +28,7 @@ class AkiView(discord.ui.View):
         self.author_id = author_id
         super().__init__(timeout=60)
         self.continue_attempts = 0
+        self.sfw_mode = sfw_mode
 
     async def interaction_check(self, interaction: discord.Interaction) -> bool:
         if interaction.user.id != self.author_id:
@@ -222,12 +223,13 @@ class AkiView(discord.ui.View):
         if current_time - AkiView.last_win_time < 60:
             await interaction.response.send_message("Please wait before starting a new game.", ephemeral=True)
             return
+
         try:
             winner = await self.aki.win()
             AkiView.last_win_time = current_time
             description = winner["description"]
 
-            if not channel_is_nsfw(interaction.channel) and self.text_is_nsfw(description):
+            if self.sfw_mode and self.text_is_nsfw(description):
                 embed = self.get_nsfw_embed()
             else:
                 embed = self.get_winner_embed(winner)
@@ -244,6 +246,7 @@ class AkiView(discord.ui.View):
                 view.add_item(self.cancel_game)
                 await interaction.message.edit(embed=embed, view=view)
                 self.stop()
+
         except Exception as e:
             log.exception("An error occurred while trying to win an Akinator game.", exc_info=e)
             embed = discord.Embed(
@@ -251,11 +254,10 @@ class AkiView(discord.ui.View):
                 title="An error occurred while trying to win the game.",
                 description="Try again later.",
             )
-
-        view = discord.ui.View()
-        view.add_item(self.play_again)
-        await interaction.message.edit(embed=embed, view=view)
-        self.stop()
+            view = discord.ui.View()
+            view.add_item(self.play_again)
+            await interaction.message.edit(embed=embed, view=view)
+            self.stop()
 
     async def edit(self, interaction: discord.Interaction):
         await interaction.message.edit(embed=self.current_question_embed(), view=self)
