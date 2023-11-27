@@ -29,6 +29,7 @@ class AkiView(discord.ui.View):
         self.author_id = author_id
         self.sfw_mode = sfw_mode
         self.num = 1
+        self.continue_attempts = 0
 
     @staticmethod
     def contains_nsfw_content(text: str) -> bool:
@@ -252,6 +253,7 @@ class AkiView(discord.ui.View):
                 embed = self.get_nsfw_embed()
             else:
                 embed = self.get_winner_embed(winner)
+                self.continue_attempts += 1
 
             if self.continue_attempts < 3:
                 view = discord.ui.View()
