@@ -28,6 +28,7 @@ class AkiView(discord.ui.View):
         self.author_id = author_id
         super().__init__(timeout=60)
         self.continue_attempts = 0
+        self.sfw_mode = not channel_is_nsfw(game.channel)
 
     @staticmethod
     def contains_nsfw_content(text: str) -> bool:
@@ -243,7 +244,7 @@ class AkiView(discord.ui.View):
             AkiView.last_win_time = current_time
             description = winner["description"]
 
-            if AkiView.contains_nsfw_content(description):
+            if self.sfw_mode and self.contains_nsfw_content(description):
                 embed = self.get_nsfw_embed()
             else:
                 embed = self.get_winner_embed(winner)
