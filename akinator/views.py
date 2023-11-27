@@ -30,6 +30,21 @@ class AkiView(discord.ui.View):
         self.continue_attempts = 0
         self.sfw_mode = sfw_mode
 
+    @staticmethod
+    def contains_nsfw_content(text: str) -> bool:
+        """
+        Check if the given text contains NSFW content based on specific words.
+
+        Args:
+            text (str): The text to check for NSFW content.
+
+        Returns:
+            bool: True if NSFW content is found, False otherwise.
+        """
+        nsfw_words = ["boobs", "breasts"]
+        text_lower = text.lower()
+        return any(nsfw_word in text_lower for nsfw_word in nsfw_words)
+
     async def interaction_check(self, interaction: discord.Interaction) -> bool:
         if interaction.user.id != self.author_id:
             await interaction.response.send_message(
@@ -229,7 +244,7 @@ class AkiView(discord.ui.View):
             AkiView.last_win_time = current_time
             description = winner["description"]
 
-            if sfw_mode and self.text_is_nsfw(description):
+            if AkiView.contains_nsfw_content(description):
                 embed = self.get_nsfw_embed()
             else:
                 embed = self.get_winner_embed(winner)
