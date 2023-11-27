@@ -78,7 +78,7 @@ class Aki(commands.Cog):
             game = asyncakinator.Akinator()
             await game.start()
 
-            view = AkiView(game=game, color=discord.Color.blue(), author_id=ctx.author.id)
+            view = AkiView(game=game, color=discord.Color.blue(), author_id=ctx.author.id, sfw_mode=sfw_mode)
 
             await view.send_initial_message(ctx.channel)
 
