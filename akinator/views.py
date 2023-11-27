@@ -7,7 +7,6 @@ import time
 
 import akinator
 import discord
-from akinator.async_aki import Akinator
 from redbot.core import commands
 
 log = logging.getLogger("red.alcor.aki.menus")
