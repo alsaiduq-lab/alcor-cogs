@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 from fuzzywuzzy import process
 import time
 
-import akinator
+import asyncakinator
 import discord
 from redbot.core import commands
 
@@ -21,7 +21,7 @@ def channel_is_nsfw(channel) -> bool:
 class AkiView(discord.ui.View):
     last_win_time = 0
 
-    def __init__(self, game: Akinator, color: discord.Color, *, author_id: int):
+    def __init__(self, game: asyncakinator.Akinator, color: discord.Color, *, author_id: int):
         self.aki = game
         self.color = color
         self.num = 1
@@ -47,7 +47,7 @@ class AkiView(discord.ui.View):
 
     @discord.ui.button(label="yes", style=discord.ButtonStyle.green)
     async def yes(self, interaction: discord.Interaction, button: discord.ui.Button):
-        await self.answer_question("yes", interaction)
+        await self.answer_question("y", interaction)
 
     @discord.ui.button(label="no", style=discord.ButtonStyle.red)
     async def no(self, interaction: discord.Interaction, button: discord.ui.Button):
@@ -69,7 +69,7 @@ class AkiView(discord.ui.View):
     async def back(self, interaction: discord.Interaction, button: discord.ui.Button):
         try:
             await self.aki.back()
-        except akinator.CantGoBackAnyFurther:
+        except asyncakinator.CantGoBackAnyFurther:
             await interaction.followup.send(
                 "You can't go back on the first question, try a different option instead.",
                 ephemeral=True,
@@ -117,15 +117,22 @@ class AkiView(discord.ui.View):
 
     async def answer_question(self, answer: str, interaction: discord.Interaction):
         self.num += 1
-        await self.answer(answer, interaction)
-        await self.send_current_question(interaction)
+        try:
+            question = await self.aki.answer(answer)
+            if question:
+                await self.send_current_question(interaction, question)
+            else:
+                await self.win(interaction)
+        except Exception as error:
+            log.exception("Error during answering question", exc_info=True)
+            await interaction.followup.send(f"Error: {str(error)}")
 
     async def answer(self, message: str, interaction: discord.Interaction):
         try:
             await self.aki.answer(message)
-        except akinator.AkiNoQuestions:
+        except asyncakinator.AkiNoQuestions:
             await self.win(interaction)
-        except akinator.AkiTimedOut:
+        except asyncakinator.AkiTimedOut:
             await self.cancel(interaction, "The connection to the Akinator servers was lost.")
         except Exception as error:
             log.exception(
