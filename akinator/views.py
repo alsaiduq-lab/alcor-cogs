@@ -229,7 +229,7 @@ class AkiView(discord.ui.View):
             AkiView.last_win_time = current_time
             description = winner["description"]
 
-            if self.sfw_mode and self.text_is_nsfw(description):
+            if sfw_mode and self.text_is_nsfw(description):
                 embed = self.get_nsfw_embed()
             else:
                 embed = self.get_winner_embed(winner)
