@@ -20,6 +20,7 @@ def channel_is_nsfw(channel) -> bool:
 
 
 class AkiView(discord.ui.View):
+    last_win_time = None
     def __init__(self, game, color, author_id, sfw_mode):
         super().__init__(timeout=60)
         self.aki = game
@@ -237,7 +238,7 @@ class AkiView(discord.ui.View):
 
     async def win(self, interaction: discord.Interaction):
         current_time = time.time()
-        if current_time - AkiView.last_win_time < 60:
+        if AkiView.last_win_time is not None and current_time - AkiView.last_win_time < 60:
             await interaction.response.send_message("Please wait before starting a new game.", ephemeral=True)
             return
 
