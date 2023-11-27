@@ -28,6 +28,7 @@ class AkiView(discord.ui.View):
         self.num = 1
         self.author_id = author_id
         super().__init__(timeout=60)
+        self.continue_attempts = 0
 
     async def interaction_check(self, interaction: discord.Interaction) -> bool:
         if interaction.user.id != self.author_id:
@@ -84,26 +85,36 @@ class AkiView(discord.ui.View):
 
     @discord.ui.button(label="Play Again", style=discord.ButtonStyle.green, row=1)
     async def play_again(self, interaction: discord.Interaction, button: discord.ui.Button):
-        # Inform the user that a new game is starting
         await interaction.response.send_message("Starting a new game...", ephemeral=True)
 
         try:
-            # Reset the game state and start a new game
-            # This is a simplified example. You'll need to replace it with your actual game initialization logic.
-            new_game = Akinator()  # Replace with actual method to create a new game instance
-            new_view = AkiView(new_game, self.color, author_id=self.author_id)  # Create a new view instance
-            await new_view.start(interaction)  # Start the new game
+            view = discord.ui.View()
+            view.add_item(self.play_again)
+            view.add_item(self.continue_game)
+            view.add_item(self.cancel_game)
+            await interaction.message.edit(embed=embed, view=view)
 
         except Exception as e:
             log.exception("Failed to start a new Akinator game", exc_info=e)
-            # Send an error message to the user
             await interaction.followup.send("An error occurred while starting a new game. Please try again later.",
                                             ephemeral=True)
+
+    @discord.ui.button(label="Cancel", style=discord.ButtonStyle.gray, row=1)
+    async def cancel_game(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await self.cancel(interaction, "Akinator game cancelled.")
 
     @discord.ui.button(label="cancel", style=discord.ButtonStyle.gray)
     async def end(self, interaction: discord.Interaction, button: discord.ui.Button):
         await interaction.message.delete()
         self.stop()
+
+    @discord.ui.button(label="Continue", style=discord.ButtonStyle.blurple, row=1)
+    async def continue_game(self, interaction: discord.Interaction, button: discord.ui.Button):
+        if self.continue_attempts < 3:
+            self.continue_attempts += 1
+            await self.send_current_question(interaction)
+        else:
+            await self.cancel(interaction, "You have bested me!")
 
     async def answer_question(self, answer: str, interaction: discord.Interaction):
         self.num += 1
@@ -214,6 +225,19 @@ class AkiView(discord.ui.View):
                 embed = self.get_nsfw_embed()
             else:
                 embed = self.get_winner_embed(winner)
+
+            if self.continue_attempts < 3:
+                view = discord.ui.View()
+                view.add_item(self.play_again)
+                view.add_item(self.continue_game)
+                view.add_item(self.cancel_game)
+                await interaction.message.edit(embed=embed, view=view)
+            else:
+                view = discord.ui.View()
+                view.add_item(self.play_again)
+                view.add_item(self.cancel_game)
+                await interaction.message.edit(embed=embed, view=view)
+                self.stop()
         except Exception as e:
             log.exception("An error occurred while trying to win an Akinator game.", exc_info=e)
             embed = discord.Embed(
