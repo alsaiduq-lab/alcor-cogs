@@ -19,14 +19,13 @@ def channel_is_nsfw(channel) -> bool:
 
 
 class AkiView(discord.ui.View):
-    last_win_time = 0
-
     def __init__(self, game, color, author_id, sfw_mode):
         super().__init__(timeout=60)
         self.aki = game
         self.color = color
         self.author_id = author_id
         self.sfw_mode = sfw_mode
+        self.num = 1
 
     @staticmethod
     def contains_nsfw_content(text: str) -> bool:
