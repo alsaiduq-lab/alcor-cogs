@@ -6,6 +6,7 @@ from fuzzywuzzy import process
 import time
 
 import asyncakinator
+from asyncakinator import AkinatorAnswerEnum
 import discord
 from redbot.core import commands
 
