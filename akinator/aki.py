@@ -75,8 +75,8 @@ class Aki(commands.Cog):
         await ctx.typing()
         child_mode = not channel_is_nsfw(ctx.channel)
         try:
-            aki = asyncakinator.Akinator()
-            await aki.start_game(language=language.replace(" ", "_"), child_mode=child_mode)
+            async with asyncakinator.Akinator() as aki:
+                await aki.start_game(language=language.replace(" ", "_"), child_mode=child_mode)
         except asyncakinator.InvalidLanguageError:
             await ctx.send("Invalid language. Please try again with a valid language code.")
         except Exception as e:
