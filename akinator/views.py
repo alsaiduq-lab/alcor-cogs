@@ -28,7 +28,6 @@ class AkiView(discord.ui.View):
         self.author_id = author_id
         super().__init__(timeout=60)
         self.continue_attempts = 0
-        self.sfw_mode = sfw_mode
 
     @staticmethod
     def contains_nsfw_content(text: str) -> bool:
