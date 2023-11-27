@@ -91,10 +91,6 @@ class AkiView(discord.ui.View):
             self.num -= 1
             await self.send_current_question(interaction)
 
-    @discord.ui.button(label="win", style=discord.ButtonStyle.gray)
-    async def react_win(self, interaction: discord.Interaction, button: discord.ui.Button):
-        await self.win(interaction)
-
     @discord.ui.button(label="Play Again", style=discord.ButtonStyle.green, row=1)
     async def play_again(self, interaction: discord.Interaction, button: discord.ui.Button):
         await interaction.response.send_message("Starting a new game...", ephemeral=True)
@@ -110,10 +106,6 @@ class AkiView(discord.ui.View):
             log.exception("Failed to start a new Akinator game", exc_info=e)
             await interaction.followup.send("An error occurred while starting a new game. Please try again later.",
                                             ephemeral=True)
-
-    @discord.ui.button(label="Cancel", style=discord.ButtonStyle.gray, row=1)
-    async def cancel_game(self, interaction: discord.Interaction, button: discord.ui.Button):
-        await self.cancel(interaction, "Akinator game cancelled.")
 
     @discord.ui.button(label="cancel", style=discord.ButtonStyle.gray)
     async def end(self, interaction: discord.Interaction, button: discord.ui.Button):
@@ -143,8 +135,14 @@ class AkiView(discord.ui.View):
 
     @staticmethod
     def convert_to_akinator_answer(answer: str):
-        conversion_dict = {"yes": 0, "no": 1, "idk": 2, "probably": 3, "probably not": 4}
-        return conversion_dict.get(answer, 0)
+        conversion_dict = {
+            "yes": AkinatorAnswerEnum.YES,
+            "no": AkinatorAnswerEnum.NO,
+            "idk": AkinatorAnswerEnum.DONT_KNOW,
+            "probably": AkinatorAnswerEnum.PROBABLY,
+            "probably not": AkinatorAnswerEnum.PROBABLY_NOT
+        }
+        return conversion_dict.get(answer, AkinatorAnswerEnum.DONT_KNOW)
 
     async def answer(self, message: str, interaction: discord.Interaction):
         try:
