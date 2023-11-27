@@ -193,7 +193,7 @@ class AkiView(discord.ui.View):
 
         win_embed = discord.Embed(
             color=self.color,
-            title=f"I'm {round(float(winner.proba) * 100)}% sure it's {winner.name}!",
+            title=f"I'm {round(winner.probablility * 100)}% sure it's {winner.name}!",
             description=winner.description
         )
         win_embed.set_image(url=image_url)
