@@ -131,7 +131,8 @@ class AkiView(discord.ui.View):
     async def answer_question(self, answer: str, interaction: discord.Interaction):
         self.num += 1
         try:
-            question = await self.aki.answer(answer)
+            akinator_answer = self.convert_to_akinator_answer(answer)
+            question = await self.aki.answer(akinator_answer)
             if question:
                 await self.send_current_question(interaction, question)
             else:
@@ -139,6 +140,11 @@ class AkiView(discord.ui.View):
         except Exception as error:
             log.exception("Error during answering question", exc_info=True)
             await interaction.followup.send(f"Error: {str(error)}")
+
+    @staticmethod
+    def convert_to_akinator_answer(answer: str):
+        conversion_dict = {"yes": 0, "no": 1, "idk": 2, "probably": 3, "probably not": 4}
+        return conversion_dict.get(answer, 0)
 
     async def answer(self, message: str, interaction: discord.Interaction):
         try:
