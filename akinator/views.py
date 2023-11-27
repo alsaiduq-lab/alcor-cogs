@@ -83,7 +83,7 @@ class AkiView(discord.ui.View):
     async def back(self, interaction: discord.Interaction, button: discord.ui.Button):
         try:
             await self.aki.back()
-        except asyncakinator.CantGoBackAnyFurther:
+        except asyncakinator.exceptions.CantGoBackAnyFurther:
             await interaction.followup.send(
                 "You can't go back on the first question, try a different option instead.",
                 ephemeral=True,
@@ -139,11 +139,11 @@ class AkiView(discord.ui.View):
         conversion_dict = {
             "yes": Answer.YES,
             "no": Answer.NO,
-            "idk": Answer.DONT_KNOW,
+            "idk": Answer.I_DONT_KNOW,
             "probably": Answer.PROBABLY,
             "probably not": Answer.PROBABLY_NOT
         }
-        return conversion_dict.get(answer, AkinatorAnswerEnum.DONT_KNOW)
+        return conversion_dict.get(answer, Answer.I_DONT_KNOW)
 
     async def answer(self, message: str, interaction: discord.Interaction):
         try:
