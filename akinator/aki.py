@@ -27,7 +27,7 @@ import logging
 import aiohttp
 import akinator
 import discord
-from akinator.async_aki import Akinator
+from akinator import Akinator
 from redbot.core import commands
 from redbot.core.bot import Red
 from redbot.core.config import Config
