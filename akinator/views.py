@@ -6,7 +6,7 @@ from fuzzywuzzy import process
 import time
 
 import asyncakinator
-from asyncakinator import AkinatorAnswerEnum
+from asyncakinator import Answer
 import discord
 from redbot.core import commands
 
@@ -137,11 +137,11 @@ class AkiView(discord.ui.View):
     @staticmethod
     def convert_to_akinator_answer(answer: str):
         conversion_dict = {
-            "yes": AkinatorAnswerEnum.YES,
-            "no": AkinatorAnswerEnum.NO,
-            "idk": AkinatorAnswerEnum.DONT_KNOW,
-            "probably": AkinatorAnswerEnum.PROBABLY,
-            "probably not": AkinatorAnswerEnum.PROBABLY_NOT
+            "yes": Answer.YES,
+            "no": Answer.NO,
+            "idk": Answer.DONT_KNOW,
+            "probably": Answer.PROBABLY,
+            "probably not": Answer.PROBABLY_NOT
         }
         return conversion_dict.get(answer, AkinatorAnswerEnum.DONT_KNOW)
 
