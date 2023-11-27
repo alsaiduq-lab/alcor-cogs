@@ -258,30 +258,23 @@ class AkiView(discord.ui.View):
                 embed = self.get_winner_embed(winner)
                 self.continue_attempts += 1
 
-            if self.continue_attempts < 3:
-                view = discord.ui.View()
-                view.add_item(self.play_again)
-                view.add_item(self.continue_game)
-                view.add_item(self.cancel)
-                await interaction.message.edit(embed=embed, view=view)
-            else:
-                view = discord.ui.View()
-                view.add_item(self.play_again)
-                view.add_item(self.cancel)
-                await interaction.message.edit(embed=embed, view=view)
-                self.stop()
+            view = discord.ui.View()
+            play_again_button = discord.ui.Button(label="Play Again", style=discord.ButtonStyle.green, row=1,
+                                                  callback=self.play_again_callback)
+            cancel_button = discord.ui.Button(label="Cancel", style=discord.ButtonStyle.gray, row=1,
+                                              callback=self.cancel_callback)
 
+            if self.continue_attempts < 3:
+                continue_game_button = discord.ui.Button(label="Continue", style=discord.ButtonStyle.blurple, row=1,
+                                                         callback=self.continue_game_callback)
+                view.add_item(continue_game_button)
+
+            view.add_item(play_again_button)
+            view.add_item(cancel_button)
+
+            await interaction.message.edit(embed=embed, view=view)
         except Exception as e:
             log.exception("An error occurred while trying to win an Akinator game.", exc_info=e)
-            embed = discord.Embed(
-                color=self.color,
-                title="An error occurred while trying to win the game.",
-                description="Try again later.",
-            )
-            view = discord.ui.View()
-            view.add_item(self.play_again)
-            await interaction.message.edit(embed=embed, view=view)
-            self.stop()
 
     async def edit(self, interaction: discord.Interaction):
         await interaction.message.edit(embed=self.current_question_embed(), view=self)
@@ -300,3 +293,24 @@ class AkiView(discord.ui.View):
                 await self.cancel(interaction)
         else:
             await self.win(interaction)
+
+    async def play_again_callback(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.send_message("Starting a new game...", ephemeral=True)
+        try:
+            self.aki = await asyncakinator.Akinator().start_game()
+            self.num = 1
+            self.continue_attempts = 0
+            await self.send_initial_message(interaction.channel)
+        except Exception as e:
+            await interaction.followup.send(f"Error starting a new game: {e}", ephemeral=True)
+
+    async def continue_game_callback(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.send_message("Continuing the game...", ephemeral=True)
+        try:
+            await self.send_current_question(interaction)
+        except Exception as e:
+            await interaction.followup.send(f"Error continuing the game: {e}", ephemeral=True)
+
+    async def cancel_callback(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.send_message("Game cancelled.", ephemeral=True)
+        self.stop()
