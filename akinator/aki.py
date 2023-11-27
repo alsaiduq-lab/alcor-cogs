@@ -25,7 +25,7 @@ SOFTWARE.
 import logging
 
 import aiohttp
-import akinator
+import asyncakinator
 import discord
 
 from redbot.core import commands
