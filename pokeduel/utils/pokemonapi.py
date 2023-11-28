@@ -4,7 +4,7 @@ import pokepy
 import requests
 from fuzzywuzzy import process
 
-cache_directory = '../data/sprites'
+cache_directory = './data/cache/sprites'
 check_file = 'sprites_obtained_go_here'
 
 full_path_to_check_file = os.path.join(cache_directory, check_file)
