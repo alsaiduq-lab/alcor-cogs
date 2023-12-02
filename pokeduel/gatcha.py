@@ -15,7 +15,7 @@ logging.basicConfig(level=logging.INFO)
 
 
 try:
-    with open(pokemon_data_path, 'r') as data_file:
+    with open(POKEMON_DATA_PATH, 'r') as data_file:
         raw_pokemon_data = json.load(data_file)
     processed_pokemon_data = process_pokemon_data(raw_pokemon_data)
 
