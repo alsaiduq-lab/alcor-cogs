@@ -8,6 +8,21 @@ import discord
 from discord import ButtonStyle, SelectOption, Interaction, Embed
 from discord.ui import Select, View, Button
 from .data.database import DatabaseManager
+from .data import sprites
+
+logging.basicConfig(level=logging.INFO)
+
+
+try:
+    with open(pokemon_data_path, 'r') as data_file:
+        raw_pokemon_data = json.load(data_file)
+    processed_pokemon_data = process_pokemon_data(raw_pokemon_data)
+
+    with open(plates_path, 'r') as data_file:
+        raw_plates_data = json.load(data_file)
+    processed_plates_data = process_plates_data(raw_plates_data["plates"])
+except FileNotFoundError as e:
+    logging.error(f"File not found: {e.filename}")
 
 
 class ShopView(View):

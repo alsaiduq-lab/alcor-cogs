@@ -3,6 +3,7 @@ import uuid
 import discord
 from discord import ButtonStyle, SelectOption, Interaction, Embed
 from discord.ui import Select, View, Button
+from .data import sprites
 
 
 class InventoryView(View):
