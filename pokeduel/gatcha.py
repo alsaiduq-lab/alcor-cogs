@@ -10,142 +10,6 @@ from discord.ui import Select, View, Button
 from .data.database import DatabaseManager
 
 
-def find_strongest_attack(pokemon_data):
-    max_effective_damage = 0
-    strongest_attack = None
-    for attack in pokemon_data["Base Wheel Size"]:
-        try:
-            damage = 0
-            if attack["Move Type"] in ["White", "Blue"]:
-                damage = int(attack["Damage"])
-            elif attack["Move Type"] == "Purple":
-                damage = 70
-            elif attack["Move Type"] == "Gold":
-                damage = int(attack["Damage"]) * 1.5
-
-            if damage > max_effective_damage:
-                max_effective_damage = damage
-                strongest_attack = attack["Name"]
-        except (ValueError, KeyError):
-            continue
-
-    return (strongest_attack, max_effective_damage) if strongest_attack else ("Unknown", 0)
-
-
-def process_pokemon_data(pokemon_data):
-    processed_data = []
-    for name, details in pokemon_data.items():
-        strongest_attack = find_strongest_attack(details)
-
-        if strongest_attack and isinstance(strongest_attack, dict):
-            processed_data.append({
-                "name": name,
-                "rarity": details["Rarity"],
-                "strongest_attack": strongest_attack.get("Name", "Unknown"),
-                "attack_damage": strongest_attack.get("Damage", "0")
-            })
-        else:
-            processed_data.append({
-                "name": name,
-                "rarity": details["Rarity"],
-                "strongest_attack": "Unknown",
-                "attack_damage": "0"
-            })
-
-    return processed_data
-
-
-def process_plates_data(plates_data):
-    print("Type of plates_data:", type(plates_data))
-    print("Content of plates_data:", plates_data)
-
-    processed_data = []
-
-    for plate in plates_data:
-        cost = int(plate["Cost"]) if plate["Cost"].isdigit() else 0
-
-        plate_info = {
-            "id": plate["ID"],
-            "name": plate["Name"],
-            "cost": cost,
-            "rarity": plate["Rarity"].strip(),
-            "color": plate["Color"],
-            "effect": plate["Effect"]
-        }
-        processed_data.append(plate_info)
-        print("Processed plate info:", plate_info)
-
-    return processed_data
-
-
-def create_shop_data_template(pokemon_data, plates_data, num_pokemon=5, num_plates=3):
-    if isinstance(pokemon_data, dict):
-        pokemon_list = [{'name': name, **details} for name, details in pokemon_data.items()]
-    else:
-        pokemon_list = pokemon_data
-
-    if 'plates' in plates_data:
-        plates_list = [{'plate_id': re.search(r'\d+', plate['ID']).group(), **plate} for plate in plates_data['plates']]
-    else:
-        plates_list = plates_data
-
-    num_pokemon = min(num_pokemon, len(pokemon_list))
-    num_plates = min(num_plates, len(plates_list))
-
-    selected_pokemon = random.sample(pokemon_list, num_pokemon) if num_pokemon > 0 else []
-    selected_plates = random.sample(plates_list, num_plates) if num_plates > 0 else []
-
-    pokemon_items = [process_pokemon(p) for p in selected_pokemon]
-    plate_items = [process_plate(p) for p in selected_plates]
-
-    return {"pokemon": pokemon_items, "plates": plate_items}
-
-
-def process_pokemon(pokemon):
-    attack_result = find_strongest_attack(pokemon)
-    if attack_result:
-        strongest_attack, attack_damage = attack_result
-        return {
-            "name": pokemon['name'],
-            "rarity": pokemon['Rarity'],
-            "strongest_attack": strongest_attack,
-            "attack_damage": attack_damage
-        }
-    return {
-        "name": pokemon['name'],
-        "rarity": pokemon['Rarity'],
-        "strongest_attack": "Unknown",
-        "attack_damage": 0
-    }
-
-
-def process_plate(plate):
-    return {
-        "id": plate["plate_id"],
-        "color": plate["Color"],
-        "name": plate["Name"],
-        "rarity": plate["Rarity"].strip(),
-        "cost": int(plate["Cost"]) if plate["Cost"].isdigit() else 0,
-        "effect": plate["Effect"]
-    }
-
-
-dir_path = os.path.dirname(os.path.abspath(__file__))
-pokemon_data_path = os.path.join(dir_path, 'data', 'pokemon.json')
-plates_path = os.path.join(dir_path, 'data', 'plates.json')
-
-try:
-    with open(pokemon_data_path, 'r') as data_file:
-        raw_pokemon_data = json.load(data_file)
-    processed_pokemon_data = process_pokemon_data(raw_pokemon_data)
-
-    with open(plates_path, 'r') as data_file:
-        raw_plates_data = json.load(data_file)
-    processed_plates_data = process_plates_data(raw_plates_data["plates"])
-except FileNotFoundError as e:
-    logging.error(f"File not found: {e.filename}")
-
-
 class ShopView(View):
     def __init__(self, db_path, init_pokemon_data, init_plates_data):
         super().__init__()
@@ -236,7 +100,8 @@ class ShopView(View):
             self.db.update_crystals(user_id, current_crystals - 50)
             await interaction.response.send_message(f"You've got a {pokemon} of rarity {rarity}!", ephemeral=True)
         else:
-            await interaction.response.send_message("No Pokémon were rolled. Your crystals have been refunded.", ephemeral=True)
+            await interaction.response.send_message("No Pokémon were rolled. Your crystals have been refunded.",
+                                                    ephemeral=True)
 
     async def multi_roll(self, interaction):
         user_id = interaction.user.id
@@ -254,7 +119,8 @@ class ShopView(View):
             roll_results_message = f"You've got the following Pokémon: {', '.join([f'{pokemon} ({rarity})' for pokemon, rarity in roll_results])}"
             await interaction.response.send_message(roll_results_message, ephemeral=True)
         else:
-            await interaction.response.send_message("No Pokémon were rolled. Your crystals have been refunded.", ephemeral=True)
+            await interaction.response.send_message("No Pokémon were rolled. Your crystals have been refunded.",
+                                                    ephemeral=True)
 
     async def flash_sale(self, interaction):
         self.generate_flash_sale_pokemon()
@@ -324,7 +190,8 @@ class ShopView(View):
                 await interaction.response.send_message("Your inventory is empty.", ephemeral=True)
             else:
                 inventory_view = InventoryView(user_id=user_id, db=self.db)
-                await interaction.response.send_message(content=inventory_view.content, view=inventory_view, ephemeral=True)
+                await interaction.response.send_message(content=inventory_view.content, view=inventory_view,
+                                                        ephemeral=True)
         except Exception as ex:
             logging.error(f"Error during inventory check for user {user_id}: {ex}", exc_info=True)
             await interaction.response.send_message("An error occurred while accessing your inventory.", ephemeral=True)
@@ -450,74 +317,3 @@ class ShopView(View):
         self.db.update_dust(user_id, current_dust - plate_cost)
         await interaction.response.send_message(f"You've bought a {selected_plate} for {plate_cost} dust!",
                                                 ephemeral=True)
-
-
-class InventoryView(View):
-    def __init__(self, user_id, db, page=0):
-        super().__init__()
-        logging.debug(f"Initializing InventoryView: user_id={user_id}, page={page}")
-        self.content = None
-        self.user_id = user_id
-        self.db = db
-        self.page = page
-        self.max_items_per_page = 8
-        self.previous_button_id = f"previous_{user_id}"
-        self.next_button_id = f"next_{user_id}"
-        self.update_view()
-
-    def update_view(self):
-        logging.debug(f"Updating view: page={self.page}")
-        self.clear_items()
-        try:
-            inventory = self.db.get_inventory(self.user_id)
-
-            aggregated_inventory = {}
-            for item in inventory:
-                key = (item['item'], item['rarity'])
-                if key in aggregated_inventory:
-                    aggregated_inventory[key]['count'] += 1
-                else:
-                    aggregated_inventory[key] = {'count': 1, 'item': item['item'], 'rarity': item['rarity']}
-
-            sorted_aggregated_inventory = sorted(aggregated_inventory.values(), key=lambda x: (-self.rarity_to_int(x['rarity']), x['item']))
-            total_items = len(sorted_aggregated_inventory)
-            total_pages = (total_items + self.max_items_per_page - 1) // self.max_items_per_page
-
-            start = self.page * self.max_items_per_page
-            end = start + self.max_items_per_page
-            page_items = sorted_aggregated_inventory[start:end]
-            self.content = '\n'.join([f"{item['item']} ({item['rarity']}) ({item['count']})" for item in page_items])
-
-            if self.page > 0:
-                previous_button = Button(label='Previous', style=ButtonStyle.grey, custom_id=self.previous_button_id)
-                previous_button.callback = self.previous_button_callback
-                self.add_item(previous_button)
-
-            if self.page < total_pages - 1:
-                next_button = Button(label='Next', style=ButtonStyle.grey, custom_id=self.next_button_id)
-                next_button.callback = self.next_button_callback
-                self.add_item(next_button)
-
-            logging.debug(f"Updated content: {self.content}")
-        except Exception as ex:
-            logging.error(f"Error in update_view: {ex}", exc_info=True)
-
-    @staticmethod
-    def rarity_to_int(rarity):
-        rarity_order = {"UX": 5, "EX": 4, "R": 3, "UC": 2, "C": 1}
-        return rarity_order.get(rarity, 0)
-
-    async def previous_button_callback(self, interaction):
-        logging.debug("Previous button pressed")
-        if self.page > 0:
-            self.page -= 1
-            self.update_view()
-            await interaction.response.edit_message(content=self.content, view=self)
-        logging.debug(f"Previous button processing complete: new page={self.page}")
-
-    async def next_button_callback(self, interaction):
-        logging.debug("Next button pressed")
-        self.page += 1
-        self.update_view()
-        await interaction.response.edit_message(content=self.content, view=self)
-        logging.debug(f"Next button processing complete: new page={self.page}")
