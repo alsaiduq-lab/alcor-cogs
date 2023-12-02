@@ -9,6 +9,7 @@ from discord import ButtonStyle, SelectOption, Interaction, Embed
 from discord.ui import Select, View, Button
 from .data.database import DatabaseManager
 from .data import sprites
+from .utils import constants
 
 logging.basicConfig(level=logging.INFO)
 
