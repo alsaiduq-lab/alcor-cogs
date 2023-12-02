@@ -13,7 +13,6 @@ from .utils.constants import POKEMON_DATA_PATH, PLATES_PATH
 
 logging.basicConfig(level=logging.INFO)
 
-
 try:
     with open(POKEMON_DATA_PATH, 'r') as data_file:
         raw_pokemon_data = json.load(data_file)
@@ -34,10 +33,12 @@ class ShopView(View):
         self.check_balance_button = None
         self.view_inventory_button = None
         self.db = DatabaseManager(db_path)
-        processed_pokemon_data_for_shop, processed_plates_data_for_shop = self.prepare_shop_data(init_pokemon_data,
-                                                                                                 init_plates_data)
-        self.pokemon_shop_data = processed_pokemon_data_for_shop
-        self.plates_shop_data = processed_plates_data_for_shop
+
+        self.shop_data_processor = ShopDataProcessor(init_pokemon_data, init_plates_data)
+        shop_data = self.shop_data_processor.create_shop_data_template()
+        self.pokemon_shop_data = shop_data["pokemon"]
+        self.plates_shop_data = shop_data["plates"]
+
         self.initialize_buttons()
         self.flash_sale_button = None
         self.flash_sale_pokemon = []
